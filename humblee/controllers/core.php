@@ -16,7 +16,7 @@ class Core {
 	{
 		$class_parts = explode("_",$class);
 		
-		$parent_folder = ( strtolower($class_parts[0]) === "humblee" ) ? "humblee/" : "application/";
+		$parent_folder = ( strtolower($class_parts[0]) === "core" ) ? "humblee/" : "application/";
 		
 		if( strtolower($class_parts[0]) === "controller" ||  count($class_parts) === 3 && strtolower($class_parts[1]) === "controller")
 		{
@@ -28,7 +28,7 @@ class Core {
 		}
 		elseif( strtolower($class_parts[0]) == "draw") // the "Draw" controller breaks convention to make is static
 		{
-			$parent_folder = "core/";
+			$parent_folder = "humblee/";
 			$class_folder = "controllers/";
 		}
 		else
