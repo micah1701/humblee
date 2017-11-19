@@ -11,4 +11,5 @@ RewriteEngine On
 Options -Indexes
 
 #requires Apache 2.2.16 
+#otherwise use traditional mod rewrite rules
 FallbackResource /public/index.php
