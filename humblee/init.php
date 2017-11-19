@@ -8,7 +8,7 @@ date_default_timezone_set('America/New_York');
 /**
  * include required models and controllers
  */
-require_once _app_server_path.'humblee/config.php'; //define table name vars, database connection and encryption info
+require_once _app_server_path.'humblee/configuration/config.php'; //define table name vars, database connection and encryption info
 require_once _app_server_path.'humblee/vendor/autoload.php'; //to load composer files
 require_once _app_server_path.'humblee/controllers/core.php'; //
 
@@ -24,9 +24,9 @@ spl_autoload_register(array('Core','auto_load'));
  * database connection data (used by idiorm.php class) 
  * values are stored in config.php
  */
-ORM::configure('mysql:host='. _db_host .';dbname=' ._db_name);
-ORM::configure('username', _db_username);
-ORM::configure('password', _db_password);
+ORM::configure('mysql:host='. $_ENV['config']['db_host'] .';dbname=' .$_ENV['config']['db_name']);
+ORM::configure('username', $_ENV['config']['db_username']);
+ORM::configure('password', $_ENV['config']['db_password']);
 
 /**
  * route to a specified controller based on URI
