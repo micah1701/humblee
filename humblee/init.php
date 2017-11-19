@@ -8,11 +8,12 @@ date_default_timezone_set('America/New_York');
 /**
  * include required models and controllers
  */
-require _app_server_path.'humblee/config.php'; //define table name vars, database connection and encryption info
-require _app_server_path.'humblee/libs/idiorm.php';  // idiorm class for database management
-// require $_app_server_path.'humblee/libs/paris.php'; // paris relational mapping add-on to idiorm (optional)
-require _app_server_path.'humblee/core.php';
+require_once _app_server_path.'humblee/config.php'; //define table name vars, database connection and encryption info
+require_once _app_server_path.'humblee/vendor/autoload.php'; //to load composer files
+require_once _app_server_path.'humblee/controllers/core.php'; //
 
+// include packagist vendor resources installed via Composer
+use \j4mie\idiorm; // include the idiorm ORM class
 
 /**
  * auto load class files when called with the Core::auto_load($class) function
