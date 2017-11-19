@@ -10,14 +10,5 @@ RewriteEngine On
 # Turn of Indexes
 Options -Indexes
 
-# Protect application and core files from being viewed
-#RewriteRule ^(?:controller|model|view)\b.* public/index.php/$0 [L]
-
-# Allow any files or directories that exist to be displayed directly
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-
-# Rewrite all other URLs to index.php/URL
-#RewriteRule .* public/index.php/$0 [PT]
-RewriteRule .* public/index.php/$0 [PT]
-#RewriteRule ^(.*)$ public/index.php/$1 [L]
+#requires Apache 2.2.16 
+FallbackResource /public/index.php
