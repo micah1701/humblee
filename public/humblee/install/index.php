@@ -10,8 +10,8 @@
 <meta charset="utf-8">
 <title>Install Humblee Framework and CMS</title>
 
-<link rel="stylesheet" type="text/css" href="core/assets/css/normalize.css">
-<link rel="stylesheet" type="text/css" href="core/assets/css/skeleton.css">
+<link rel="stylesheet" type="text/css" href="../css/normalize.css">
+<link rel="stylesheet" type="text/css" href="../css/skeleton.css">
 </head>
 <body>
 <div class="container">
