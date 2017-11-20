@@ -75,8 +75,9 @@ class Core {
             $_path_info = ltrim($_path_info, "index.php");   // index.php might be there, drop that too
         }
    		
-		return (!isset($_path_info) || $_path_info == "") ? "" : ltrim($_path_info,"/");
-
+		$uri = (!isset($_path_info) || $_path_info == "" || $_path_info == "public") ? "" : ltrim($_path_info,"/");
+		return ltrim($uri,'public/');
+		
         // depending on server configuration, you might need to do this instead		
         // $_path_info = preg_split("/\?|\&/",$_path_info); // check for ? or & in url  
         // return (!isset($_path_info[0]) || $_path_info[0] == "") ? "" : ltrim($_path_info[0],"/");

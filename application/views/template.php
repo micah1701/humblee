@@ -27,7 +27,7 @@ if($meta_tags && $meta_tags->og_image != "") {
     <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
 
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
    // add Humblee CMS toolbar for logged in users

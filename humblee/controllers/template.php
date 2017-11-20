@@ -60,9 +60,9 @@ class Core_Controller_Template {
 			}
 
 		//check for "preview mode" content override
-		if(isset($_GET['preview'])
+		if(	isset($_GET['preview'])
 		    && Core::auth('admin') // require "admin" role to view preview.  comment out this line for open access.
-		  ){
+		){
 			$preview_ids = explode(",",$_GET['preview']);
 			$getPreviewContent = ORM::for_table( _table_content )
 						  			->join( _table_content_types, array( _table_content.".type_id","=", _table_content_types.".id") )
