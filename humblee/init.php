@@ -9,21 +9,21 @@ require_once _app_server_path.'humblee/configuration/config.php';
 require_once _app_server_path.'humblee/vendor/autoload.php'; // to load composer files
 require_once _app_server_path.'humblee/controllers/core.php';
 
-// set default timezone
+// Set default timezone
 date_default_timezone_set($_ENV['config']['timezone']);
 
-// auto load class files when called with the Core::auto_load($class) function
+// Auto load class files when called with the Core::auto_load($class) function
 spl_autoload_register(array('Core','auto_load')); 
 
-// database connection data (used by idiorm.php class) 
+// Database connection data (used by idiorm.php class) 
 use \j4mie\idiorm; // include the idiorm ORM class
 ORM::configure('mysql:host='. $_ENV['config']['db_host'] .';dbname=' .$_ENV['config']['db_name']);
 ORM::configure('username', $_ENV['config']['db_username']);
 ORM::configure('password', $_ENV['config']['db_password']);
 
 /**
- * route to a specified controller based on URI
- * if the uri matches a pre-defined route use its coorisponding controller
+ * Route to a specified controller based on URI
+ * if the uri matches a pre-defined route use its corresponding controller
  * otherwise, include the default controller
  */
 
