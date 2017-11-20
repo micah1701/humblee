@@ -76,7 +76,7 @@ class Core {
         }
    		
 		$uri = (!isset($_path_info) || $_path_info == "" || $_path_info == "public") ? "" : ltrim($_path_info,"/");
-		return ltrim($uri,'public/');
+		return ltrim($uri,'public');
 		
         // depending on server configuration, you might need to do this instead		
         // $_path_info = preg_split("/\?|\&/",$_path_info); // check for ? or & in url  
