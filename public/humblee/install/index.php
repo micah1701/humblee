@@ -120,7 +120,7 @@
         {
     ?>        
          <br>
-         <a href="admin">Log In</a>   
+         <a href="../../admin">Log In</a>   
     <?php  
         }
     

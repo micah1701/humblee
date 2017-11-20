@@ -81,6 +81,21 @@ class Core {
         // $_path_info = preg_split("/\?|\&/",$_path_info); // check for ? or & in url  
         // return (!isset($_path_info[0]) || $_path_info[0] == "") ? "" : ltrim($_path_info[0],"/");
     }
+    
+    /**
+ 	 * Return ARRAY of URI parts
+ 	 * eg www.mydomain.com/dir1/dir2/dir3 returns array(0=>'dir1',1=>'dir2',2=>'dir3');
+	 *
+	 */
+	public static function getURIparts()
+	{
+		$_uri_parts = explode("/",ltrim(Core::getURI(),"/"));
+		if($_uri_parts[0] == "public")
+		{
+			array_shift($_uri_parts);
+		}
+		return $_uri_parts;
+	}
 
 	/**
 	 * return the contents of a page

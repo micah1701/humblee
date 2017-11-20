@@ -27,7 +27,7 @@ ORM::configure('password', $_ENV['config']['db_password']);
  * otherwise, include the default controller
  */
 
-$_uri_parts = explode("/",ltrim(Core::getURI(),"/")); 
+$_uri_parts = Core::getURIparts();
 $_called_controller = strtolower($_uri_parts[0]);
 
 switch ($_called_controller)
@@ -48,7 +48,7 @@ switch ($_called_controller)
 	break;
     
     case "admin" : // controller for admin specific functions for outside the site's template
-		
+
 		$controller = new Core_Controller_Admin;
 		if( isset($_uri_parts[1]) && $_uri_parts[1] != "" )
 		{
@@ -93,7 +93,7 @@ switch ($_called_controller)
 	break;
 	
 	default : // everything should run through the template controller unless a custom controller is specified above
-
+	
 		$controller = new Core_Controller_Template;
 		$controller->index();
 }
