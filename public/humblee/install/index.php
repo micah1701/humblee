@@ -1,9 +1,10 @@
-<?php
+<?php 
     $_app_path = realpath(__DIR__ . '/../../..').'/humblee/';
     require_once $_app_path.'configuration/config.php';
    
     ini_set('display_errors',1);
     error_reporting(E_ALL);
+    
 ?>    
 <html>
 <head>
@@ -38,7 +39,7 @@
            $sql = file_get_contents('database.txt');
            
             if (mysqli_multi_query($connection,$sql)) {
-                
+                while ($sql->next_result()) {;} // flush multi_queries
             } else {
                 throw new Exception (mysqli_error);
             }
@@ -99,7 +100,7 @@
         if(isset($show_form) && $show_form !== false) {
     ?>
     <hr>
-    <form action="install.php" method="post">
+    <form action="" method="post">
         <h3>Create a master user for your site</h3>
         <label for="name">Full Name:</label>
         <input type="text" class="u-full-width" id="name" name="name" placeholder="John Smith">

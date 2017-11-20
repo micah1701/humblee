@@ -1,0 +1,253 @@
+<?php
+
+class Core_Model_Users {
+	
+	/**
+	 * Converted a string of text into a standard salted hash
+	 *
+	 * "password_salt" constant is defined in config.php
+	 */
+    public function stringToSaltedHash($string){
+	    return md5($string.password_salt);
+    }
+	 
+    /**
+	 * Log in as given user
+	 *	
+     */
+    public function logInSession($user_id){
+	    $_SESSION[session_key] = array();
+	    $_SESSION[session_key]['user_id'] = $user_id; 
+    }
+	 
+    /**
+     * Update the access log 
+     * 
+     */
+    public function accesslog($status=''){
+        $log = ORM::for_table(_table_accesslog)->create();
+        $log->session_id = session_id();
+        $log->user_id = (isset($_SESSION[session_key]['user_id'])) ? $_SESSION[session_key]['user_id'] : '';
+        $log->ip_address = $_SERVER['REMOTE_ADDR'];
+        $log->user_agent = $_SERVER['HTTP_USER_AGENT'];
+        $log->timestamp = date("Y-m-d H:i:s");
+        $log->status = $status;
+        $log->save();
+	 	
+        $ch = curl_init('https://freegeoip.net/json/' . $_SERVER['REMOTE_ADDR']);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		$result = json_decode(curl_exec($ch));
+		curl_close($ch);
+
+		if(isset($result->country_name) && $result->country_name != "")
+		{
+			$log->ip_geolocation = $result->city .", ".$result->region_name ." ".$result->country_name;
+			$log->save(); // yes, this is a second DB call on the same row, but this way we know the first one saved and if the API fails, its no biggie
+		}
+	 }
+	 
+    /**
+     * Check credentials and log in
+     *
+     */
+    public function logIn($username,$password,$sms_login=false){
+		
+		//check if given "username" is an e-mail address or a username
+		$username_column = (filter_var($username, FILTER_VALIDATE_EMAIL)) ? 'email' : 'username';
+		
+		//check for username first
+		$user = ORM::for_table( _table_users)
+						->where($username_column,$username)
+						->where('active',1)
+						->find_one();
+		
+		if(!$user) { 
+			$this->accesslog('Failed: invalid credentials');
+			return array("access_granted"=> false, "error"=>"Invalid Username");
+		}
+		
+		//check credentials
+		if($sms_login)
+		{
+			if(	!isset($_SESSION[session_key]['login_token']) || 
+				(isset($_SESSION[session_key]['login_token']) && strtoupper($password) !== $_SESSION[session_key]['login_token'])
+			){
+				$this->accesslog('Failed: invalid SMS token');
+				return array("access_granted"=> false, "error"=>"Invalid SMS Code");
+			}
+			if(!isset($_SESSION[session_key]['login_token_expires']) || time() > $_SESSION[session_key]['login_token_expires'])
+			{
+				$this->accesslog('Failed: SMS token expired');
+				return array("access_granted"=> false, "error"=>"SMS Code Expired");
+			}
+		}
+		else
+		{
+			if($this->stringToSaltedHash($password) != ($user->password))
+			{
+				$this->accesslog('Failed: Invalid Password');
+				return array("access_granted"=> false, "error"=>"Invalid Password");	
+			}
+			
+			if(TWILIO_Enabled && $user->use_twofactor_auth == 1)
+			{
+				$this->accesslog('Valid password. SMS requested');
+				return array("access_granted"=> false, "error"=>"use_twofactor_auth");
+			}
+			
+		}
+
+		//set session values to recognize user as being logged in
+		$this->logInSession($user->id);	
+		
+		//update user's record to record this login
+		$user->logins = $user->logins +1;
+		$user->last_login = date("Y-m-d H:i:s");		
+		$user->save();
+		
+		$log_msg = ($sms_login) ? "Accepted SMS" : "Accepted Password";
+		$this->accesslog($log_msg);
+		return array("access_granted"=> true);	
+	 }
+	 
+    /**
+     * Log current user out
+     */
+    public function logOut(){
+        session_destroy();
+        return true;
+    }
+	 
+    /**
+     * Get user's profile
+     *
+     * returns logged in user unless $user_id is specified
+     */
+    public function profile($user_id=NULL){
+		$user_id = (is_numeric($user_id)) ? $user_id : $_SESSION[session_key]['user_id'];
+		return ORM::for_table( _table_users)->find_one($user_id); 
+    }
+	 
+    /**
+     * Get user's profile
+     *
+     * returns logged in user unless $user_id is specified
+     */
+    public function access_log($user_id=NULL){
+		$user_id = (is_numeric($user_id)) ? $user_id : $_SESSION[session_key]['user_id'];
+		return ORM::for_table( _table_accesslog)
+			->where('user_id',$user_id)
+			->order_by_desc('timestamp')
+			->limit(20)
+			->find_many(); 
+    }
+	 
+    /**
+     * Generate a random PLAIN TEXT password string
+     *
+     */
+    public function generatePassword($length=8){
+		$chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+		$pw = "";
+		for($i=0; $i<$length; $i++){
+			$random = rand(0, strlen($chars) -1);
+			$pw.= $chars[$random];
+		}
+		return $pw;
+	}	 
+	
+    /**
+     * Create a new user
+     *
+     */
+    public function createUser($name,$email,$username,$password=''){
+		$user = ORM::for_table( _table_users )->create();
+		$user->name = $name;
+		$user->username = $username;
+		$user->email = $email;
+		$user->password = ($password != "") ? $this->stringToSaltedHash($password) : "";
+		$user->active = 1;
+		$user->save();
+		return $user->id;
+    }
+	 
+    /**
+     * Delete a user
+     *
+     * $complete_removal	BOOL	(optional) 
+     *						True 	physcially deletes the row.
+     *						False 	updates record to remove access
+     *
+     */
+    public function deleteUser($user_id,$complete_removal=false){
+		if(!is_numeric($user_id)){ return false; } 
+		$user = ORM::for_table(_table_users)->find_one($user_id);
+		if(!$user){ return false; }
+		
+		
+		//delete this user's associated  roles
+		$roles = ORM::for_table( _table_user_roles )->where('user_id',$user_id)->find_many();
+		foreach ($roles as $role){
+			$role->delete();
+		}
+	
+		//delete user
+		if($complete_removal){
+			return $user->delete();
+		}
+		//or remove credentials but keep record (important for integrity of content revision history)
+		$user->name = $user->name." [DELETED USER]";
+		$user->username = $user->username." [DELETED USER]";
+		$user->email = $user->email." [DELETED USER]";
+		$user->password = "";
+		$user->active = 0;
+		$user->save();
+		return true;
+    }
+	
+    /**
+     * Reset a user's password and notify them by e-mail
+     *
+     */
+    public function resetPassword($user_id){
+		if(!is_numeric($user_id)){ return false; }
+		$user = ORM::for_table( _table_users)->find_one($user_id);
+		if(!$user){ return false; }
+		$new_password = $this->generatePassword();
+		$user->password = $this->stringToSaltedHash($new_password);
+		$user->save();
+		
+		$from = _default_mail_address;
+		$subject = "Your ". _DOMAIN ." password has been reset";
+		$body = "Hi {$user->name},\n\n";
+		$body.= "The password associated with your account has been reset.\n\n";
+		$body.= "Please hold on to your sign-in info:\n\n";
+		$body.= "Username: {$user->email} \n";
+		$body.= "Password: {$new_password} \n\n";
+		$body.= "To change your password, log in to ". _DOMAIN ." and update your user profile.\n\n";
+		$body.=" Thanks!";
+		
+		$tools = new Core_Model_Tools;
+		return $tools->sendEmail($user->email,$from,$subject,nl2br($body));		
+	}
+	
+    /**
+     * Send a registration confirmation e-mail to user
+     *
+     */
+    public function registrationEmail($email,$name,$password){
+		$from = _default_mail_address;
+		$subject = _DOMAIN ." Username and Password";
+		$body = "Hi {$name},\n\n";
+		$body.= "Welcome to ". _DOMAIN ."!\n\n";
+		$body.= "Please hold on to your sign-in info:\n\n";
+		$body.= "Username: {$email} \n";
+		$body.= "Password: {$password} \n\n";
+		$body.=" To change your password, log in to ". _DOMAIN ." and update your user profile.\n\n";
+		$body.=" Thanks!";
+		
+		$tools = new Core_Model_Tools;
+		return $tools->sendEmail($email,$from,$subject,nl2br($body));		
+	}
+	
+}
