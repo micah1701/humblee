@@ -8,6 +8,9 @@ class Core_Controller_User {
 		$this->tools = new Core_Model_Tools;
 		$this->users = new Core_Model_Users;
 		
+		//the template these views are loaded into may be looking for the $content object but these views doen't have $content by default
+		$this->content = false;
+		
 		if(isset($_POST['hmac_token']) && isset($_POST['hmac_key']))
 		{
 			if(!Core::check_hmac_pair($_POST['hmac_token'], $_POST['hmac_key']))
