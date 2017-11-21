@@ -39,7 +39,7 @@ class Core_Controller_User {
 	public function login()
 	{
         // check if user is already logged in
-        if(isset($_SESSION[session_key]['user_id']) && Core::auth(1))
+        if(isset($_SESSION[session_key]['user_id']) && Core::auth('login'))
         { 
             $this->pagebody = "<h1>You are already logged in</h1><p>If you were forwarded to this page unexpectedly, you most likely do not have permission to access the page you were trying to go to.</p><p>If you feel this is in error, please contact your system administrator.  For now, use your back button to return to wherever you came from.</p>";
             echo Core::view( _app_server_path .'humblee/views/admin/template.php',get_object_vars($this) );
@@ -195,7 +195,7 @@ class Core_Controller_User {
 			}
 			
 			
-			if(	TWILIO_Enabled &&
+			if(	$_ENV['config']['TWILIO_Enabled'] &&
 				$_POST['cellphone'] != "" && 
 				$_POST['cellphone'] != $this->user->cellphone && 
 				$_POST['cellphone_validate'] != "")
@@ -224,7 +224,7 @@ class Core_Controller_User {
 				}
 			}
 			
-			if($_POST['cellphone'] == "" || strlen($_POST['cellphone']) != 10)
+			if(!isset($_POST['cellphone']) || $_POST['cellphone'] == "" || strlen($_POST['cellphone']) != 10)
 			{
 				$this->user->cellphone = "";
 				$this->user->cellphone_validated = 0;

@@ -36,6 +36,7 @@ class Core_Model_Users {
 	 	
         $ch = curl_init('https://freegeoip.net/json/' . $_SERVER['REMOTE_ADDR']);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		$result = json_decode(curl_exec($ch));
 		curl_close($ch);
 
