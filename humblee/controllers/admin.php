@@ -30,14 +30,14 @@ class Core_Controller_Admin {
         {
          	header('HTTP/1.1 403 Forbidden');  
             $this->pagebody = "<h1>403 Forbidden</h1><h3>You do not have access to view this page</h3><p>If you believe this is an error, please see your site administrator.</p>";
-            echo Core::view( _app_server_path .'core/views/admin/template.php',get_object_vars($this) );
+            echo Core::view( _app_server_path .'humblee/views/admin/template.php',get_object_vars($this) );
             exit();
         }
     }
 	
 	public function index(){	
-		$this->pagebody = Core::view( _app_server_path .'core/views/admin/index.php',get_object_vars($this) ); 	
-		echo Core::view( _app_server_path .'core/views/admin/template.php',get_object_vars($this) ); 
+		$this->pagebody = Core::view( _app_server_path .'humblee/views/admin/index.php',get_object_vars($this) ); 	
+		echo Core::view( _app_server_path .'humblee/views/admin/template.php',get_object_vars($this) ); 
 	}
 	
 	public function pages(){
@@ -46,8 +46,8 @@ class Core_Controller_Admin {
         $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'core/assets/js/libs/tooltip.js"></script>';
         $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'core/assets/js/admin-pages.js"></script>';
        
-		$this->pagebody = Core::view( _app_server_path .'core/views/admin/pages.php',get_object_vars($this) ); 	
-		echo Core::view( _app_server_path .'core/views/admin/template.php',get_object_vars($this) ); 
+		$this->pagebody = Core::view( _app_server_path .'humblee/views/admin/pages.php',get_object_vars($this) ); 	
+		echo Core::view( _app_server_path .'humblee/views/admin/template.php',get_object_vars($this) ); 
 	}
 	
 	public function edit(){
@@ -101,7 +101,7 @@ class Core_Controller_Admin {
 		$this->page_data->url = $pageObj->buildLink($this->content->page_id); // append object with additional variable
         $this->template_data = ORM::for_table( _table_templates)->find_one($this->page_data->template_id);
 		
-		$this->pagebody = Core::view( _app_server_path .'core/views/admin/edit.php',get_object_vars($this) ); 
+		$this->pagebody = Core::view( _app_server_path .'humblee/views/admin/edit.php',get_object_vars($this) ); 
         $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'core/libs/ckeditor/ckeditor.js"></script>';
         $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'core/libs/ckeditor/adapters/jquery.js"></script>';
         $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'core/assets/js/admin-edit.js"></script>';
@@ -109,7 +109,7 @@ class Core_Controller_Admin {
         $_SESSION['KCFINDER'] = array();
         $_SESSION['KCFINDER']['disabled'] = false;
         	
-		echo Core::view( _app_server_path .'core/views/admin/template.php',get_object_vars($this) );
+		echo Core::view( _app_server_path .'humblee/views/admin/template.php',get_object_vars($this) );
 	}
 	
 	public function files()
@@ -117,22 +117,22 @@ class Core_Controller_Admin {
 	    $this->require_role('content');
 	    $_SESSION['KCFINDER'] = array();
         $_SESSION['KCFINDER']['disabled'] = false;    
-	    $this->pagebody = Core::view( _app_server_path .'core/views/admin/filemanager.php',get_object_vars($this) ); 
-	    echo Core::view( _app_server_path .'core/views/admin/template.php',get_object_vars($this) );
+	    $this->pagebody = Core::view( _app_server_path .'humblee/views/admin/filemanager.php',get_object_vars($this) ); 
+	    echo Core::view( _app_server_path .'humblee/views/admin/template.php',get_object_vars($this) );
 	}
 	
 	public function users(){
         $this->require_role('users');
         
-		$this->pagebody = Core::view( _app_server_path .'core/views/admin/users.php',get_object_vars($this) ); 
-		echo Core::view( _app_server_path .'core/views/admin/template.php',get_object_vars($this) ); 
+		$this->pagebody = Core::view( _app_server_path .'humblee/views/admin/users.php',get_object_vars($this) ); 
+		echo Core::view( _app_server_path .'humblee/views/admin/template.php',get_object_vars($this) ); 
 	}
     
     public function blocks(){
         $this->require_role('designer');
         $params = array("id"=> (isset($this->_uri_parts[2])) ? $this->_uri_parts[2] : false,
                         "table"=> _table_content_types,
-                        "view" => _app_server_path."core/views/admin/blocks.php", 
+                        "view" => _app_server_path."humblee/views/admin/blocks.php", 
                         "post" => (isset($_POST) && count($_POST) > 0) ? $_POST : false,
                         "allow_html" =>true,
                         "validation" => array('name'=>array('if'=>'$val == ""','error_message'=>'Name field cannot be blank'),
@@ -173,7 +173,7 @@ class Core_Controller_Admin {
 		}
         $params = array("id"=> (isset($this->_uri_parts[2])) ? $this->_uri_parts[2] : false,
                         "table"=> _table_templates,
-                        "view" => _app_server_path."core/views/admin/template_tool.php", 
+                        "view" => _app_server_path."humblee/views/admin/template_tool.php", 
                         "post" => (isset($_POST) && count($_POST) > 0) ? $_POST : false,
                         "allow_html" =>true,
                         "validation" => array('name'=>array('if'=>'$val == ""','error_message'=>'Name field cannot be blank')
@@ -188,7 +188,7 @@ class Core_Controller_Admin {
         $this->require_role('designer');
         $params = array("id"=> (isset($this->_uri_parts[2])) ? $this->_uri_parts[2] : false,
                         "table"=> "spending",
-                        "view" => _app_server_path."core/views/admin/spending.php", 
+                        "view" => _app_server_path."humblee/views/admin/spending.php", 
                         "post" => (isset($_POST) && count($_POST) > 0) ? $_POST : false,
                         "allow_html" =>true,
                         "validation" => array('amount'=>array('if'=>'$val == ""','error_message'=>'Name field cannot be blank')

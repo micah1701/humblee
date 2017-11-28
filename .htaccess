@@ -10,9 +10,11 @@ RewriteEngine On
 # Turn of Indexes
 Options -Indexes
 
+RewriteCond  %{DOCUMENT_ROOT}/public/%{REQUEST_URI} -f
+RewriteRule  ^(.*)$ %{DOCUMENT_ROOT}/public/$1 [L,QSA,END]
+
 # All files are really in the "public" subdirectory
 # credit: https://stackoverflow.com/a/21027742/1161266
-RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ %{ENV:BASE}public/index.php [L,QSA]
 
 RewriteCond %{ENV:URI} ^$
@@ -20,4 +22,6 @@ RewriteRule ^(.*)$ - [ENV=URI:$1]
 
 RewriteCond %{ENV:BASE} ^$
 RewriteCond %{ENV:URI}::%{REQUEST_URI} ^(.*)::(.*?)\1$
+
+
 RewriteRule ^ - [ENV=BASE:%2]

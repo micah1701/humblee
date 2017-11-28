@@ -19,8 +19,8 @@ if($meta_tags && $meta_tags->og_image != "") {
 ?>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-<link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>humblee/assets/css/normalize.css">
-<link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>humblee/assets/css/skeleton.css">
+<link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>humblee/css/normalize.css">
+<link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>humblee/css/skeleton.css">
 <link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>application/css/layout.css">
 
 <!--[if lt IE 9]>
