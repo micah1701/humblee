@@ -11,10 +11,13 @@ RewriteEngine On
 Options -Indexes
 
 # All files are really in the "public" subdirectory
-RewriteCond %{REQUEST_URI} !^/public/.*$
-RewriteRule ^(.*)$ /public/$1 [QSA,L]
-
-# Anything thats not a real file goes to the index.php page
+# credit: https://stackoverflow.com/a/21027742/1161266
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule .* index.php/$0 [PT]
+RewriteRule ^(.*)$ %{ENV:BASE}public/index.php [L,QSA]
+
+RewriteCond %{ENV:URI} ^$
+RewriteRule ^(.*)$ - [ENV=URI:$1]
+
+RewriteCond %{ENV:BASE} ^$
+RewriteCond %{ENV:URI}::%{REQUEST_URI} ^(.*)::(.*?)\1$
+RewriteRule ^ - [ENV=BASE:%2]
