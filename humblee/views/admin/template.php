@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title><?php echo  _DOMAIN ?> CMS</title>
+<title><?php echo  $_ENV['config']['domain'] ?> CMS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 <link rel="stylesheet" type="text/css" href="<?php echo  _app_path ?>humblee/css/normalize.css">

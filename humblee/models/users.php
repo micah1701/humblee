@@ -219,13 +219,13 @@ class Core_Model_Users {
 		$user->save();
 		
 		$from = _default_mail_address;
-		$subject = "Your ". _DOMAIN ." password has been reset";
+		$subject = "Your ". $_ENV['config']['domain'] ." password has been reset";
 		$body = "Hi {$user->name},\n\n";
 		$body.= "The password associated with your account has been reset.\n\n";
 		$body.= "Please hold on to your sign-in info:\n\n";
 		$body.= "Username: {$user->email} \n";
 		$body.= "Password: {$new_password} \n\n";
-		$body.= "To change your password, log in to ". _DOMAIN ." and update your user profile.\n\n";
+		$body.= "To change your password, log in to ". $_ENV['config']['domain'] ." and update your user profile.\n\n";
 		$body.=" Thanks!";
 		
 		$tools = new Core_Model_Tools;
@@ -238,13 +238,13 @@ class Core_Model_Users {
      */
     public function registrationEmail($email,$name,$password){
 		$from = _default_mail_address;
-		$subject = _DOMAIN ." Username and Password";
+		$subject = $_ENV['config']['domain'] ." Username and Password";
 		$body = "Hi {$name},\n\n";
-		$body.= "Welcome to ". _DOMAIN ."!\n\n";
+		$body.= "Welcome to ". $_ENV['config']['domain'] ."!\n\n";
 		$body.= "Please hold on to your sign-in info:\n\n";
 		$body.= "Username: {$email} \n";
 		$body.= "Password: {$password} \n\n";
-		$body.=" To change your password, log in to ". _DOMAIN ." and update your user profile.\n\n";
+		$body.=" To change your password, log in to ". $_ENV['config']['domain'] ." and update your user profile.\n\n";
 		$body.=" Thanks!";
 		
 		$tools = new Core_Model_Tools;
