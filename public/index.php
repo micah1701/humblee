@@ -4,6 +4,7 @@
  * 
  * @package Humblee
  * @author	Micah J. Murray <micah@sixeightinteractive.com>
+ * @link    https://humblee.io
  */
 
 session_start();
