@@ -2,7 +2,8 @@
 
 class Core_Controller_User {
 	
-	function __construct(){
+	function __construct()
+	{
 		global $_uri_parts;
 		$this->_uri_parts = $_uri_parts;
 		$this->tools = new Core_Model_Tools;
@@ -10,10 +11,12 @@ class Core_Controller_User {
 		
 		//the template these views are loaded into may be looking for the $content object but these views doen't have $content by default
 		$this->content = false;
-		
-		if(isset($_POST['hmac_token']) && isset($_POST['hmac_key']))
+
+		//any form posted to this controller must pass an HMAC token and key
+		if($_POST)
 		{
-			if(!Core::check_hmac_pair($_POST['hmac_token'], $_POST['hmac_key']))
+			$crypto = new Core_Model_Crypto;
+			if(!$crypto->check_hmac_pair($_POST['hmac_token'], $_POST['hmac_key']))
 			{
 				exit("Invalid Machine Authentication Key");
 			}
@@ -21,7 +24,8 @@ class Core_Controller_User {
 		
 	}
 	
-	public function index(){
+	public function index()
+	{
 		if(!Core::auth(1)){ Core::forward("/user/login"); }
 		
 	    //	$this->template_view = Core::view( _app_server_path .'humblee/views/user/index.php',get_object_vars($this) ); 	
@@ -29,7 +33,8 @@ class Core_Controller_User {
 		Core::forward("/user/profile"); // (if site has no index page for logged in users, just forward to profile page)	
 	}
 	
-	public function logout(){
+	public function logout()
+	{
 		if($this->users->logOut() )
         {
             Core::forward();	    
@@ -94,7 +99,8 @@ class Core_Controller_User {
 		echo Core::view( _app_server_path .'application/views/template.php',get_object_vars($this) );
 	}
 	
-	public function register(){
+	public function register()
+	{
 		if(isset($_POST['email']) && isset($_POST['password']) && isset($_POST['password_check']) ){
 			
 			if($_POST['password'] != $_POST['password_check']){
@@ -117,13 +123,15 @@ class Core_Controller_User {
 			if(isset($_POST['username']) && trim($_POST['username'] != ""))
 			{
 				$usernamecheck = ORM::for_table( _table_users)->where('username',$_POST['username'])->find_one();
-				if($usernamecheck) {
+				if($usernamecheck)
+				{
 					$this->error[] = "A user with this Username already exists";
 				}
 			}
 			
 			$emailcheck = ORM::for_table( _table_users)->where('email',$_POST['email'])->find_one();
-			if( $emailcheck ){
+			if( $emailcheck )
+			{
 				$this->error[] = "A user with this e-mail address already exists";
 			}
 			
@@ -158,12 +166,12 @@ class Core_Controller_User {
 		echo Core::view( _app_server_path .'application/views/template.php',get_object_vars($this) );
 	}
 	
-	public function profile(){
-		
+	public function profile()
+	{
 		$this->user = $this->users->profile(); //get user profile data to bind to view
 	
-		if(isset($_POST['email']) && isset($_POST['password']) && isset($_POST['password_check']) ){
-			
+		if(isset($_POST['email']) && isset($_POST['password']) && isset($_POST['password_check']) )
+		{
 			if( $_POST['password'] != "" && $_POST['password'] != $_POST['password_check']){
 				$this->error[] = "Passwords do not match";
 			}

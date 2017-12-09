@@ -76,7 +76,7 @@ class Core_Model_Crypto {
 		}
 		else
 		{
-		    return md5($token)  
+		    return md5($token);
 		}
     }
     

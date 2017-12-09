@@ -37,16 +37,6 @@ class Core_Controller_Template {
 				exit( "<h1>403 Forbidden</h1>You do not have permission to view this page"); 
 			}
 		}
-		
-		//if a form was submitted with hashed machine authentication code, check it.
-		if(isset($_POST['hmac_token']) && isset($_POST['hmac_key']))
-		{
-			if(!Core::check_hmac_pair($_POST['hmac_token'], $_POST['hmac_key']))
-			{
-				header('HTTP/1.1 403 Forbidden');
-				exit("<h1>403 Forbidden</h1>Invalid Machine Authentication Key");
-			}
-		}
         
 		//get any LIVE content entries related to this page
 		$getContent = ORM::for_table( _table_content )

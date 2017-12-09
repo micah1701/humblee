@@ -4,16 +4,11 @@ class Core_Controller_Admin {
 
 	function __construct(){
 		
-		if(!Core::auth('admin') && !Core::auth('developer')){ Core::forward("/user/login/?fwd=".Core::getURI() ); }
-		
-		if(isset($_POST['hmac_token']) && isset($_POST['hmac_key']))
-		{
-			if(!Core::check_hmac_pair($_POST['hmac_token'], $_POST['hmac_key']))
-			{
-				exit("Invalid Machine Authentication Key");
-			}
+		if(!Core::auth(array('admin','developer')))
+		{ 
+            Core::forward("/user/login/?fwd=".Core::getURI() ); 
 		}
-	    
+		
         global $_uri_parts; // array set in index.php.  [0] is the name of the controller, [1] is this function's name, [2] or higher can be any other variable
         $this->_uri_parts = $_uri_parts;
         
