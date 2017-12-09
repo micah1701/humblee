@@ -44,15 +44,6 @@ $(document).ready(function(){
 </head>
 
 <body>
-    
-    <?php
-    $message = "micah is pretty cool don't you think? yeah I really do think. and isn't it ironic? a little too ironic";
-    $encoded = Core::encrypt($message);
-    print_r($encoded);
-    echo Core::decrypt($encoded['crypttext'],$encoded['nonce']);
-    echo "<hr>\n";
-    echo Core::decrypt($encoded['crypttext'],$encoded['nonce']);
-    ?>
 
 <div id="header"><!-- extends beyond 960 container -->
 	<div class="container">
