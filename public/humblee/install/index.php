@@ -94,9 +94,32 @@
             }
         }
         
+        //generate the secret encrpytion key 
+        $encryption_key_genertaed = "";
+        if(!file_exists($_app_path.'configuration/crypto.php'))
+        {
+            $file_content = '<?php defined(\'include_only\') or die(\'No direct script access.\');';
+            $file_content.= "\n\n /**\n * THIS FILE WAS AUTO GENERATED AT THE TIME OF INSTALL\n *\n * DO NOT MODIFY THIS FILE!\n *\n";
+            $file_content.= " * Do not store this file in a public repo. \n * You may want to create a backup of this file and store it in a safe place.\n *\n */\n\n ";
+            $file_content.= '$_encryption_key = "'. random_bytes(32).'";';
+            
+            $my_file = $_app_path.'configuration/crypto.php';
+            $handle = fopen($my_file, 'w') or die('Could not create encrpytion file at:  '.$my_file);
+            fwrite($handle, $file_content);
+            
+            $encryption_key_genertaed = "Encryption Key Generated";
+        }
+        else
+        {
+            $encryption_key_genertaed = "Encryption Key Exists";
+        }
+        
         echo "Database: ".$database_created;
         echo "<br>";
         echo "User: ".$user_created;
+        echo "<br>";
+        echo $encryption_key_genertaed;
+        echo "<br>";
  
         if(isset($show_form) && $show_form !== false) {
     ?>

@@ -256,19 +256,13 @@ class Core {
 	/**
 	 * Encrypt a string
 	 *
-	 * ENCRYPT_CYPHER, ENCRYPT_MODE and ENCRYPT_KEY are defined in /core/config.php
-	 * Besure to change the ENCRYPT_KEY from the default value.
-	 *
 	 */
 	public static function encrypt($plaintext)
 	{
-		$plaintext .= ENCRYPT_EOT;
-		$td = mcrypt_module_open(ENCRYPT_CYPHER, '', ENCRYPT_MODE, '');
-		$iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
-		mcrypt_generic_init($td, ENCRYPT_KEY, $iv);
-		$crypttext = mcrypt_generic($td, $plaintext);
-		mcrypt_generic_deinit($td);
-		return base64_encode($iv.$crypttext);
+		if(!class_exists('ParagonIE_Sodium_Compat'))
+		{
+			return false;
+		}
 	}
 	
 	/** 
@@ -277,18 +271,10 @@ class Core {
 	 */
 	public static function decrypt($crypttext)
 	{
-		$crypttext = base64_decode($crypttext);
-        $plaintext = '';
-        $td        = mcrypt_module_open(ENCRYPT_CYPHER, '', ENCRYPT_MODE, '');
-        $ivsize    = mcrypt_enc_get_iv_size($td);
-        $iv        = substr($crypttext, 0, $ivsize);
-        $crypttext = substr($crypttext, $ivsize);
-        if ($iv)
-        {
-            mcrypt_generic_init($td, ENCRYPT_KEY, $iv);
-            $plaintext = mdecrypt_generic($td, $crypttext);
-        }
-        return substr($plaintext,0,strpos($plaintext, ENCRYPT_EOT));
+		if(!class_exists('ParagonIE_Sodium_Compat'))
+		{
+			return false;
+		}
 	}	 
 	
 }
