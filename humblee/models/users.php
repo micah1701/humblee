@@ -6,20 +6,22 @@ class Core_Model_Users {
 	 * Converted a string of text into a standard salted hash
 	 *
 	 * $string	STRING	value to be hased
-	 * $salt	MIXED	string or INT, for unique salt use the users ID
+	 * $salt	MIXED	string or INT, for unique salt use the user's ID
+	 * 
+	 * attempts to use libsodium via the paragonie/sodium_compact polyfil library
+	 * if not installed, use a simple md5();
 	 */
     public function stringToSaltedHash($string,$salt)
     {
-	    $salted_string = $string.'-'.$salt;
-	    if(class_exists('ParagonIE_Sodium_Compat'))
-	    {
-	    	return \Sodium\crypto_generichash($salted_string);
-	    }
-	    else
-	    {
-		    return md5($salted_string);	    	
-	    }
-
+		$salted_string = $string.'-'.$salt;
+		if(class_exists('ParagonIE_Sodium_Compat'))
+		{
+			return \Sodium\crypto_generichash($salted_string);
+		}
+		else
+		{
+			return md5($salted_string);	    	
+		}
     }
 	 
     /**
@@ -95,7 +97,7 @@ class Core_Model_Users {
 		}
 		else
 		{
-			if($this->stringToSaltedHash($password) != ($user->password))
+			if($this->stringToSaltedHash($password,$user->id) != ($user->password))
 			{
 				$this->accesslog('Failed: Invalid Password');
 				return array("access_granted"=> false, "error"=>"Invalid Password");	
@@ -177,9 +179,13 @@ class Core_Model_Users {
 		$user->name = $name;
 		$user->username = $username;
 		$user->email = $email;
-		$user->password = ($password != "") ? $this->stringToSaltedHash($password) : "";
+		$user->password = 'random-temp-password-'.time();
+		$user->save();
+		
+		$user->password = $this->stringToSaltedHash($password,$user->id);
 		$user->active = 1;
 		$user->save();
+		
 		return $user->id;
     }
 	 
@@ -226,7 +232,7 @@ class Core_Model_Users {
 		$user = ORM::for_table( _table_users)->find_one($user_id);
 		if(!$user){ return false; }
 		$new_password = $this->generatePassword();
-		$user->password = $this->stringToSaltedHash($new_password);
+		$user->password = $this->stringToSaltedHash($new_password,$user_id);
 		$user->save();
 		
 		$from = _default_mail_address;
