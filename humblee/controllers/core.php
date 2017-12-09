@@ -240,7 +240,7 @@ class Core {
  		$random_string = md5(uniqid(rand(), true). time() . session_id());
 	 	return array(
 	 		'message' => $random_string,
-	 		'hmac' => base64_encode(hash_hmac('sha256', $random_string, Core::get_csrf_token() . password_salt ))
+	 		'hmac' => base64_encode(hash_hmac('sha256', $random_string, Core::get_csrf_token() ))
  		);
 	 }
 	 
@@ -249,7 +249,7 @@ class Core {
 	  */
 	  public static function check_hmac_pair($string,$hash)
 	  {
-	  		return ($hash == base64_encode(hash_hmac('sha256', $string, Core::get_csrf_token() . password_salt )) ) ? true : false;
+	  		return ($hash == base64_encode(hash_hmac('sha256', $string, Core::get_csrf_token() )) ) ? true : false;
 	  }
 	 
 

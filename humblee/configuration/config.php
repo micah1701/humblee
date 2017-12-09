@@ -11,9 +11,6 @@ $environment  = 'env_production.php';
 
 $_ENV['config'] = require_once $environment;
 
-// password salt (applied to hashed passwords)
-define("password_salt","HUMBLEE-SALT-CHANGE.ME"); // once set, NEVER EVER CHANGE THIS 
-
 // encryption key (used for simple encryption)
 define("ENCRYPT_KEY", md5("HowManyProgrammersDoesItTakeToChangeALightbulb?None,thatsAHardwareIssue") ); // once set, NEVER EVER CHANGE THIS 
 

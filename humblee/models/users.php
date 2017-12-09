@@ -5,10 +5,21 @@ class Core_Model_Users {
 	/**
 	 * Converted a string of text into a standard salted hash
 	 *
-	 * "password_salt" constant is defined in config.php
+	 * $string	STRING	value to be hased
+	 * $salt	MIXED	string or INT, for unique salt use the users ID
 	 */
-    public function stringToSaltedHash($string){
-	    return md5($string.password_salt);
+    public function stringToSaltedHash($string,$salt)
+    {
+	    $salted_string = $string.'-'.$salt;
+	    if(class_exists('ParagonIE_Sodium_Compat'))
+	    {
+	    	return \Sodium\crypto_generichash($salted_string);
+	    }
+	    else
+	    {
+		    return md5($salted_string);	    	
+	    }
+
     }
 	 
     /**
