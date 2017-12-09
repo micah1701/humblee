@@ -10,11 +10,11 @@ class Core_Model_Crypto {
         }
         elseif(extension_loaded('libsodium'))
         {
-            $this->sodium_library = 'pecl'
+            $this->sodium_library = 'pecl';
         }
         elseif(class_exists('ParagonIE_Sodium_Compat'))
         {
-            $this->sodium_library = 'compat'
+            $this->sodium_library = 'compat';
         }
         else
         {
@@ -22,7 +22,7 @@ class Core_Model_Crypto {
         }
     }
     
-    private static function getCryptoKey()
+    private function getCryptoKey()
 	{
 		require _app_server_path."humblee/configuration/crypto.php";
 		return $_encryption_key;
@@ -33,14 +33,14 @@ class Core_Model_Crypto {
 	 * 
 	 * $plaintext	STRING	value to be encrypted
 	 * 
-	 * Returns	ARRAY	containst encrypted text AND a unique one-time "nonce" value that is required to decrypt the file (in addition to the stored key)
+	 * Returns	ARRAY	contains encrypted text AND a unique one-time "nonce" value that is required to decrypt the file (in addition to the stored key)
 	 * 
 	 * Be sure to save the encrypted value AND the unique $none value
 	 *
 	 */
-	public static function encrypt($plaintext)
+	public function encrypt($plaintext)
 	{
-		if(!$this->sodium_library))
+		if(!$this->sodium_library)
 		{
 			return false;
 		}
@@ -49,11 +49,11 @@ class Core_Model_Crypto {
 		
 		if($this->sodium_library == "native")
 		{
-    		$crypttext = sodium_crypto_secretbox($plaintext, $nonce, Core::getCryptoKey());  
+    		$crypttext = sodium_crypto_secretbox($plaintext, $nonce, $this->getCryptoKey());  
 		}
 		else
 		{
-		    $crypttext = \Sodium\crypto_secretbox($plaintext, $nonce, Core::getCryptoKey());
+		    $crypttext = \Sodium\crypto_secretbox($plaintext, $nonce, $this->getCryptoKey());
 		}
 
 		return array('crypttext'=>$crypttext,'nonce'=>$nonce);
@@ -68,19 +68,19 @@ class Core_Model_Crypto {
 	 * Returns plain text
 	 *
 	 */
-	public static function decrypt($crypttext,$nonce)
+	public function decrypt($crypttext,$nonce)
 	{
-		if(!$this->sodium_library))
+		if(!$this->sodium_library)
 		{
 			return false;
 		}
 		if($this->sodium_library == "native")
 		{
-    		return sodium_crypto_secretbox_open($crypttext, $nonce,  Crypto::getCryptoKey());		    
+    		return sodium_crypto_secretbox_open($crypttext, $nonce,  $this->getCryptoKey());		    
 		}
 		else
 		{
-		    return \Sodium\crypto_secretbox_open($crypttext, $nonce,  Crypto::getCryptoKey());
+		    return \Sodium\crypto_secretbox_open($crypttext, $nonce,  $this->getCryptoKey());
 		}
 
 	}

@@ -44,7 +44,7 @@ $(document).ready(function(){
 </head>
 
 <body>
-<?php phpinfo(); ?>
+
 <div id="header"><!-- extends beyond 960 container -->
 	<div class="container">
 	    
