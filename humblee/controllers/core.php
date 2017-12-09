@@ -210,46 +210,4 @@ class Core {
 		exit();
 	}
 	
-	/**
-	 * Return a token unique to the current session
-	 * Can be included as hidden form field and checked upon POST to make sure request is coming from known user
-	 *
-	 * DO NOT use this value in the browser if using HMAC functionality below
-	 */
-	public static function get_csrf_token()
-	{
-		if(isset($_SESSION[session_key]['csrf_token']) && isset($_SESSION[session_key]['csrf_token']) != "")
-		{
-			return $_SESSION[session_key]['csrf_token'];
-		}
-		else
-		{
-			$token = md5(uniqid(rand(), true). time() . session_id() );
-			$_SESSION[session_key]['csrf_token'] = $token;
-			return $token;
-		}
-	}
-
-	/**
-	 * Generate a random string and hash it to this user's session for machine authentication & CSRF protection
-	 * 
-	 */
-	 public static function get_hmac_pair()
-	 {
- 		$random_string = md5(uniqid(rand(), true). time() . session_id());
-	 	return array(
-	 		'message' => $random_string,
-	 		'hmac' => base64_encode(hash_hmac('sha256', $random_string, Core::get_csrf_token() ))
- 		);
-	 }
-	 
-	/**
-	* Check HMAC string and hash
-	*/
-	public static function check_hmac_pair($string,$hash)
-	{
-	  	return ($hash == base64_encode(hash_hmac('sha256', $string, Core::get_csrf_token() )) ) ? true : false;
-	}
-
-	
 }

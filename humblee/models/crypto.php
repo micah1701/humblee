@@ -22,6 +22,64 @@ class Core_Model_Crypto {
         }
     }
     
+    /**
+	 * Return a token unique to the current session
+	 * Can be included as hidden form field and checked upon POST to make sure request is coming from known user
+	 *
+	 * DO NOT send this value to the browser if using HMAC functionality below
+	 */
+    public function getCsrfToken()
+    {
+        if(isset($_SESSION[session_key]['csrf_token']) && isset($_SESSION[session_key]['csrf_token']) != "")
+		{
+			return $_SESSION[session_key]['csrf_token'];
+		}
+		else
+		{
+			$csrfToken = $this->generateCsrfToken();
+			$_SESSION[session_key]['csrf_token'] = $csrfToken;
+			return $csrfToken;
+		}
+    }
+    
+    /**
+	 * Generate a random string and hash it to this user's session for machine authentication & CSRF protection
+	 * 
+	 */
+	 public static function get_hmac_pair()
+	 {
+ 		$random_string = md5(uniqid(rand(), true). time() . session_id());
+	 	return array(
+	 		'message' => $random_string,
+	 		'hmac' => base64_encode(hash_hmac('sha256', $random_string, $this->getCsrfToken() ))
+ 		);
+	 }
+	 
+	/**
+	* Check HMAC string and hash
+	*/
+	public static function check_hmac_pair($string,$hash)
+	{
+	  	return ($hash == base64_encode(hash_hmac('sha256', $string, $this->getCsrfToken() )) ) ? true : false;
+	}
+    
+    private function generateCsrfToken()
+    {
+		$token = uniqid(rand(), true). time() . session_id();
+		if($this->sodium_library == "native")
+		{
+		    return sodium_crypto_generichash($token);
+		}
+		elseif($this->sodium_library != false)
+		{
+	        return \Sodium\crypto_generichash($token);
+		}
+		else
+		{
+		    return md5($token)  
+		}
+    }
+    
     private function getCryptoKey()
 	{
 		require _app_server_path."humblee/configuration/crypto.php";
@@ -30,6 +88,7 @@ class Core_Model_Crypto {
 
 	/**
 	 * Encrypt a string
+	 * Requires the libsodium extension
 	 * 
 	 * $plaintext	STRING	value to be encrypted
 	 * 
