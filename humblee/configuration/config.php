@@ -1,5 +1,4 @@
 <?php 
-
 /**
  * Set which configuration file to use
  * 
@@ -16,6 +15,8 @@ define("ENCRYPT_KEY", md5("HowManyProgrammersDoesItTakeToChangeALightbulb?None,t
 
 // all $_SESSION info used by the framework is in a sub arrayof $_SESSION
 define("session_key","humblee"); // example usage: $_SESSION[session_key][user_id];
+
+define('include_only','scripts checking for this definition should die() if not set');
 
 // tables used in this application
 define("_table_pages","humblee_pages");
