@@ -100,7 +100,7 @@
         {
             $file_content = '<?php defined(\'include_only\') or die(\'No direct script access.\');';
             $file_content.= "\n\n /**\n * THIS FILE WAS AUTO GENERATED AT THE TIME OF INSTALL\n *\n * DO NOT MODIFY THIS FILE!\n *\n";
-            $file_content.= " * Do not store this file in a public repo. \n * You may want to create a backup of this file and store it in a safe place.\n *\n */\n\n ";
+            $file_content.= " * Do not store this file in a public repo. \n * You may want to create a backup of this file and store it in a safe place.\n *\n */\n\n";
             $file_content.= '$_encryption_key = "'. random_bytes(32).'";';
             
             $my_file = $_app_path.'configuration/crypto.php';
