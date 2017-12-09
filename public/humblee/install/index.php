@@ -1,5 +1,6 @@
 <?php 
     $_app_path = realpath(__DIR__ . '/../../..').'/humblee/';
+    require_once $_app_path.'vendor/autoload.php'; // to load composer files
     require_once $_app_path.'configuration/config.php';
    
     ini_set('display_errors',1);
