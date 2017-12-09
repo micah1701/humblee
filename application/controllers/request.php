@@ -1,4 +1,4 @@
-<?php defined('MVC_ONLY') or die('No direct script access.');
+<?php
 
 /**
  * this class is not meant to extend the default controller. It is only used to return "AJAX" requests
