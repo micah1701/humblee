@@ -251,51 +251,5 @@ class Core {
 	  	return ($hash == base64_encode(hash_hmac('sha256', $string, Core::get_csrf_token() )) ) ? true : false;
 	}
 
-
-	private static function getCryptoKey()
-	{
-		require _app_server_path."humblee/configuration/crypto.php";
-		return $_encryption_key;
-	}
-
-	/**
-	 * Encrypt a string
-	 * 
-	 * $plaintext	STRING	value to be encrypted
-	 * 
-	 * Returns	ARRAY	containst encrypted text AND a unique one-time "nonce" value that is required to decrypt the file (in addition to the stored key)
-	 * 
-	 * Be sure to save the encrypted value AND the unique $none value
-	 *
-	 */
-	public static function encrypt($plaintext)
-	{
-		if(!class_exists('ParagonIE_Sodium_Compat'))
-		{
-			return false;
-		}
-		$nonce = random_bytes(24);
-		$crypttext = \Sodium\crypto_secretbox($plaintext, $nonce, Core::getCryptoKey());
-		return array('crypttext'=>$crypttext,'nonce'=>$nonce);
-	}
-	
-	/** 
-	 * Decrypt a previously encrypted string
-	 * 
-	 * $crypttext	ciphered text previously encrypted by this site
-	 * $nonce		unique one-time token originally generated at the time of encryption
-	 * 
-	 * Returns plain text
-	 *
-	 */
-	public static function decrypt($crypttext,$nonce)
-	{
-		if(!class_exists('ParagonIE_Sodium_Compat'))
-		{
-			return false;
-		}
-		
-		return \Sodium\crypto_secretbox_open($crypttext, $nonce,  Core::getCryptoKey());
-	}	 
 	
 }
