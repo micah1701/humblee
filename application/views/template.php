@@ -44,6 +44,11 @@ $(document).ready(function(){
 </head>
 
 <body>
+<?php 
+echo "micah: ". \Sodium\crypto_generichash('micah')."<br>\n";
+echo "joe: ". \Sodium\crypto_generichash('joe')."<br>\n";
+echo "micah: ". \Sodium\crypto_generichash('micah')."<br>\n";
+?>
 
 <div id="header"><!-- extends beyond 960 container -->
 	<div class="container">
