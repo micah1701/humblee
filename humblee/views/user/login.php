@@ -70,7 +70,10 @@ $("#sendSMS").click(function(e){
   <label for="password">Password:</label>
   <input type="password" id="password" name="password">
   
-  <?php $hmac_pair = Core::get_hmac_pair(); ?>
+  <?php 
+    $crypto = new Core_Model_Crypto;
+    $hmac_pair = $crypto->get_hmac_pair(); 
+  ?>
   <input type="hidden" name="hmac_token" value="<?php echo $hmac_pair['message'] ?>">
   <input type="hidden" name="hmac_key" value="<?php echo $hmac_pair['hmac'] ?>">
 

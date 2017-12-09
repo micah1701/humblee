@@ -37,7 +37,10 @@ if(isset($_SESSION[session_key]['user_id'])) // user is already logged in
   <label for="password_check">Confirm Password</label>
   <input type="password" id="password_check" name="password_check">
 
-  <?php $hmac_pair = Core::get_hmac_pair(); ?>
+  <?php 
+    $crypto = new Core_Model_Crypto;
+    $hmac_pair = $crypto->get_hmac_pair(); 
+  ?>
   <input type="hidden" name="hmac_token" value="<?php echo $hmac_pair['message'] ?>">
   <input type="hidden" name="hmac_key" value="<?php echo $hmac_pair['hmac'] ?>">
 

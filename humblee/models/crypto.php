@@ -46,7 +46,7 @@ class Core_Model_Crypto {
 	 * Generate a random string and hash it to this user's session for machine authentication & CSRF protection
 	 * 
 	 */
-	 public static function get_hmac_pair()
+	 public function get_hmac_pair()
 	 {
  		$random_string = md5(uniqid(rand(), true). time() . session_id());
 	 	return array(
@@ -58,7 +58,7 @@ class Core_Model_Crypto {
 	/**
 	* Check HMAC string and hash
 	*/
-	public static function check_hmac_pair($string,$hash)
+	public function check_hmac_pair($string,$hash)
 	{
 	  	return ($hash == base64_encode(hash_hmac('sha256', $string, $this->getCsrfToken() )) ) ? true : false;
 	}
