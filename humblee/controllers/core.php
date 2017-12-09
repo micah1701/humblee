@@ -149,7 +149,6 @@ class Core {
 		return $_SESSION[session_key]['has_roles'];
 	}
 	
-	
 	/**
 	 * Check if user has given role
 	 *

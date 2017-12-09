@@ -110,7 +110,7 @@ class Core_Model_Users {
 			}
 			
 		}
-
+		
 		//set session values to recognize user as being logged in
 		$this->logInSession($user->id);	
 		
@@ -122,8 +122,8 @@ class Core_Model_Users {
 		$log_msg = ($sms_login) ? "Accepted SMS" : "Accepted Password";
 		$this->accesslog($log_msg);
 		return array("access_granted"=> true);	
-	 }
-	 
+	}
+	
     /**
      * Log current user out
      */
@@ -131,7 +131,7 @@ class Core_Model_Users {
         session_destroy();
         return true;
     }
-	 
+    
     /**
      * Get user's profile
      *
@@ -141,7 +141,7 @@ class Core_Model_Users {
 		$user_id = (is_numeric($user_id)) ? $user_id : $_SESSION[session_key]['user_id'];
 		return ORM::for_table( _table_users)->find_one($user_id); 
     }
-	 
+    
     /**
      * Get user's profile
      *
