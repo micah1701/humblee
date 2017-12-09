@@ -1,4 +1,6 @@
 <?php 
+define('include_only','scripts checking for this definition should die() if not set');
+
 /**
  * Set which configuration file to use
  * 
@@ -8,15 +10,12 @@
  */
 $environment  = 'env_production.php';
 
+// load the environment set above
 $_ENV['config'] = require_once $environment;
 
-// encryption key (used for simple encryption)
-define("ENCRYPT_KEY", md5("HowManyProgrammersDoesItTakeToChangeALightbulb?None,thatsAHardwareIssue") ); // once set, NEVER EVER CHANGE THIS 
-
-// all $_SESSION info used by the framework is in a sub arrayof $_SESSION
-define("session_key","humblee"); // example usage: $_SESSION[session_key][user_id];
-
-define('include_only','scripts checking for this definition should die() if not set');
+// all $_SESSION info used by the framework is in a sub array of $_SESSION
+// default value is "humblee", eg $_SESSION['humblee']['my_variable'];
+define("session_key","humblee"); // example usage: echo $_SESSION[session_key]['user_id'];
 
 // tables used in this application
 define("_table_pages","humblee_pages");
@@ -28,8 +27,3 @@ define("_table_roles","humblee_roles");
 define("_table_user_roles","humblee_user_roles");
 define("_table_validation","humblee_validation");
 define("_table_accesslog","humblee_accesslog");
-
-// encryption variables
-define("ENCRYPT_CYPHER", MCRYPT_RIJNDAEL_256);
-define("ENCRYPT_MODE",   MCRYPT_MODE_CBC);
-define('ENCRYPT_EOT','___EOT'); // an "end of transfer" delimiter to append to the data before encrypting (a fix for .docx and .xlsx files)
