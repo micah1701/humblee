@@ -107,19 +107,18 @@ class Core {
 	 */
 	public static function view($path,$view_variables=false)
     {
-		if (is_file($path))
+		if (!is_file($path))
         {
-        	ob_start();
-        	
-			if($view_variables)
-            {
-				extract($view_variables);
-			}
-			
-			include $path;
-    	   	return ob_get_clean();
-    	}
-    	return false;	
+        	return false;
+        }
+		
+		ob_start();
+		if($view_variables)
+        {
+			extract($view_variables);
+		}
+		include $path;
+		return ob_get_clean();
 	}
 	
 	/**
