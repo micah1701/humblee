@@ -11,6 +11,30 @@ class ComposerStaticInit7982179984a2c44e2b9ced63c863d58c
         '3109cb1a231dcd04bee1f9f620d46975' => __DIR__ . '/..' . '/paragonie/sodium_compat/autoload.php',
     );
 
+    public static $prefixLengthsPsr4 = array (
+        'T' => 
+        array (
+            'Twig\\' => 5,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'Twig\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/twig/twig/src',
+        ),
+    );
+
+    public static $prefixesPsr0 = array (
+        'T' => 
+        array (
+            'Twig_' => 
+            array (
+                0 => __DIR__ . '/..' . '/twig/twig/lib',
+            ),
+        ),
+    );
+
     public static $classMap = array (
         'IdiormMethodMissingException' => __DIR__ . '/..' . '/j4mie/idiorm/idiorm.php',
         'IdiormResultSet' => __DIR__ . '/..' . '/j4mie/idiorm/idiorm.php',
@@ -22,6 +46,9 @@ class ComposerStaticInit7982179984a2c44e2b9ced63c863d58c
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInit7982179984a2c44e2b9ced63c863d58c::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit7982179984a2c44e2b9ced63c863d58c::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit7982179984a2c44e2b9ced63c863d58c::$prefixesPsr0;
             $loader->classMap = ComposerStaticInit7982179984a2c44e2b9ced63c863d58c::$classMap;
 
         }, null, ClassLoader::class);

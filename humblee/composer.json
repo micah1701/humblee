@@ -1,6 +1,7 @@
 {
     "require": {
         "j4mie/idiorm": "^1.5",
-        "paragonie/sodium_compat": "^1.4"
+        "paragonie/sodium_compat": "^1.4",
+        "twig/twig": "~1.0"
     }
 }
