@@ -1,27 +1,45 @@
-<p style="float: right; margin-right: 30px"><a href="<?php echo  _app_path ?>user/logout">Log out</a></p>
-<h1>User Profile</h1>
+<section class="columns">
+  <div class="column">
+    <h1 class="title">User Profile</h1>    
+  </div>
+  <div class="column">
+    <a class="button is-secondary" href="<?php echo _app_path ?>user/logout">Log out</a>   
+  </div>
+</section>
 
-<?php if(isset($error)){ ?>
-<div class="err_message">
-  <ul>
-	<?php foreach($error as $err){ ?>
-	<li><?php echo $err ?></li>
-	<?php } ?>    
-  </ul>
-</div>
-<?php } ?>
-
-<form action="<?php echo ( isset($_GET['fwd']) ) ? "?fwd=".$_GET['fwd'] : '' ?>" method="post">
-
-  <label>Full Name</label>
-  <input type="text" id="name" name="name" value="<?php echo $user->name ?>">
-
+<section class="section columns">
+<form action="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? "?fwd=".$_GET['fwd'] : '' ?>" method="post">
   
-  <label>E-Mail Address</label>
-  <input type="text" id="email" name="email" value="<?php echo $user->email ?>">
+  <?php if(isset($error)){ ?>
+  <div class="field is-two-fifths">
+    <ul class="control">
+  	<?php foreach($error as $err){ ?>
+  	<li class="has-text-danger"><?php echo $err ?></li>
+  	<?php } ?>    
+    </ul>
+  </div>
+  <?php } ?>
+
+  <div class="field is-two-fifths">
+    <label class="label" for="name">Full Name</label> 
+    <div class="control">
+      <input class="input" type="text" id="name" name="name" value="<?php echo $user->name ?>">
+    </div>
+  </div>
   
-  <label>Username</label>
-  <input type="text" id="username" name="username" value="<?php echo $user->username ?>">
+  <div class="field is-two-fifths">
+    <label class="label" for="email">E-Mail Address</label> 
+    <div class="control">
+      <input class="input" type="text" id="email" name="email" value="<?php echo $user->email ?>">
+    </div>
+  </div>
+  
+  <div class="field is-two-fifths">
+    <label class="label" for="username">Username</label> 
+    <div class="control">
+      <input class="input" type="text" id="username" name="username" value="<?php echo $user->username ?>">
+    </div>
+  </div>
 
 <?php
   if($_ENV['config']['TWILIO_Enabled'])
@@ -60,16 +78,20 @@
     }
   }
 ?>
-  
-<div id="password_box">
-  <label>New Password</label>
-  <input type="password" id="password" name="password">
-  <br>
-  <em>Leave these fields blank to keep existing password</em>
-  
-  <label>Confirm Password</label>
-  <input type="password" id="password_check" name="password_check" value="">
-</div>
+
+  <div class="field is-two-fifths">
+    <label class="label" for="name">New Password</label><span class="help">Leave blank to keep exisiting password</span>
+    <div class="control">
+      <input class="input" type="password" id="password" name="password">
+    </div>
+  </div>
+  <div id="confirm_password_block" class="field is-two-fifths" style="display: none">
+    <label class="label" for="password_check">Confirm Password</label> 
+    <div class="control">
+      <input class="input" type="password" id="password_check" name="password_check">
+    </div>
+  </div>
+
 
   <?php 
     $crypto = new Core_Model_Crypto;
@@ -78,9 +100,20 @@
   <input type="hidden" name="hmac_token" value="<?php echo $hmac_pair['message'] ?>">
   <input type="hidden" name="hmac_key" value="<?php echo $hmac_pair['hmac'] ?>">
 
-  <p><input name="" type="submit" value="Update Profile" value=""></p>
+  <div class="field is-grouped is-two-fifths">
+    <div class="control">
+      <input class="button is-primary" name="" type="submit" value="Update Profile" value="">
+    </div>
+  </div>
   
 </form>
+</section>
+
+
+<?php
+  if($_ENV['config']['TWILIO_Enabled'])
+  {
+?>
 
 <style type="text/css">
   #phone_verification_dialog {
@@ -100,20 +133,8 @@
     display: inline-block;
   }
   
-  #password_box {
-    padding: 20px 20px 20px 10px; 
-    width: 525px; 
-    border: 1px #036 solid; 
-    margin-left: -10px; 
-    margin-bottom: 20px; 
-    background-color: #F3F3F3"; 
-  }
 </style>
 
-<?php
-  if($_ENV['config']['TWILIO_Enabled'])
-  {
-?>
 <script type="text/javascript">
 function showSMSvalidateion()
 {
@@ -166,4 +187,20 @@ $(document).ready(function(){
   }
 ?>
 
-Total logins: <?php echo $user->logins; ?> &nbsp; <a href="<?php echo  _app_path ?>user/access">View Access Log</a>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $("#password").on("keyup",function(){
+      if($(this).val() == "")
+      {
+        $("#confirm_password_block").fadeOut('fast');
+      }
+      else
+      {
+        $("#confirm_password_block").fadeIn('fast');
+      }
+    });
+  });
+</script>
+
+<a class="button is-secondary" href="<?php echo  _app_path ?>user/access">View Access Log</a>
+<br>Total logins: <strong><?php echo $user->logins; ?></strong> 
