@@ -95,7 +95,7 @@ class Core_Controller_Template {
 	}
 	 
 	public function index(){
-		$this->setTemplatePath('application/views/template.php');
+		$this->setTemplatePath('application/views/templates/template.php');
 		
 		switch($this->template->page_type) {
 		
@@ -112,13 +112,13 @@ class Core_Controller_Template {
 			
 			case "view" :
 			
-				$this->template_view =  Core::view( _app_server_path."application/views/".$this->template->page_meta.".php",get_object_vars($this));
+				$this->template_view =  Core::view( _app_server_path."application/views".$this->template->page_meta.".php",get_object_vars($this));
 			
 			break;
 			
 			case "default" :
             
-				$this->template_view =  Core::view( _app_server_path.'application/views/tierpage.php',get_object_vars($this));
+				$this->template_view =  Core::view( _app_server_path.'application/views/default.php',get_object_vars($this));
 			
 			break;
 			

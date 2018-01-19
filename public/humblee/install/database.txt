@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS `humblee_templates` (
 --
 
 INSERT INTO `humblee_templates` (`id`, `name`, `description`, `page_type`, `page_meta`, `dynamic_uri`, `blocks`, `available`) VALUES
-(1, 'default', 'Standard content page', 'view', 'tierpage', 0, '1,2,3', 1),
+(1, 'default', 'Standard content page', 'view', 'default', 0, '1,2,3', 1),
 (2, 'Homepage', 'Site Homepage', 'view', 'homepage', 0, '1,2,3', 0);
 
 -- --------------------------------------------------------
