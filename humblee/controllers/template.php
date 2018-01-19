@@ -117,8 +117,8 @@ class Core_Controller_Template {
 			break;	
 			
 			case "view" :
-			
-				$this->template_view = Core::view( _app_server_path."application/views".$this->template->page_meta.".php",get_object_vars($this));
+
+				$this->template_view = Core::view( _app_server_path."application/views/".$this->template->page_meta.".php",get_object_vars($this));
 			break;
 			
 			case "default" :
@@ -145,7 +145,6 @@ class Core_Controller_Template {
 		}
 		
 		echo Core::view( _app_server_path .$_SESSION[session_key]['templatepath'] ,get_object_vars($this) ); 	 	
-
 	}
 	
 }
