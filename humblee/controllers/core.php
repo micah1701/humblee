@@ -199,11 +199,17 @@ class Core {
 	 
 	/**
 	 * Forward to another page on this site using Output Buffering
-	 *
+	 * 
+	 * $uri	path to forward to
+	 * $status (optional) STRING for status code (eg: 301 Moved Permanently)
 	 */
-	public static function forward($uri='')
+	public static function forward($uri='',$status=false)
     {		
 		ob_start();
+		if($status)
+		{
+			header("HTTP/1.1 ".$status);
+		}
 		header("Location: ".rtrim(_app_path,"/") . "/" . ltrim($uri,"/"));
 		ob_flush();	
 		exit();

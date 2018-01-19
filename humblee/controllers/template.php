@@ -8,13 +8,13 @@ class Core_Controller_Template {
 	 *
 	 * Pre-sets the following objects:
 	 * $this->page		Object with data about the page
-     * $this->template  Ojbect with data about the template this page is using
-     * $this->content	Associative Array of Objects with any related content (Array Key is the Content Type "Name")
+	 * $this->template  Ojbect with data about the template this page is using
+	 * $this->content	Associative Array of Objects with any related content (Array Key is the Content Type "Name")
 	 *
 	 */
-	 function __construct(){
-   
-	 	//get information about what this link does
+	function __construct()
+	{
+		//get information about what this link does
 		$uri = Core::getURI();
 		
 		$pageObj = new Core_Model_Pages;
@@ -28,11 +28,15 @@ class Core_Controller_Template {
 		}		
 		
 		//check if page requires authorization to view
-		if($this->page->required_role != 0 && !Core::auth($this->page->required_role) ){
-			
-			if(!isset($_SESSION[session_key]['user_id'])){ // if not logged in at all, forward to login page
+		if($this->page->required_role != 0 && !Core::auth($this->page->required_role))
+		{
+			if(!isset($_SESSION[session_key]['user_id']))
+			{ 
+				// if not logged in at all, forward to login page
 				Core::forward("user/login/?fwd=".$uri);
-			}else{
+			}
+			else
+			{
 				header('HTTP/1.1 403 Forbidden');
 				exit( "<h1>403 Forbidden</h1>You do not have permission to view this page"); 
 			}
@@ -65,10 +69,13 @@ class Core_Controller_Template {
 		}			
 		
 		//set content for use by class
-		if(!isset($contents)){
+		if(!isset($contents))
+		{
 			$this->content = false;
-		}else{
-	 		$this->content = $contents;
+		}
+		else
+		{
+			$this->content = $contents;
 		}
         
         //get data about the template being used
@@ -79,8 +86,7 @@ class Core_Controller_Template {
         {
             $this->template->page_type = "404";
         }	
-        			  	
-	}// end of __construct()
+	}
 	
 	//save the template path in a session var so it can be set from a child class
 	public function setTemplatePath($path)
@@ -94,50 +100,48 @@ class Core_Controller_Template {
 		$_SESSION[session_key][$key] = $value;
 	}
 	 
-	public function index(){
+	public function index()
+	{
 		$this->setTemplatePath('application/views/templates/template.php');
 		
 		switch($this->template->page_type) {
 		
 			case "controller" :
-
+				
 				$controller_data = unserialize($this->template->page_meta);
 				$controller = "Controller_".ucfirst($controller_data['controller']);
 				
 				$sub_controller = new $controller();
 				$action = $controller_data['action'];			
 				$this->template_view = $sub_controller->$action( get_object_vars($this));
-
 			break;	
 			
 			case "view" :
 			
-				$this->template_view =  Core::view( _app_server_path."application/views".$this->template->page_meta.".php",get_object_vars($this));
-			
+				$this->template_view = Core::view( _app_server_path."application/views".$this->template->page_meta.".php",get_object_vars($this));
 			break;
 			
 			case "default" :
             
-				$this->template_view =  Core::view( _app_server_path.'application/views/default.php',get_object_vars($this));
-			
+				$this->template_view = Core::view( _app_server_path.'application/views/default.php',get_object_vars($this));
 			break;
 			
 			case "link" :
-				header("Location: ".$this->template->page_meta);
-				exit();
+				
+				Core::forward($this->template->page_meta);
 			break;
 			
 			case "301" :
-				header("Location: ".$this->template->page_meta, TRUE, 301);
-				exit();
+				
+				Core::forward($this->template->page_meta,"301 Moved Permanently");
 			break;
 			
 			default :
-			  header('HTTP/1.1 404 Not Found'); 
-			  $this->content = array();
-			  $this->content['title'] = new stdClass();
-			  $this->content['title']->content = "File Not Found";
-              $this->template_view =  Core::view( _app_server_path."application/views/404.php",get_object_vars($this));			
+				header('HTTP/1.1 404 Not Found'); 
+				$this->content = array();
+				$this->content['title'] = new stdClass();
+				$this->content['title']->content = "File Not Found";
+				$this->template_view =  Core::view( _app_server_path."application/views/404.php",get_object_vars($this));			
 		}
 		
 		echo Core::view( _app_server_path .$_SESSION[session_key]['templatepath'] ,get_object_vars($this) ); 	 	
