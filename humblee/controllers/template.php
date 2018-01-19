@@ -138,9 +138,6 @@ class Core_Controller_Template {
 			
 			default :
 				header('HTTP/1.1 404 Not Found'); 
-				$this->content = array();
-				$this->content['title'] = new stdClass();
-				$this->content['title']->content = "File Not Found";
 				$this->template_view =  Core::view( _app_server_path."application/views/404.php",get_object_vars($this));			
 		}
 		

@@ -33,13 +33,13 @@ class Draw {
         
         if($isJson)
         {
-            if(is_array($block_key) && isset($block_key['field_key']))
+            if(is_array($block_key) && isset($block_key['field_key']) && isset($contentJson->$block_key['field_key']))
             {
-                $content = $contentJson->$block_key["field_key"];
+                $content = $contentJson->$block_key['field_key'];
             }
             else
             {
-                $content = "MJM WEB ERROR: Be sure to pass a specific field_key to display. ". print_r($contentJson,true);
+                $content = "";
             }
         }
         

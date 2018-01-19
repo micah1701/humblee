@@ -9,13 +9,14 @@
 <title><?php Draw::content($content,array('block_key'=>'meta_tags','field_key'=>'page_title')); ?></title>
 <meta name="description" content="<?php Draw::content($content,array('block_key'=>'meta_tags','field_key'=>'meta_description')); ?>">
 <?php
-/* here's an example of accessing the content array's content object of serialized content without using the "Draw::content()" method */
-$meta_tags = (isset($content['meta_tags'])) ? json_decode($content['meta_tags']->content) : false;
-if($meta_tags && $meta_tags->og_image != "") { 
+    /* here's an example of accessing the content array's content object of serialized content without using the "Draw::content()" method */
+    $meta_tags = (isset($content['meta_tags'])) ? json_decode($content['meta_tags']->content) : false;
+    if($meta_tags && isset($meta_tags->og_image) && $meta_tags->og_image != "")
+    { 
 ?>
 <meta property="og:image" content="http://<?php echo $_SERVER['HTTP_HOST'] . $meta_tags->og_image ?>">
 <?php
-} 
+    } 
 ?>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
