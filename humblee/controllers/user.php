@@ -29,7 +29,7 @@ class Core_Controller_User {
 		if(!Core::auth(1)){ Core::forward("/user/login"); }
 		
 	    //	$this->template_view = Core::view( _app_server_path .'humblee/views/user/index.php',get_object_vars($this) ); 	
-	    //	echo Core::view( _app_server_path .'application/views/template.php',get_object_vars($this) );
+	    //	echo Core::view( _app_server_path .'application/views/templates/template.php',get_object_vars($this) );
 		Core::forward("/user/profile"); // (if site has no index page for logged in users, just forward to profile page)	
 	}
 	
@@ -47,7 +47,7 @@ class Core_Controller_User {
         if(isset($_SESSION[session_key]['user_id']) && Core::auth('login'))
         { 
             $this->pagebody = "<h1>You are already logged in</h1><p>If you were forwarded to this page unexpectedly, you most likely do not have permission to access the page you were trying to go to.</p><p>If you feel this is in error, please contact your system administrator.  For now, use your back button to return to wherever you came from.</p>";
-            echo Core::view( _app_server_path .'humblee/views/admin/template.php',get_object_vars($this) );
+            echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) );
             exit();
 	    }
 	    
@@ -96,7 +96,7 @@ class Core_Controller_User {
 		}
 		
 		$this->template_view = Core::view( _app_server_path .'humblee/views/user/login.php',get_object_vars($this) ); 	
-		echo Core::view( _app_server_path .'application/views/template.php',get_object_vars($this) );
+		echo Core::view( _app_server_path .'application/views/templates/template.php',get_object_vars($this) );
 	}
 	
 	public function register()
@@ -163,7 +163,7 @@ class Core_Controller_User {
 		}// end check for $_POST data
 		
 		$this->template_view = Core::view( _app_server_path .'humblee/views/user/register.php',get_object_vars($this) ); 	
-		echo Core::view( _app_server_path .'application/views/template.php',get_object_vars($this) );
+		echo Core::view( _app_server_path .'application/views/templates/template.php',get_object_vars($this) );
 	}
 	
 	public function profile()
@@ -258,7 +258,7 @@ class Core_Controller_User {
 		} // end check for $_POST data
 		
 		$this->template_view = Core::view( _app_server_path .'humblee/views/user/profile.php',get_object_vars($this) ); 	
-		echo Core::view( _app_server_path .'application/views/template.php',get_object_vars($this) );
+		echo Core::view( _app_server_path .'application/views/templates/template.php',get_object_vars($this) );
 	}
 	
 	public function access()
@@ -266,7 +266,7 @@ class Core_Controller_User {
 		$this->user = $this->users->profile(); //get user profile data to bind to view
 		$this->userAccessLog = $this->users->access_log(); // get users access log
 		$this->template_view = Core::view( _app_server_path .'humblee/views/user/access.php',get_object_vars($this) ); 	
-		echo Core::view( _app_server_path .'application/views/template.php',get_object_vars($this) );
+		echo Core::view( _app_server_path .'application/views/templates/template.php',get_object_vars($this) );
 	}
 	
 }

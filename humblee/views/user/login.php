@@ -6,7 +6,8 @@ if(isset($_SESSION[session_key]['user_id'])){ // user is already logged in
 }
 ?>
 
-<h1>Log In...</h1>
+<h1 class="title">Knock Knock</h1>
+<h2 class="subtitle"<?php echo (!$_ENV['config']['TWILIO_Enabled']) ? '' : ' style="display:none"'; ?>>Log in using your username and password</h2>
 
 
 <?php 
@@ -58,17 +59,26 @@ $("#sendSMS").click(function(e){
    if(isset($error))
    { 
    ?>
-<div class="err_message"><?php echo $error ?></div>
+<div class="has-text-danger"><?php echo $error ?></div>
 <?php } ?>
 
-<div id="login-form">
+<section class="section columns">
 <form action="<?php echo ( isset($_GET['fwd']) ) ? "?fwd=".$_GET['fwd'] : '' ?>" method="post">
-  <p<?php if(!$_ENV['config']['TWILIO_Enabled']){ echo ' style="display:none"'; } ?>>Log in using your username and password.</p>
-  <label for="username">Username:</label>
-  <input type="text" id="username" name="username">
-
-  <label for="password">Password:</label>
-  <input type="password" id="password" name="password">
+  
+   
+  <div class="field  is-two-fifths">
+    <label class="label" for="username">Username:</label> 
+    <div class="control">
+      <input class="input" type="text" id="username" name="username">
+    </div>
+  </div>
+  
+  <div class="field is-two-fifths">
+    <label class="label" for="password">Password:</label> 
+    <div class="control">
+      <input class="input" type="password" id="password" name="password">
+    </div>
+  </div>
   
   <?php 
     $crypto = new Core_Model_Crypto;
@@ -77,9 +87,12 @@ $("#sendSMS").click(function(e){
   <input type="hidden" name="hmac_token" value="<?php echo $hmac_pair['message'] ?>">
   <input type="hidden" name="hmac_key" value="<?php echo $hmac_pair['hmac'] ?>">
 
-  <p><input name="" type="submit" value="Log In"></p>
+  <div class="field is-two-fifths">
+    <input class="button is-primary is-outlined" name="" type="submit" value="Log In">
+  </div>
+
 </form>
-</div>
+</section>
 
 <?php
 }

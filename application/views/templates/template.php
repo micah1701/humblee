@@ -38,7 +38,7 @@ $(document).ready(function(){
 
 <body>
 
-<header class="section hero"><!-- extends beyond 960 container -->
+<header class="section hero is-primary"><!-- extends beyond 960 container -->
 	<div class="container">
         <p class="title">Your Name Here</p>
         <nav class="nav">
