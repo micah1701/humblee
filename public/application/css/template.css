@@ -1,4 +1,18 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto");
+/* all rounded borders */
+/* Reference for color palettes https://material.io/guidelines/style/color.html#color-color-palette */
+/* blues */
+/* reds */
+body, button, input, select, textarea {
+  font-family: "Roboto", sans-serif; }
+
 .hero {
-  background-color: #3273dc; }
+  background-color: #2196F3; }
+  .hero .title {
+    color: #f1f1f1; }
+  .hero .nav a {
+    color: #E3F2FD; }
+    .hero .nav a:hover {
+      text-decoration: underline; }
 
 /*# sourceMappingURL=template.css.map */

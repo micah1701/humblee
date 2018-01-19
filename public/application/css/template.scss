@@ -1,3 +1,38 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+$font-primary: 'Roboto', sans-serif;
+$radius: 2px; /* all rounded borders */
+$background-transition: background-color 0.4s ease;
+$color-gray-light: #f1f1f1;
+$color-gray: #d7d7d7;
+$color-gray-dark: #bfbfbf;
+$color-black: #222;
+
+/* Reference for color palettes https://material.io/guidelines/style/color.html#color-color-palette */
+
+$color-primary-500: #2196F3; /* blues */
+$color-primary-200: #90CAF9;
+$color-primary-100: #BBDEFB;
+$color-primary-50: #E3F2FD;
+
+$color-secondary-500: #F44336; /* reds */
+$color-secondary-200: #EF9A9A;
+$color-secondary-700: #D32F2F;
+
+body, button, input, select, textarea {
+    font-family: $font-primary;
+}
+
 .hero {
-    background-color: #3273dc;
+    background-color: $color-primary-500;
+    .title {
+        color: $color-gray-light;
+    }
+    .nav a {
+        color: $color-primary-50;
+        
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 }
