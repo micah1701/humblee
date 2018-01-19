@@ -1,18 +1,8 @@
-<?php
-
-if(isset($_SESSION[session_key]['user_id'])) // user is already logged in
-{ 
-    $fwd = (isset($_GET['fwd'])) ? _app_path.$_GET['fwd'] : _app_path."user";
-    header("Location: ".$fwd);
-    exit();
-}
-?>
-
 <h1 class="title">Hello? Who is it?</h1>
 <h2 class="subtitle">Register for access</h2>
 <section class="section columns">
 
-  <form action="<?php echo ( isset($_GET['fwd']) ) ? "?fwd=".$_GET['fwd'] : '' ?>" method="post">
+  <form action="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? "?fwd=".$_GET['fwd'] : '' ?>" method="post">
 
   <?php if(isset($error)){ ?>
   <div class="field is-two-fifths">

@@ -63,9 +63,8 @@ $("#sendSMS").click(function(e){
 <?php } ?>
 
 <section class="section columns">
-<form action="<?php echo ( isset($_GET['fwd']) ) ? "?fwd=".$_GET['fwd'] : '' ?>" method="post">
+<form action="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? "?fwd=".$_GET['fwd'] : '' ?>" method="post">
   
-   
   <div class="field  is-two-fifths">
     <label class="label" for="username">Username:</label> 
     <div class="control">

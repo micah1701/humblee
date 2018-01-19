@@ -46,7 +46,7 @@ class Core_Controller_User {
         // check if user is already logged in
         if(isset($_SESSION[session_key]['user_id']) && Core::auth('login'))
         { 
-            $this->pagebody = "<h1>You are already logged in</h1><p>If you were forwarded to this page unexpectedly, you most likely do not have permission to access the page you were trying to go to.</p><p>If you feel this is in error, please contact your system administrator.  For now, use your back button to return to wherever you came from.</p>";
+            $this->pagebody = "<h1 class=\"text-has-danger\">You are already logged in</h1><p>If you were forwarded to this page unexpectedly, you most likely do not have permission to access the page you were trying to go to.</p><p>If you feel this is in error, please contact your system administrator.  For now, use your back button to return to wherever you came from.</p>";
             echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) );
             exit();
 	    }
@@ -87,9 +87,11 @@ class Core_Controller_User {
 				
 				if($login['access_granted'] === true )
 				{
-					$fwd = (isset($_GET['fwd'])) ? $_GET['fwd'] : '/user';
-					Core::forward($fwd);	
-				}else{
+					$fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user";
+		    		Core::forward($fwd);	
+				}
+				else
+				{
 					$this->error = $login['error'];
 				}
 			}
@@ -101,6 +103,13 @@ class Core_Controller_User {
 	
 	public function register()
 	{
+		//check if user is already logged in
+		if(isset($_SESSION[session_key]['user_id']))
+		{ 
+		    $fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user";
+		    Core::forward($fwd);
+		}
+		
 		if(isset($_POST['email']) && isset($_POST['password']) && isset($_POST['password_check']) ){
 			
 			if($_POST['password'] != $_POST['password_check']){
@@ -249,9 +258,12 @@ class Core_Controller_User {
 				$this->user->use_twofactor_auth = (isset($_POST['use_twofactor_auth']) && $_POST['use_twofactor_auth'] == 1) ? 1 : 0;
 				$this->user->save();
 				
-				if(isset($_GET['fwd'])) {
+				if(isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd']))
+				{
 					 Core::forward($_GET['fwd']); 
-				}else{
+				}
+				else
+				{
 					$this->error[] = "Changes Saved!";	
 				}
 			}
