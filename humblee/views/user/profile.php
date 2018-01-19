@@ -100,7 +100,7 @@
   <input type="hidden" name="hmac_token" value="<?php echo $hmac_pair['message'] ?>">
   <input type="hidden" name="hmac_key" value="<?php echo $hmac_pair['hmac'] ?>">
 
-  <div class="field is-grouped is-two-fifths">
+  <div class="field is-two-fifths">
     <div class="control">
       <input class="button is-primary" name="" type="submit" value="Update Profile" value="">
     </div>
