@@ -17,6 +17,10 @@ CREATE TABLE IF NOT EXISTS `humblee_content` (
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
+INSERT INTO `humblee_content` (`id`,`type_id`,`page_id`,`content`,`updated_by`,`live`) VALUES
+(1,1,1,'<h1>Welcome to your Humblee powered website</h1>',1,1),
+(2,2,1,'{"page_title":"Welcome to Humblee!","meta_description":"","og_title":"","og_description":"","og_image":""}',1,1);
+
 -- --------------------------------------------------------
 
 --
