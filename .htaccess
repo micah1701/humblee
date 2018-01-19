@@ -10,4 +10,5 @@ RewriteEngine On
 # Turn of Indexes
 Options -Indexes
 
+# Send All Requests to the "public" folder
 RewriteRule ^(.*)$ public/$1 [L]

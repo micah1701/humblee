@@ -1,11 +1,8 @@
 <!DOCTYPE html>
-<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
-<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
-<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
-<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
 <html>
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?php Draw::content($content,array('block_key'=>'meta_tags','field_key'=>'page_title')); ?></title>
 <meta name="description" content="<?php Draw::content($content,array('block_key'=>'meta_tags','field_key'=>'meta_description')); ?>">
 <?php
@@ -18,15 +15,10 @@
 <?php
     } 
 ?>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-<link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>humblee/css/normalize.css">
-<link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>humblee/css/skeleton.css">
-<link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>application/css/layout.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>application/css/template.css">
 
-<!--[if lt IE 9]>
-    <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-<![endif]-->
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script type="text/javascript">
@@ -46,33 +38,26 @@ $(document).ready(function(){
 
 <body>
 
-<div id="header"><!-- extends beyond 960 container -->
+<header class="section hero"><!-- extends beyond 960 container -->
 	<div class="container">
-	    
-        <div class="row clearfix">
-            <!--
-            <a id="header_logo" class="one-third columns" href="/"><img src="logo"></a>
-            -->
-            <h1>Your Name Here</h1>
-            
-            <div id="navigation" class="two-thirds columns">
-            <?php	
-	            $pageObj = new Core_Model_Pages;
-	            $menu = $pageObj->getPages();
-				$li_format = '<a href=\"$newSlug\">$item->label</a>'; // raw php code to be eval'd in function
-				echo $pageObj->drawMenu_UL($menu,array('li_format'=>$li_format));
-            ?>
-            </div>
-		</div>
+        <p class="title">Your Name Here</p>
+        <nav class="nav">
+        <?php	
+            $pageObj = new Core_Model_Pages;
+            $menu = $pageObj->getPages();
+			$li_format = '<a href=\"$newSlug\">$item->label</a>'; // raw php code to be eval'd in function
+			echo $pageObj->drawMenu_UL($menu,array('li_format'=>$li_format));
+        ?>
+        </nav>
 
-	<br class="clear">
 	</div><!-- end container -->
-    
-</div><!-- end "header" -->
+</header><!-- end "header" -->
 
-<div id="pageBody" class="container">
-    <?php echo (isset($template_view)) ? $template_view : '' ?>
-</div><!-- end "pageBody" -->
+<section id="pageBody" class="section">
+    <div id="pageBody" class="container">
+        <?php echo (isset($template_view)) ? $template_view : '' ?>        
+    </div><!-- end "pageBody" -->
+</section>
 
 </body>
 </html>
