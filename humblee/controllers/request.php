@@ -81,17 +81,17 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 	public function sms_login_code()
 	{
 		if(!$_ENV['config']['TWILIO_Enabled']){ exit("Site not configured to use SMS"); }
-		if(!isset($_GET['email'])) { exit("Invalid or missing username"); }
+		if(!isset($_SESSION[session_key]['email'])) { exit("Invalid or missing username"); }
 		
 		//check if given "username" is an e-mail address or a username
-		$username_column = (filter_var($_GET['email'], FILTER_VALIDATE_EMAIL)) ? 'email' : 'username';
+		$username_column = (filter_var($_SESSION[session_key]['email'], FILTER_VALIDATE_EMAIL)) ? 'email' : 'username';
 		
 		//look up user
 		$user = ORM::for_table( _table_users)
-					->where($username_column,$_GET['email'])
+					->where($username_column,$_SESSION[session_key]['email'])
 					->where('active',1)
 					->find_one();
-		if(!$user){ exit("Invalid Username"); }
+		if(!$user){ exit("Invalid User Account"); }
 		if($user->cellphone == "" || !is_numeric($user->cellphone)) { exit("No phone number associated with this account."); }
 		if($user->cellphone_validated != 1) { exit("Phone number has not yet been validated."); }
 		
@@ -113,7 +113,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		else
 		{
 			$start_point = rand(0,10);
-			$token = strtoupper(substr(md5(rand(10000,999999).password_salt),$start_point,5));
+			$token = strtoupper(substr(md5(rand(10000,999999)),$start_point,5));
 			
 			//define the session if it doesnt' already exist.
 			if(!isset($_SESSION[session_key]))

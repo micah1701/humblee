@@ -103,12 +103,11 @@ class Core_Model_Users {
 				return array("access_granted"=> false, "error"=>"Invalid Password");	
 			}
 			
-			if(TWILIO_Enabled && $user->use_twofactor_auth == 1)
+			if($_ENV['config']['TWILIO_Enabled'] && $user->use_twofactor_auth == 1)
 			{
 				$this->accesslog('Valid password. SMS requested');
-				return array("access_granted"=> false, "error"=>"use_twofactor_auth");
+				return array("access_granted"=> false, "error"=>"use_twofactor_auth", "cellphone"=>$user->cellphone, "name"=>$user->name, "email"=>$user->email);
 			}
-			
 		}
 		
 		//set session values to recognize user as being logged in

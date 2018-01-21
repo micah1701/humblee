@@ -53,7 +53,9 @@ class Core_Controller_User {
 	    
         // process log-in POST data
 		if(isset($_POST['username']) || isset($_POST['smsusername'])){
-		
+			
+			$fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user";
+			
 			if(isset($_POST['cellphone_validate']) && trim($_POST['cellphone_validate']) != "")
 			{
 				if(trim($_POST['smsusername']) == "" || trim($_POST['cellphone_validate']) == "" )
@@ -87,8 +89,14 @@ class Core_Controller_User {
 				
 				if($login['access_granted'] === true )
 				{
-					$fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user";
-		    		Core::forward($fwd);	
+					Core::forward($fwd);	
+				}
+				elseif($login['error'] == 'use_twofactor_auth')
+				{
+					$_SESSION[session_key]['sms_cellphone'] = $login['cellphone'];
+					$_SESSION[session_key]['name'] = $login['name'];
+					$_SESSION[session_key]['email'] = $login['email'];
+					Core::forward('user/login2?fwd'.$fwd);
 				}
 				else
 				{
@@ -98,6 +106,20 @@ class Core_Controller_User {
 		}
 		
 		$this->template_view = Core::view( _app_server_path .'humblee/views/user/login.php',get_object_vars($this) ); 	
+		echo Core::view( _app_server_path .'application/views/templates/template.php',get_object_vars($this) );
+	}
+	
+	public function login2()
+	{
+		$fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user";
+		
+		//if user came to this page without being sent from the first login page, send them to the regular login page
+		if(!isset($_SESSION[session_key]['sms_cellphone']) || !isset($_SESSION[session_key]['name']) || !isset($_SESSION[session_key]['email']))
+		{
+			Core::forward('user/login?fwd='.$fwd);
+		}
+		
+		$this->template_view = Core::view( _app_server_path .'humblee/views/user/login_sms.php',get_object_vars($this) ); 	
 		echo Core::view( _app_server_path .'application/views/templates/template.php',get_object_vars($this) );
 	}
 	
