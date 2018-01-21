@@ -1,9 +1,3 @@
-<?php 
-if(isset($_SESSION[session_key]['user_id'])){ // user is already logged in
-	$fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? _app_path.$_GET['fwd'] : _app_path."/user";
-	Core::forward($fwd);
-}
-?>
 <h1 class="title">Almost There</h1>
 <p class="subtitle">Your account requires two factor authentication to complete the sign in process.</p>
 
@@ -43,6 +37,14 @@ if(isset($_SESSION[session_key]['user_id'])){ // user is already logged in
         </div>
     </div>
 </section>
+
+<?php 
+    $crypto = new Core_Model_Crypto;
+    $hmac_pair = $crypto->get_hmac_pair(); 
+  ?>
+  <input type="hidden" id="hmac_token" value="<?php echo $hmac_pair['message'] ?>">
+  <input type="hidden" id="hmac_key" value="<?php echo $hmac_pair['hmac'] ?>">
+  <input type="hidden" id="fwd" value="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user"; ?>">
 
 <script defer src="https://use.fontawesome.com/releases/v5.0.0/js/all.js"></script>
 <script type="text/javascript">var APP_PATH = '<?php echo _app_path ?>';</script>
