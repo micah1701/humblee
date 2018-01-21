@@ -1,6 +1,6 @@
 <h2 class="title">Website Access Log</h2>
 <p class="subtitle">Here is a list of your most recent successful log in attempts</p>
-<a class="button is-link" href="<?php echo _app_path ?>user/profile">Return to Profile</a>
+<a class="button is-info" href="<?php echo _app_path ?>user/profile">Return to Profile</a>
 <table class="table">
     <thead>
         <th>Date</th>
@@ -9,9 +9,9 @@
         <th>Browser/Device</th>
     </thead>
     <tbody>
-    <?php
-        foreach($userAccessLog as $accessAttempt)
-        {
+<?php
+    foreach($userAccessLog as $accessAttempt)
+    {
 ?>
         <tr>
             <td><?php echo date("m/d/Y",strtotime($accessAttempt->timestamp)); ?></td>

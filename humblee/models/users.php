@@ -147,12 +147,12 @@ class Core_Model_Users {
      *
      * returns logged in user unless $user_id is specified
      */
-    public function access_log($user_id=NULL){
+    public function access_log($limit=100,$user_id=NULL){
 		$user_id = (is_numeric($user_id)) ? $user_id : $_SESSION[session_key]['user_id'];
 		return ORM::for_table( _table_accesslog)
 			->where('user_id',$user_id)
 			->order_by_desc('timestamp')
-			->limit(20)
+			->limit($limit)
 			->find_many(); 
     }
 	 
