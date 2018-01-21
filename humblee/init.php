@@ -21,6 +21,10 @@ ORM::configure('mysql:host='. $_ENV['config']['db_host'] .';dbname=' .$_ENV['con
 ORM::configure('username', $_ENV['config']['db_username']);
 ORM::configure('password', $_ENV['config']['db_password']);
 
+//if using Twilio, include the class
+use Twilio\Rest\Client;
+
+
 /**
  * Route to a specified controller based on URI
  * if the uri matches a pre-defined route use its corresponding controller

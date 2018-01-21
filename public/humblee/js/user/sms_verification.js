@@ -30,7 +30,7 @@ $(document).ready(function(){
       smsStatus.html("Sending...").addClass('has-text-info')
 
       $.get(APP_PATH+"core-request/verify_sms_send",{cellphone:$("#cellphone").val()},function(data){
-        smsStatus.removeClass('has-text-info');
+        smsStatus.removeClass('has-text-info').removeClass('has-text-danger');
         if($.trim(data) == "success")
         {
           smsStatus.html("Text Message Sent").addClass('has-text-success');

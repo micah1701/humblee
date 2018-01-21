@@ -244,9 +244,10 @@ class Core_Model_Tools {
 		$from = $this->cleanNumber($from);
 		if(!$to || !$from) { return false; }
 		
-		require _app_server_path.'core/libs/twilio/sdk/Services/Twilio.php';
-		$client = new Services_Twilio($_ENV['config']['TWILIO_AccountSid'],$_ENV['config']['TWILIO_AuthToken']);
-		$sms = $client->account->sms_messages->create("+1".$from, "+1".$to, $message, array());
+//		require _app_server_path.'core/libs/twilio/sdk/Services/Twilio.php';
+		$client = new Twilio\Rest\Client($_ENV['config']['TWILIO_AccountSid'],$_ENV['config']['TWILIO_AuthToken']);
+		
+		$sms = $client->messages->create("+1".$to, array('from'=>"+1".$from, 'body'=>$message));
 
 		if ($sms->status == "queued")
 		{
