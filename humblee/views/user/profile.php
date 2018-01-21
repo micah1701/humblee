@@ -21,7 +21,7 @@
   <div class="column">
     
     <a class="button is-secondary is-pulled-right" href="<?php echo _app_path ?>user/logout">
-      <span class="icon is-pulled-left has-text-danger">
+      <span class="icon has-text-danger">
         <i class="fas fa-times"></i>
       </span>
       <span class="is-pulled-right">Log out</span>
@@ -30,7 +30,7 @@
   </div>
 </section>
 
-<section class="columns">
+<section class="columns is-variable is-8">
 
   <div class="column">  
   <form action="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? "?fwd=".$_GET['fwd'] : '' ?>" method="post">
@@ -65,16 +65,24 @@
       <div class="control smsInputGroup">
         <input class="input" type="text" id="cellphone" name="cellphone" value="<?php echo $user->cellphone ?>">
         
-        <p class="help">To validate this number a verification code must be sent to your phone.</p>
-        <button class="button is-link">Send Verification Code Now</button>
+        <p class="help">To validate this number a verification code must be sent to your phone before this form can be submited.</p>
+        <button class="button is-info">
+          <span class="icon is-pulled-left">
+            <i class="fas fa-paper-plane"></i>
+          </span>
+          <span class="is-pulled-right">
+            Send Code Now
+          </span>
+        </button>
         <div id="sms_sent_status"></div>
       
-        <div class="notification is-info">
-          <p>Phone number has not be verified by Text Message (SMS).</p>
-          <label>SMS Verification Code</label>
-          <input type="text" id="cellphone_validate" name="cellphone_validate">
-        </div>
-      
+      </div>
+    </div>
+    
+    <div id="smsVerificationCode" class="field">
+      <label class="label" for="cellphone_validate">SMS Verification Code</label> 
+      <div class="control">
+        <input type="text" class="input" id="cellphone_validate" name="cellphone_validate">
       </div>
     </div>
   
@@ -103,9 +111,9 @@
   ?>
   
     <div class="field">
-      <label class="label" for="name">New Password</label><span class="help">Leave blank to keep exisiting password</span>
+      <label class="label" for="name">New Password <span class="has-text-weight-normal has-text-grey">(optional)</span></label>
       <div class="control">
-        <input class="input" type="password" id="password" name="password">
+        <input class="input" type="password" id="password" name="password" placeholder="Leave blank to keep exisiting password">
       </div>
     </div>
     <div id="confirm_password_block" class="field" style="display: none">
@@ -114,7 +122,6 @@
         <input class="input" type="password" id="password_check" name="password_check">
       </div>
     </div>
-  
   
     <?php 
       $crypto = new Core_Model_Crypto;
@@ -134,7 +141,6 @@
 </div>
 
 <div class="column">
-  <div class="is-pulled-right">
     <h2 class="subtitle">Recent Access</h2>
 <table class="table">
     <thead>
@@ -166,7 +172,6 @@
       <span class="is-pulled-right">View Full Access Log</span>
     </a></p>
 
-  </div>
 </div>
 
 </section>
@@ -186,13 +191,14 @@
   .smsInputGroup button {
     display: none;
   }
-  #sms_sent_status {
-    margin-left: 10px;
-    display: inline-block;
+
+  #smsVerificationCode {
+    display: none;
   }
   
 </style>
 
+<script type="text/javascript">var APP_PATH = '<?php echo _app_path ?>';</script>
 <script type="text/javascript" src="<?php echo _app_path ?>humblee/js/user/sms_verification.js"></script>
 <?php
   }

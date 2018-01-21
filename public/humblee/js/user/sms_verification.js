@@ -1,3 +1,5 @@
+/* global $, APP_PATH */
+
 function showSMSvalidateion()
 {
   $(".smsInputGroup .notification, .smsInputGroup button, .smsInputGroup .help").fadeIn('fast');
@@ -24,16 +26,19 @@ $(document).ready(function(){
       if(number.length != 10){ alert("The Cellphone number must be 10 digits."); return false; }
       
       $(this).css("display","none");
-      $("#sms_sent_status").html("Sending...").hasClass('has-text-info')
+      var smsStatus = $("#sms_sent_status");
+      smsStatus.html("Sending...").addClass('has-text-info')
 
-      $.get("<?php echo _app_path ?>core-request/verify_sms_send",{cellphone:$("#cellphone").val()},function(data){
+      $.get(APP_PATH+"core-request/verify_sms_send",{cellphone:$("#cellphone").val()},function(data){
+        smsStatus.removeClass('has-text-info');
         if($.trim(data) == "success")
         {
-          $("#sms_sent_status").html("Text Message Sent").hasClass('has-text-success')
+          smsStatus.html("Text Message Sent").addClass('has-text-success');
+          $("#smsVerificationCode").fadeIn('fast'); // show the field to enter the code into
         }
         else
         {
-          $("#sms_sent_status").html('Error. Message could not be sent').hasClass('has-text-danger');
+          smsStatus.html('Error. Message could not be sent').addClass('has-text-danger');
         }
         
       });    

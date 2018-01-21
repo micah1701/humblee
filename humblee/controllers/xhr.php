@@ -1,5 +1,5 @@
 <?php
-exit('what are you doing here');
+
 /**
  * this class is not meant to extend the default controller. It is only used to return "AJAX" requests
  *
