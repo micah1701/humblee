@@ -61,7 +61,22 @@
     {
   ?>
     <div class="field">
-      <label class="label" for="username">SMS Cellphone</label> 
+      <label class="label" for="username">
+        SMS Cellphone
+        <?php 
+          if($user->cellphone_validated != 0)
+          {
+        ?> 
+        <span class="has-text-weight-normal has-text-grey" id="sms_verified_status">
+          <span class="icon">
+            <i class="fas fa-check has-text-success"></i>
+          </span>
+          Verified
+        </span>
+        <?php
+          }
+        ?>
+      </label> 
       <div class="control smsInputGroup">
         <input class="input" type="text" id="cellphone" name="cellphone" value="<?php echo $user->cellphone ?>">
         
@@ -92,13 +107,16 @@
       if($user->cellphone_validated != 0)
       {
     ?>    
-      <span id="sms_verified_status"><span style="color: green">&#10004;</span> Verified</span>
-      
-      <label for="use_twofactor_auth" class="tooltip" title="When checked, logging in will require both a password and token code sent to your phone">
+    <div class="field">
+      <span class="label">Two Factor Authentication</span>
+      <div class="control">
+      <label for="use_twofactor_auth" class="checkbox">
         <input type="checkbox" name="use_twofactor_auth" value="1" id="use_twofactor_auth"<?php echo ($user->use_twofactor_auth ==1) ? " checked" : "" ?>>
         Use Two Factor Authentication
+        <p class="help">When checked, logging in will require both a password and token code sent to your phone</p>
       </label>  
-        
+      </div>
+    </div>    
     <?php
       }
       else
@@ -110,6 +128,8 @@
     }
   ?>
   
+  <div class="message">
+    <div class="message-body">
     <div class="field">
       <label class="label" for="name">New Password <span class="has-text-weight-normal has-text-grey">(optional)</span></label>
       <div class="control">
@@ -122,6 +142,8 @@
         <input class="input" type="password" id="password_check" name="password_check">
       </div>
     </div>
+    </div>
+  </div>
   
     <?php 
       $crypto = new Core_Model_Crypto;
