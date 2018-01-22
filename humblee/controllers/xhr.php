@@ -14,12 +14,6 @@ class Core_Controller_Xhr {
         header("Cache-Control: no-store, no-cache, must-revalidate");
         header("Cache-Control: post-check=0, pre-check=0", false);
         header("Pragma: no-cache");
-        
-        // if HTTP_X_REQUESTED_WITH is available (not empty) but is not an XHR, then die.
-        if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) != 'xmlhttprequest')
-        {
-            exit("Error! invalid request method");
-        }
 	}
 	
 	/**
@@ -31,9 +25,7 @@ class Core_Controller_Xhr {
         if(!Core::auth($role) && !Core::auth('developer') )
         {
          	header('HTTP/1.1 403 Forbidden');  
-            $this->pagebody = "<h1>403 Forbidden</h1><h3>You do not have access to view this page</h3><p>If you believe this is an error, please see your site administrator.</p>";
-            echo Core::view( _app_server_path .'humblee/views/admin/template.php',get_object_vars($this) );
-            exit();
+            exit("<h1>403 Forbidden</h1><h3>You do not have access to view this page</h3><p>If you believe this is an error, please see your site administrator.</p>");
         }
     }
     
@@ -46,10 +38,20 @@ class Core_Controller_Xhr {
         if(!isset($_POST['hmac_token']) || !isset($_POST['hmac_key']))
         {
             header('HTTP/1.1 401 Unauthorized');  
-            $this->pagebody = "<h1>401 Unauthorized</h1><h3>Missing Machine Key</h3><p>If you believe this is an error, please see your site administrator.</p>";
-            echo Core::view( _app_server_path .'humblee/views/admin/template.php',get_object_vars($this) );
-            exit();
+            exit("<h1>401 Unauthorized</h1><h3>Missing Machine Key</h3><p>If you believe this is an error, please see your site administrator.</p>");
         }
+        $crypto = new Core_Model_Crypto;
+        if(!$crypto->check_hmac_pair())
+        {
+            $crypto = new Core_Model_Crypto;
+			if(!$crypto->check_hmac_pair($_POST['hmac_token'], $_POST['hmac_key']))
+			{
+				header('HTTP/1.1 401 Unauthorized');  
+                exit("<h1>401 Unauthorized</h1><h3>Invalid Machine Authentication Key</h3>");
+			}
+        }
+        
+        return true;
     }
 	
    /**

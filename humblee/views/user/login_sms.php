@@ -4,8 +4,8 @@
 <section class="columns">
     <div class="message">
         <div class="message-body">
-            <p><?php echo $_SESSION[session_key]['name'] ?></p>
-            <p>(***) *** - <?php echo substr($_SESSION[session_key]['sms_cellphone'], -4) ?></p>
+            <p><?php echo $name ?></p>
+            <p>(***) *** - <?php echo $cellphone_lastfour ?></p>
             
             <div class="field">
                 <div class="control">
@@ -28,7 +28,7 @@
             <div id="smsVerificationCode" style="display: none" class="field">
               <label class="label" for="cellphone_validate">Enter the Verification Code</label> 
               <div class="control">
-                <input type="text" class="input" id="cellphone_validate" name="cellphone_validate">
+                <input type="text" class="input" id="cellphone_validate" maxlength="5" name="cellphone_validate">
               </div>
               <br>
                   <button class="button is-primary" id="login">Sign In</button>

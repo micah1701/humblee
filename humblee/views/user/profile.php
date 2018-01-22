@@ -79,6 +79,7 @@
       </label> 
       <div class="control smsInputGroup">
         <input class="input" type="text" id="cellphone" name="cellphone" value="<?php echo $user->cellphone ?>">
+        <input type="hidden" id="cellphone_original" value="<?php echo $user->cellphone ?>">
         
         <p class="help">To validate this number a verification code must be sent to your phone before this form can be submited.</p>
         <button class="button is-info">

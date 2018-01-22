@@ -15,12 +15,16 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 	 */
 	public function verify_sms_send()
 	{
-		if(!$_ENV['config']['TWILIO_Enabled']){ exit("Site not configured to use SMS"); }
-		$this->require_role('login');
-		
-		if(!isset($_GET['cellphone']) || !is_numeric($_GET['cellphone']) || strlen($_GET['cellphone']) != 10) 
+		if(!$_ENV['config']['TWILIO_Enabled'])
 		{
-			exit("Invalid or missing 10 digit cellphone number");
+		    $this->json(array("error"=>"Site not configured to use SMS")); 
+	    }
+	    
+		$this->require_role('login'); //user must be loged in to verify their cellphone number
+		
+		if(!isset($_POST['cellphone']) || !is_numeric($_POST['cellphone']) || strlen($_POST['cellphone']) != 10) 
+		{
+			$this->json(array("error"=>"Invalid or missing 10 digit cellphone number"));
 		}
 		$userID = $_SESSION[session_key]['user_id'];
 		
@@ -28,7 +32,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		
 		//look for exisiting entry in validation table for this user & number
 		$previousValidation = ORM::for_table(_table_validation)
-								->where('new_value',$_GET['cellphone'])
+								->where('new_value',$_POST['cellphone'])
 								->where('user_id',$userID)
 								->where('type','sms')
 								->find_one();
@@ -58,11 +62,11 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		//send SMS 
 		$tools = new Core_Model_Tools;
 		$txtmsg = $_ENV['config']['domain'] ." log in code: ". $token; 
-		$sms_status = $tools->sendSMS($_GET['cellphone'],$txtmsg);
+		$sms_status = $tools->sendSMS($_POST['cellphone'],$txtmsg);
 		
 		if($sms_status['success'])
 		{
-			$validation->new_value = $_GET['cellphone'];
+			$validation->new_value = $_POST['cellphone'];
 			$validation->token = $token;
 			$validation->token_created = date("Y-m-d H:i:s");
 			$validation->message_id = $sms_status['message_id'];
@@ -76,19 +80,26 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 	}
 
 	/**
-	 * this function is user to send an SMS token for the purposes of logging in
+	 * send an SMS token for the purposes of logging in
 	 */
 	public function sms_login_code()
 	{
-		if(!$_ENV['config']['TWILIO_Enabled']){ exit("Site not configured to use SMS"); }
-		if(!isset($_SESSION[session_key]['email'])) { exit("Invalid or missing username"); }
+		if(!$_ENV['config']['TWILIO_Enabled'])
+		{ 
+		    $this->json(array("error"=>"Site not configured to use SMS")); 
+		}
+		//the "sms_login_email" must have been set in the intial login (w/ username & password) before requesting an SMS code
+		if(!isset($_SESSION[session_key]['sms_login_email']) || $_SESSION[session_key]['sms_login_email'] == "")
+		{ 
+	        $this->json(array("error"=>"Invalid Request")); 
+		}
 		
 		//check if given "username" is an e-mail address or a username
-		$username_column = (filter_var($_SESSION[session_key]['email'], FILTER_VALIDATE_EMAIL)) ? 'email' : 'username';
+		$username_column = (filter_var($_SESSION[session_key]['sms_login_email'], FILTER_VALIDATE_EMAIL)) ? 'email' : 'username';
 		
 		//look up user
 		$user = ORM::for_table( _table_users)
-					->where($username_column,$_SESSION[session_key]['email'])
+					->where($username_column,$_SESSION[session_key]['sms_login_email'])
 					->where('active',1)
 					->find_one();
 		if(!$user){ exit("Invalid User Account"); }
@@ -132,5 +143,38 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		$sms_status = $tools->sendSMS($user->cellphone,$txtmsg);
 		echo ($sms_status['success']) ? "success" : "Message could not be sent.";
 	}
+	
+	/**
+	 * Check the user submited SMS verification code and log them in if it matches what was sent in sms_login_code()
+	 */
+    public function sms_login()
+    {
+        if(!$_ENV['config']['TWILIO_Enabled'])
+		{ 
+		    $this->json(array("error"=>"Site not configured to use SMS")); 
+		}
+		//the "sms_login_email" must have been set in the intial login (w/ username & password) before loggin w/ this second factor side channel
+		if(!isset($_SESSION[session_key]['sms_login_email']) || $_SESSION[session_key]['sms_login_email'] == "")
+		{ 
+	        $this->json(array("error"=>"You are not authorized to make this request.")); 
+		}
+		
+		$this->require_hmac();
+		
+		if(!isset($_POST['sms_token']) || strlen($_POST['sms_token']) != 5)
+		{
+		    $this->json(array("error"=>"Missing or malformed verification token"));
+		}
+		
+		$login = $this->users->logIn($_SESSION[session_key]['sms_login_email'],$_POST['sms_token'],true);
+		if($login['access_granted'] === true )
+		{
+		    $this->json(array("success"=>true));	
+		}
+		else
+		{
+		    $this->json(array("error"=>$login['error']));
+		}
+    }
 
 }
