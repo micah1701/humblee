@@ -1,9 +1,7 @@
-    <h2>CMS Homepage</h2>   
-
-    <h5>Recently Edited Content Elements:</h5>
+    <h2 class="title">Welcome to Humblee Admin</h2>
+    <p class="is-size-5">Recently Edited Content Elements:</p>
     <div id="recentlyeditedcontent">
     <?php
-    $can_edit = (Core::auth('users') || Core::auth('developer') ) ? true : false;
     $recent_contents = ORM::for_table(_table_content)
                     ->raw_query("SELECT *
                                     FROM "._table_content." AS topTable
@@ -26,7 +24,7 @@
 
     $tools = new Core_Model_Tools;
        
-    echo "<table width=\"100%\"><thead><th>&nbsp</th><th>Page Label</th><th>Type</th><th>Status</th><th>&nbsp;</th></thead><tbody>";                    
+    echo "<table class=\"table\" width=\"100%\"><thead><th>&nbsp</th><th>Page Label</th><th>Type</th><th>Status</th><th>&nbsp;</th></thead><tbody>";                    
     foreach($recent_contents as $recent_content):
         $recentPage = ORM::for_table(_table_pages)->find_one($recent_content->page_id);
         echo '<td><span class="tooltip" title="'. date("F j, Y h:ia",strtotime($recent_content->revision_date)) .'">'.$tools->time_ago($recent_content->revision_date) .'</span></td>';
@@ -42,7 +40,8 @@
             }
         echo "</td>";
         echo "<td>";
-            if($can_edit){
+            if(Core::auth(array('content','developer')))
+            {
                 echo '<a href="'. _app_path .'admin/edit/'.$recent_content->id.'">Edit</a>';
             }
         echo "</td>";
@@ -52,12 +51,3 @@
     echo "</tbody></table>";
 ?>
     </div>
-
-
-<?php if(Core::auth('content') || Core::auth('developer')) : ?>
-<style type="text/css">
-    /* have left hand "Content Nav" drawer already open on page load */
-    #editnav { margin-left: 0; }
-    #content { margin-left: 300; }
-</style>
-<?php endif; ?>

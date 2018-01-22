@@ -177,5 +177,17 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		    $this->json(array("error"=>$login['error']));
 		}
     }
+    
+    /**
+     * Get list of pages with editable content
+     */
+    public function loadContentMenu()
+	{
+		$this->require_role('content');
+		$pageObj = new Core_Model_Pages;
+	    $menu = $pageObj->getPages(array('active_only'=>false,'display_in_sitemap_only'=>false));
+		$li_format = '<a href=\"'._app_path.'admin/edit/?page_id=$item->thisID\">$item->label</a>'; // raw php code to be eval'd in function
+		echo $pageObj->drawMenu_UL($menu,array('li_format'=>$li_format,'id_label'=>'contentNav_'));
+	}
 
 }
