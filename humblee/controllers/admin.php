@@ -25,14 +25,14 @@ class Core_Controller_Admin {
         {
          	header('HTTP/1.1 403 Forbidden');  
             $this->pagebody = "<h1>403 Forbidden</h1><h3>You do not have access to view this page</h3><p>If you believe this is an error, please see your site administrator.</p>";
-            echo Core::view( _app_server_path .'humblee/views/admin/template.php',get_object_vars($this) );
+            echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) );
             exit();
         }
     }
 	
 	public function index(){	
 		$this->pagebody = Core::view( _app_server_path .'humblee/views/admin/index.php',get_object_vars($this) ); 	
-		echo Core::view( _app_server_path .'humblee/views/admin/template.php',get_object_vars($this) ); 
+		echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) ); 
 	}
 	
 	public function pages(){
@@ -42,7 +42,7 @@ class Core_Controller_Admin {
         $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'core/assets/js/admin-pages.js"></script>';
        
 		$this->pagebody = Core::view( _app_server_path .'humblee/views/admin/pages.php',get_object_vars($this) ); 	
-		echo Core::view( _app_server_path .'humblee/views/admin/template.php',get_object_vars($this) ); 
+		echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) ); 
 	}
 	
 	public function edit(){
@@ -104,7 +104,7 @@ class Core_Controller_Admin {
         $_SESSION['KCFINDER'] = array();
         $_SESSION['KCFINDER']['disabled'] = false;
         	
-		echo Core::view( _app_server_path .'humblee/views/admin/template.php',get_object_vars($this) );
+		echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) );
 	}
 	
 	public function files()
@@ -113,14 +113,14 @@ class Core_Controller_Admin {
 	    $_SESSION['KCFINDER'] = array();
         $_SESSION['KCFINDER']['disabled'] = false;    
 	    $this->pagebody = Core::view( _app_server_path .'humblee/views/admin/filemanager.php',get_object_vars($this) ); 
-	    echo Core::view( _app_server_path .'humblee/views/admin/template.php',get_object_vars($this) );
+	    echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) );
 	}
 	
 	public function users(){
         $this->require_role('users');
         
 		$this->pagebody = Core::view( _app_server_path .'humblee/views/admin/users.php',get_object_vars($this) ); 
-		echo Core::view( _app_server_path .'humblee/views/admin/template.php',get_object_vars($this) ); 
+		echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) ); 
 	}
     
     public function blocks(){
