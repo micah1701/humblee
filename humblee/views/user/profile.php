@@ -156,6 +156,15 @@
     <div class="field">
       <div class="control">
         <input class="button is-primary" name="" type="submit" value="Update Profile" value="">
+        <?php
+        if(isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd']))
+        {
+        ?>
+        <a href="<?php echo _app_path .ltrim($_GET['fwd'],"/") ?>" class="button is-secondary" title="Return to previous page without saving changes">Cancel</a>
+        <?php
+        }
+        ?>
+        
       </div>
     </div>
     
