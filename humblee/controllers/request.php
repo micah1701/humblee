@@ -166,7 +166,8 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		    $this->json(array("error"=>"Missing or malformed verification token"));
 		}
 		
-		$login = $this->users->logIn($_SESSION[session_key]['sms_login_email'],$_POST['sms_token'],true);
+		$users = new Core_Model_Users;
+		$login = $users->logIn($_SESSION[session_key]['sms_login_email'],$_POST['sms_token'],true);
 		if($login['access_granted'] === true )
 		{
 		    $this->json(array("success"=>true));	

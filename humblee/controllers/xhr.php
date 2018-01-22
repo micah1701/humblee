@@ -40,16 +40,13 @@ class Core_Controller_Xhr {
             header('HTTP/1.1 401 Unauthorized');  
             exit("<h1>401 Unauthorized</h1><h3>Missing Machine Key</h3><p>If you believe this is an error, please see your site administrator.</p>");
         }
+
         $crypto = new Core_Model_Crypto;
-        if(!$crypto->check_hmac_pair())
-        {
-            $crypto = new Core_Model_Crypto;
-			if(!$crypto->check_hmac_pair($_POST['hmac_token'], $_POST['hmac_key']))
-			{
-				header('HTTP/1.1 401 Unauthorized');  
-                exit("<h1>401 Unauthorized</h1><h3>Invalid Machine Authentication Key</h3>");
-			}
-        }
+		if(!$crypto->check_hmac_pair($_POST['hmac_token'], $_POST['hmac_key']))
+		{
+			header('HTTP/1.1 401 Unauthorized');  
+            exit("<h1>401 Unauthorized</h1><h3>Invalid Machine Authentication Key</h3>");
+		}
         
         return true;
     }
