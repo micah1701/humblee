@@ -190,6 +190,11 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		echo $pageObj->drawMenu_UL($menu,array('li_format'=>$li_format,'id_label'=>'contentNav_'));
 	}
 	
+	/**
+	 * manage pages
+	 * 
+	 */
+	// return table of pages 
 	public function loadPagesTable()
     {
    		$this->require_role('pages');
@@ -199,6 +204,39 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		
 		$all_pages = $pages->getPages(array('active_only'=>false,'display_in_sitemap_only'=>false));
 		echo $pages->drawMenu_UL($all_pages,array('li_format'=>$li_contents,'id_label'=>'pageID_'));
+	}
+	
+	// return properties for a given page by ID
+	public function getPageProperties()
+    {
+		$this->require_role('pages');
+		if(!isset($_POST['page_id']) || !is_numeric($_POST['page_id']))
+		{
+			$this->json(array=>"error"=>"Invalid or missing page ID");
+		}
+		
+        $page = ORM::for_table(_table_pages)->find_one($_POST['page_id']);
+        if(!$page)
+        {
+        	$this->json(array=>"error"=>"Page data not found");
+        }
+		
+		$active = ($page->active == 0) ? false : true;
+		$searchable = ($page->searchable == 0) ? false : true;
+		$display_in_sitemap = ($page->display_in_sitemap == 0) ? false : true;
+		
+        $checkTemplate = ORM::for_table( _table_templates)->select('available')->find_one($page->template_id);
+        
+		$array = array(	"success" => true,
+						"label" => $page->label, 
+						"slug" => $page->slug,
+						"template_id"=>$page->template_id,"required_role"=>$page->required_role,
+						"template_disabled" => ($checkTemplate->available == 0 && !Core::auth(array('designer','developer')) ? 1 : 0,
+						"active"=>$active, "display_in_sitemap"=>$display_in_sitemap,
+						"searchable"=>$searchable
+					);
+					
+		$this->json( $array );		
 	}
 
 }

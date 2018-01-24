@@ -5,13 +5,13 @@
 <div id="pages"></div>
 
 <div id="page_toolbar">
-	<div class="page_toolbar_button tooltip ui-icon ui-icon-wrench ui-state-default ui-corner-all" title="Edit page properties">Edit Page</div>
-	<div class="page_toolbar_button tooltip ui-icon ui-icon-arrowthick-2-n-s ui-state-default ui-corner-all" title="Re-order this page in the sitemap">Reorder</div>
-	<div class="page_toolbar_button tooltip ui-icon ui-icon-arrowreturnthick-1-e ui-state-default ui-corner-all" title="Create a new subpage">New Subpage</div>
-    <div class="page_toolbar_button tooltip ui-icon ui-icon-trash ui-state-default ui-corner-all" title="Remove this page from the site">Delete</div>
+	<div class="page_toolbar_button tooltip" title="Edit page properties">Edit Page</div>
+	<div class="page_toolbar_button tooltip" title="Re-order this page in the sitemap">Reorder</div>
+	<div class="page_toolbar_button tooltip" title="Create a new subpage">New Subpage</div>
+    <div class="page_toolbar_button tooltip" title="Remove this page from the site">Delete</div>
 </div>
 
-<button class="button is-info" onclick="openPagePropertiesModal();">Test Modal</button>
+<button class="button is-info" onclick="openPagePropertiesModal(1);">Test Modal</button>
 
 <div id="editPageDialog" class="modal">
     <div class="modal-background"></div>
