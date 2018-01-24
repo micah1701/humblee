@@ -1,7 +1,7 @@
 <h2 class="title">Website Access Log</h2>
 <p class="subtitle">Here is a list of your most recent successful log in attempts</p>
 <a class="button is-info" href="<?php echo _app_path ?>user/profile">Return to Profile</a>
-<table class="table">
+<table class="table is-striped is-hoverable">
     <thead>
         <th>Date</th>
         <th>Time</th>

@@ -174,7 +174,7 @@
 
 <div class="column">
     <h2 class="subtitle">Recent Access</h2>
-<table class="table">
+<table class="table is-striped is-hoverable">
     <thead>
         <th>Date</th>
         <th>Time</th>

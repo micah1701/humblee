@@ -189,5 +189,16 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		$li_format = '<a href=\"'._app_path.'admin/edit/?page_id=$item->thisID\">$item->label</a>'; // raw php code to be eval'd in function
 		echo $pageObj->drawMenu_UL($menu,array('li_format'=>$li_format,'id_label'=>'contentNav_'));
 	}
+	
+	public function loadPagesTable()
+    {
+   		$this->require_role('pages');
+        $li_contents = '<div class=\"pages_menu_item\" data=\"$item->thisID\"><span $drawClass title=\"$newSlug\">$item->label</span></div>'; // raw php code to be eval'd in function
+    	
+    	$pages = new Core_Model_Pages;
+		
+		$all_pages = $pages->getPages(array('active_only'=>false,'display_in_sitemap_only'=>false));
+		echo $pages->drawMenu_UL($all_pages,array('li_format'=>$li_contents,'id_label'=>'pageID_'));
+	}
 
 }

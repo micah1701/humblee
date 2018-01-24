@@ -142,7 +142,7 @@ class Core_Model_Users {
     }
     
     /**
-     * Get user's profile
+     * Get a user's access log
      *
      * returns logged in user unless $user_id is specified
      */

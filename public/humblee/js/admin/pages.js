@@ -179,6 +179,8 @@ function updateSlug(page_name){
 
 $(document).ready( function() {
 	
+	toggleContentEditDrawer(0);
+	
 	loadPagesTable();
 
 	$("#editPageDialog").dialog({

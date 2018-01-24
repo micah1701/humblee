@@ -16,6 +16,15 @@ class Core_Controller_Admin {
     }
     
     /**
+     * return an object of the logged in user's data
+     */
+    private function getUser()
+    {
+        $userObj = new Core_Model_Users;
+        return $userObj->profile();
+    }
+    
+    /**
      * call this from any function below to ensure the user has the necessary role required to access the given page
      * 
      */
@@ -30,7 +39,28 @@ class Core_Controller_Admin {
         }
     }
 	
-	public function index(){	
+	public function index(){
+	    $this->user = $this->getUser();
+        $this->recent_contents = ORM::for_table(_table_content)
+                                    ->raw_query("SELECT *
+                                                    FROM "._table_content." AS topTable
+                                                    WHERE revision_date != '0000-00-00 00:00:00' 
+                                                    AND content != '' 
+                                                    AND revision_date = (SELECT revision_date
+                                                                        FROM "._table_content." 
+                                                                        WHERE page_id = topTable.page_id 
+                                                                        AND type_id = topTable.type_id 
+                                                                        ORDER BY revision_date DESC 
+                                                                        LIMIT 1) 
+                                                    ORDER BY revision_date DESC
+                                                    LIMIT 10")
+                                    ->find_many();    
+        $getcontentTypes = ORM::for_table(_table_content_types)->find_many();
+        foreach($getcontentTypes as $getType)
+        {
+            $this->contentTypes[$getType->id] = $getType->name;
+        }
+	    
 		$this->pagebody = Core::view( _app_server_path .'humblee/views/admin/index.php',get_object_vars($this) ); 	
 		echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) ); 
 	}
