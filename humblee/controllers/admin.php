@@ -61,16 +61,16 @@ class Core_Controller_Admin {
             $this->contentTypes[$getType->id] = $getType->name;
         }
 	    
+	    $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'humblee/js/admin/index.js"></script>';
+	    
 		$this->pagebody = Core::view( _app_server_path .'humblee/views/admin/index.php',get_object_vars($this) ); 	
 		echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) ); 
 	}
 	
 	public function pages(){
 	    $this->require_role('pages');
-        //$this->extra_head_code = '<script type="text/javascript" src="'._app_path.'core/assets/js/libs/jquery.ui.nestedSortable.js"></script>';
-        //$this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'core/assets/js/libs/tooltip.js"></script>';
-        $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'humblee/js/admin/pages.js"></script>';
-       
+	    $this->extra_head_code = '<link rel="stylesheet" type="text/css" href="'._app_path.'humblee/css/admin/pages.css">';
+        $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'humblee/js/admin/pages.js"></script>';
 		$this->pagebody = Core::view( _app_server_path .'humblee/views/admin/pages.php',get_object_vars($this) ); 	
 		echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) ); 
 	}
