@@ -212,13 +212,13 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		$this->require_role('pages');
 		if(!isset($_POST['page_id']) || !is_numeric($_POST['page_id']))
 		{
-			$this->json(array=>"error"=>"Invalid or missing page ID");
+			$this->json(array("error"=>"Invalid or missing page ID"));
 		}
 		
         $page = ORM::for_table(_table_pages)->find_one($_POST['page_id']);
         if(!$page)
         {
-        	$this->json(array=>"error"=>"Page data not found");
+        	$this->json(array("error"=>"Page data not found"));
         }
 		
 		$active = ($page->active == 0) ? false : true;
@@ -230,9 +230,11 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		$array = array(	"success" => true,
 						"label" => $page->label, 
 						"slug" => $page->slug,
-						"template_id"=>$page->template_id,"required_role"=>$page->required_role,
-						"template_disabled" => ($checkTemplate->available == 0 && !Core::auth(array('designer','developer')) ? 1 : 0,
-						"active"=>$active, "display_in_sitemap"=>$display_in_sitemap,
+						"template_id"=>$page->template_id,
+						"required_role"=>$page->required_role,
+						"template_disabled" => ($checkTemplate->available == 0 && !Core::auth(array('designer','developer')) ) ? 1 : 0,
+						"active"=>$active,
+						"display_in_sitemap"=>$display_in_sitemap,
 						"searchable"=>$searchable
 					);
 					

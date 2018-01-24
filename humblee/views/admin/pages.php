@@ -11,7 +11,7 @@
     <div class="page_toolbar_button tooltip" title="Remove this page from the site">Delete</div>
 </div>
 
-<button class="button is-info" onclick="openPagePropertiesModal(1);">Test Modal</button>
+<button class="button is-info" onclick="openPagePropertiesModal('1');">Test Modal</button>
 
 <div id="editPageDialog" class="modal">
     <div class="modal-background"></div>
