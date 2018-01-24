@@ -11,7 +11,9 @@
     <div class="page_toolbar_button tooltip ui-icon ui-icon-trash ui-state-default ui-corner-all" title="Remove this page from the site">Delete</div>
 </div>
 
-<div id="editPageDialog" class="modal is-active">
+<button class="button is-info" onclick="openPagePropertiesModal();">Test Modal</button>
+
+<div id="editPageDialog" class="modal">
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
@@ -100,7 +102,7 @@
         
         <footer class="modal-card-foot">
           <button class="button is-success">Save changes</button>
-          <button class="button">Cancel</button>
+          <button class="button cancel">Cancel</button>
         </footer>
     </div>
 </div><!-- end "editPageDialog" page properties pop-up -->
