@@ -11,12 +11,12 @@
     <div class="page_toolbar_button tooltip ui-icon ui-icon-trash ui-state-default ui-corner-all" title="Remove this page from the site">Delete</div>
 </div>
 
-<div id="editPageDialog" title="Edit Page Properties" class="modal is-active">
+<div id="editPageDialog" class="modal is-active">
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
             <p class="modal-card-title">Edit Page Properties</p>
-            <button class="delete" aria-label="close"></button>    
+            <button class="delete" aria-label="close" title="close dialog"></button>    
         </header>
         
         <section class="modal-card-body">
@@ -40,7 +40,7 @@
             </div>     
             
             <div class="field">
-                <label class="label" for="template_id">Template</label> 
+                <label class="label" for="template_id">Layout</label> 
                 <div class="control">
                     <div class="select">
                         <select  id="template_id" name="template_id">
