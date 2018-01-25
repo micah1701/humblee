@@ -3,16 +3,16 @@
 class Core_Model_Users {
 	
 	/**
-	 * Converted a string of text into a standard salted hash
-	 *
-	 * $string	STRING	value to be hased
-	 * $salt	MIXED	string or INT, for unique salt use the user's ID
-	 * 
-	 * attempts to use libsodium via the paragonie/sodium_compact polyfil library
-	 * if not installed, use a simple md5();
-	 */
-    public function stringToSaltedHash($string,$salt)
-    {
+	* Converted a string of text into a standard salted hash
+	*
+	* $string	STRING	value to be hased
+	* $salt	MIXED	string or INT, for unique salt use the user's ID
+	* 
+	* attempts to use libsodium via the paragonie/sodium_compact polyfil library
+	* if not installed, use a simple md5();
+	*/
+	public function stringToSaltedHash($string,$salt)
+	{
 		$salted_string = $string.'-'.$salt;
 		if(class_exists('ParagonIE_Sodium_Compat'))
 		{
@@ -22,32 +22,33 @@ class Core_Model_Users {
 		{
 			return md5($salted_string);	    	
 		}
-    }
+	}
 	 
-    /**
-	 * Log in as given user
-	 *	
-     */
-    public function logInSession($user_id){
-	    $_SESSION[session_key] = array();
-	    $_SESSION[session_key]['user_id'] = $user_id; 
-    }
+	/**
+	* Log in as given user
+	*	
+	*/
+	public function logInSession($user_id){
+		$_SESSION[session_key] = array();
+		$_SESSION[session_key]['user_id'] = $user_id; 
+	}
 	 
-    /**
-     * Update the access log 
-     * 
-     */
-    public function accesslog($status=''){
-        $log = ORM::for_table(_table_accesslog)->create();
-        $log->session_id = session_id();
-        $log->user_id = (isset($_SESSION[session_key]['user_id'])) ? $_SESSION[session_key]['user_id'] : '';
-        $log->ip_address = $_SERVER['REMOTE_ADDR'];
-        $log->user_agent = $_SERVER['HTTP_USER_AGENT'];
-        $log->timestamp = date("Y-m-d H:i:s");
-        $log->status = $status;
-        $log->save();
-	 	
-        $ch = curl_init('https://freegeoip.net/json/' . $_SERVER['REMOTE_ADDR']);
+	/**
+	 * Update the access log 
+	 * 
+	 */
+	public function accesslog($status='')
+	{
+		$log = ORM::for_table(_table_accesslog)->create();
+		$log->session_id = session_id();
+		$log->user_id = (isset($_SESSION[session_key]['user_id'])) ? $_SESSION[session_key]['user_id'] : '';
+		$log->ip_address = $_SERVER['REMOTE_ADDR'];
+		$log->user_agent = $_SERVER['HTTP_USER_AGENT'];
+		$log->timestamp = date("Y-m-d H:i:s");
+		$log->status = $status;
+		$log->save();
+
+		$ch = curl_init('https://freegeoip.net/json/' . $_SERVER['REMOTE_ADDR']);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		$result = json_decode(curl_exec($ch));
@@ -60,20 +61,20 @@ class Core_Model_Users {
 		}
 	 }
 	 
-    /**
-     * Check credentials and log in
-     *
-     */
-    public function logIn($username,$password,$sms_login=false){
-		
+	/**
+	 * Check credentials and log in
+	 *
+	 */
+	public function logIn($username,$password,$sms_login=false)
+	{	
 		//check if given "username" is an e-mail address or a username
 		$username_column = (filter_var($username, FILTER_VALIDATE_EMAIL)) ? 'email' : 'username';
 		
 		//check for username first
 		$user = ORM::for_table( _table_users)
-						->where($username_column,$username)
-						->where('active',1)
-						->find_one();
+			->where($username_column,$username)
+			->where('active',1)
+			->find_one();
 		
 		if(!$user) { 
 			$this->accesslog('Failed: invalid credentials');
@@ -123,43 +124,46 @@ class Core_Model_Users {
 		return array("access_granted"=> true);	
 	}
 	
-    /**
-     * Log current user out
-     */
-    public function logOut(){
-        session_destroy();
-        return true;
-    }
+	/**
+	* Log current user out
+	*/
+	public function logOut()
+	{
+		session_destroy();
+		return true;
+	}
     
-    /**
-     * Get user's profile
-     *
-     * returns logged in user unless $user_id is specified
-     */
-    public function profile($user_id=NULL){
+	/**
+	* Get user's profile
+	*
+	* returns logged in user unless $user_id is specified
+	*/
+	public function profile($user_id=NULL)
+	{
 		$user_id = (is_numeric($user_id)) ? $user_id : $_SESSION[session_key]['user_id'];
 		return ORM::for_table( _table_users)->find_one($user_id); 
-    }
-    
-    /**
-     * Get a user's access log
-     *
-     * returns logged in user unless $user_id is specified
-     */
-    public function access_log($limit=100,$user_id=NULL){
+	}
+
+	/**
+	* Get a user's access log
+	*
+	* returns logged in user unless $user_id is specified
+	*/
+	public function access_log($limit=100,$user_id=NULL)
+	{
 		$user_id = (is_numeric($user_id)) ? $user_id : $_SESSION[session_key]['user_id'];
 		return ORM::for_table( _table_accesslog)
 			->where('user_id',$user_id)
 			->order_by_desc('timestamp')
 			->limit($limit)
 			->find_many(); 
-    }
+	}
 	 
-    /**
-     * Generate a random PLAIN TEXT password string
-     *
-     */
-    public function generatePassword($length=8){
+	/**
+	 * Generate a random PLAIN TEXT password string
+	 *
+	 */
+	public function generatePassword($length=8){
 		$chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 		$pw = "";
 		for($i=0; $i<$length; $i++){
@@ -169,11 +173,11 @@ class Core_Model_Users {
 		return $pw;
 	}	 
 	
-    /**
-     * Create a new user
-     *
-     */
-    public function createUser($name,$email,$username,$password=''){
+	/**
+	 * Create a new user
+	 *
+	 */
+	public function createUser($name,$email,$username,$password=''){
 		$user = ORM::for_table( _table_users )->create();
 		$user->name = $name;
 		$user->username = $username;
@@ -186,7 +190,7 @@ class Core_Model_Users {
 		$user->save();
 		
 		return $user->id;
-    }
+	}
 	 
     /**
      * Delete a user
@@ -222,11 +226,12 @@ class Core_Model_Users {
 		return true;
     }
 	
-    /**
-     * Reset a user's password and notify them by e-mail
-     *
-     */
-    public function resetPassword($user_id){
+	/**
+	* Reset a user's password and notify them by e-mail
+	*
+	*/
+	public function resetPassword($user_id)
+	{
 		if(!is_numeric($user_id)){ return false; }
 		$user = ORM::for_table( _table_users)->find_one($user_id);
 		if(!$user){ return false; }
@@ -248,11 +253,11 @@ class Core_Model_Users {
 		return $tools->sendEmail($user->email,$from,$subject,nl2br($body));		
 	}
 	
-    /**
-     * Send a registration confirmation e-mail to user
-     *
-     */
-    public function registrationEmail($email,$name,$password){
+	/**
+	* Send a registration confirmation e-mail to user
+	*
+	*/
+	public function registrationEmail($email,$name,$password){
 		$from = _default_mail_address;
 		$subject = $_ENV['config']['domain'] ." Username and Password";
 		$body = "Hi {$name},\n\n";
