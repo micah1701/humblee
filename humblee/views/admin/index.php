@@ -20,7 +20,7 @@ if(!Core::auth(array('content','developer')))
         echo "<table class=\"table is-striped is-hoverable\" width=\"100%\"><thead><th>&nbsp</th><th>Page Label</th><th>Type</th><th>Status</th><th>&nbsp;</th></thead><tbody>";                    
         foreach($recent_contents as $recent_content):
             $recentPage = ORM::for_table(_table_pages)->find_one($recent_content->page_id);
-            echo '<td><span class="tooltip" title="'. date("F j, Y h:ia",strtotime($recent_content->revision_date)) .'">'.$tools->time_ago($recent_content->revision_date) .'</span></td>';
+            echo '<td><span class="tooltip" data-tooltip="'. date("F j, Y h:ia",strtotime($recent_content->revision_date)) .'">'.$tools->time_ago($recent_content->revision_date) .'</span></td>';
             echo "<td>".$recentPage->label."</td>";
             echo "<td>".$contentTypes[$recent_content->type_id]."</td>";
             echo "<td>"; 

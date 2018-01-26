@@ -5,10 +5,10 @@
 <div id="pages" class="menu">Loading...</div>
 
 <div id="page_toolbar" class="is-pulled-right">
-	<span class="icon page_toolbar_button tooltip edit" title="Edit page properties"><i class="fas fa-edit"></i></span></span>
-	<span class="icon page_toolbar_button tooltip order" title="Re-order this page in the sitemap"><i class="fas fa-arrows-alt-v"></i></span>
-	<span class="icon page_toolbar_button tooltip newpage" title="Create a new subpage"><i class="fas fa-plus"></i></span>
-    <span class="icon page_toolbar_button tooltip trash" title="Remove this page from the site"><i class="fas fa-trash"></i></div>
+	<span class="icon page_toolbar_button tooltip edit" data-tooltip="Edit page properties"><i class="fas fa-edit"></i></span></span>
+	<span class="icon page_toolbar_button tooltip order" data-tooltip="Re-order this page in the sitemap"><i class="fas fa-arrows-alt-v"></i></span>
+	<span class="icon page_toolbar_button tooltip newpage" data-tooltip="Create a new subpage"><i class="fas fa-plus"></i></span>
+    <span class="icon page_toolbar_button tooltip trash" data-tooltip="Remove this page from the site"><i class="fas fa-trash"></i></div>
 </div>
 
 <div id="editPageDialog" class="modal">
@@ -32,7 +32,7 @@
             <div class="field">
                 <label class="label" for="slug">
                     URL Slug
-                    <span class="inline is-size-7 has-text-info tooltip" title="Reset URL Slug to previous state" style="display: none" id="reset_slug_link">
+                    <span class="inline is-size-7 has-text-info tooltip is-tooltip-right" data-tooltip="Reset URL Slug to previous state" style="display: none" id="reset_slug_link">
                         <span class="icon is-small"><i class="fas fa-undo"></i></span>
                     </span>
                 </label> 
