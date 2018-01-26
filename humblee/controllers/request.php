@@ -245,7 +245,6 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 	public function setPageProperties()
 	{
 		$this->require_role('pages');
-		$this->require_hmac();
 		if(!isset($_POST['page_id']) || !is_numeric($_POST['page_id']))
 		{
 			$this->json(array("error"=>"Invalid or missing page ID"));

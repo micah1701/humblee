@@ -107,11 +107,4 @@
         </footer>
     </div>
 
-    <?php
-    $crypto = new Core_Model_Crypto;
-    $hmac_pair = $crypto->get_hmac_pair(); 
-    ?>
-    <input type="hidden" id="hmac_token" value="<?php echo $hmac_pair['message'] ?>">
-    <input type="hidden" id="hmac_key" value="<?php echo $hmac_pair['hmac'] ?>">
-
 </div><!-- end "editPageDialog" page properties pop-up -->

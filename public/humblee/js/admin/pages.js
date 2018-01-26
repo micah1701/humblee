@@ -131,17 +131,15 @@ function updateSlug(page_name){
 
 function savePageProperties()
 {
-    var postData =  {
-                        hmac_token : $("#hmac_token").val(),
-                        hmac_key : $("#hmac_key").val(),
-                        page_id : $("#page_id").val(),
-                        label : $("#label").val(),
-                        slug : $("#slug").val(),
-                        template_id : $("#template_id").val(),
-                        active: ( $("#active").is(':checked')) ? 1 : 0,
-                        display_in_sitemap: ( $("#display_in_sitemap").is(':checked')) ? 1 : 0,
-                        required_role: $("#required_role").val() 
-                    };
+    var postData = {
+                    page_id : $("#page_id").val(),
+                    label : $("#label").val(),
+                    slug : $("#slug").val(),
+                    template_id : $("#template_id").val(),
+                    active: ( $("#active").is(':checked')) ? 1 : 0,
+                    display_in_sitemap: ( $("#display_in_sitemap").is(':checked')) ? 1 : 0,
+                    required_role: $("#required_role").val() 
+    };
     $.post(XHR_PATH + 'setPageProperties', postData, function(response){
        
         if(response.success)
@@ -173,10 +171,10 @@ function closePagePropertiesModal()
 
 function addPage(parent_id)
 {
-	$.post(XHR_PATH +'add_page',{ parent_id:parent_id }, function(response){
+	$.post(XHR_PATH +'add_page',{parent_id:parent_id}, function(response){
 		if(response.success)
 		{
-			var newPageItem = '<li id="pageID_'+response.page_id+'"><div class="pages_menu_item" data="'+ response.page_id +'"><a>New Page!</a></div></li>';
+			var newPageItem = '<li id="pageID_'+response.page_id+'"><div class="pages_menu_item" data="'+ response.page_id +'"><a>New Page</a></div></li>';
 			var parentPageItem = $(".pages_menu_item[data='"+ parent_id +"']").closest('li');
 			if(parentPageItem.hasClass('menu_hasChildren'))
 			{
