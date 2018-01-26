@@ -1,6 +1,7 @@
 <h2 class="title">Edit the pages of this site</h2>
 
-<button class="button is-link" onclick="addPage(0); return false">+ Create New Page</button>
+<button class="button tooltip is-tooltip-right is-info is-outlined" data-tooltip="Create a top level page" onclick="addPage(0); return false">
+    <span class="icon is-pulled-left"><i class="fas fa-plus"></i></span><span class="is-pulled-right">New Page</span></button>
 
 <div id="pages" class="menu">Loading...</div>
 

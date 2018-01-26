@@ -181,15 +181,23 @@ function addPage(parent_id)
 		if(response.success)
 		{
 			var newPageItem = '<li id="pageID_'+response.page_id+'"><div class="pages_menu_item" data="'+ response.page_id +'"><a>New Page</a></div></li>';
-			var parentPageItem = $(".pages_menu_item[data='"+ parent_id +"']").closest('li');
-			if(parentPageItem.hasClass('menu_hasChildren'))
+			if(parent_id == 0)
 			{
-				parentPageItem.find('ul').first().append(newPageItem);
+				$("#pages ul li").first().after(newPageItem);	
 			}
 			else
 			{
-				parentPageItem.addClass('menu_hasChildren').after('<ul class="menu-list">'+newPageItem+'</ul>');
+				var parentPageItem = $(".pages_menu_item[data='"+ parent_id +"']").closest('li');
+				if(parentPageItem.hasClass('menu_hasChildren'))
+				{
+					parentPageItem.find('ul').first().append(newPageItem);
+				}
+				else
+				{
+					parentPageItem.addClass('menu_hasChildren').after('<ul class="menu-list">'+newPageItem+'</ul>');
+				}	
 			}
+			
 			initiateToolBar();
 		}
 		else if(response.error)
