@@ -12,16 +12,16 @@ function loadPages()
 		$("#pages ul").addClass('menu-list').not(':first').addClass('is-closed');
 		$("#pages ul li a").not(':first').addClass('closed');
 			
-		$("li.menu_hasChildren").on('click',function(){
-			var firstUL = $("ul",this).first();
+		$("a.menu_hasChildren").on('click',function(){
+			var firstUL = $(this).parent().next('ul');
 			if(firstUL.hasClass('is-closed'))
 			{
-				$("a",this).removeClass('closed').addClass('open');
+				$(this).removeClass('closed');
 				firstUL.removeClass('is-closed');	
 			}
 			else
 			{
-				$("a",this).removeClass('open').addClass('closed');
+				$(this).addClass('closed');
 				firstUL.addClass('is-closed');
 			}
 		});

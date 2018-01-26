@@ -4,15 +4,12 @@ ul {
             font-family: Font Awesome\ 5 Free;
             font-weight: 900;
             margin-left: 8px;
+            content: "\f107"
         }
         
         &.closed:after {
             content: "\f105";
         }
-        &.open:after {
-            content: "\f107";
-        }
-        
     }
 
     &.is-closed {
