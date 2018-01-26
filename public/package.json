@@ -1,0 +1,17 @@
+{
+  "name": "humblee",
+  "version": "0.1.0",
+  "description": "Scripts and Styles used by the Humblee.io Framework",
+  "main": "index.js",
+  "dependencies": {
+    "bulma": "^0.6.2",
+    "bulma-tooltip": "^0.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
