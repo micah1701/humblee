@@ -7,7 +7,7 @@ ul {
             content: "\f107"
         }
         
-        &.closed:after {
+        &.has-closed:after {
             content: "\f105";
         }
     }

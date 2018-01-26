@@ -4,10 +4,8 @@ ul a.menu_hasChildren:after {
   font-weight: 900;
   margin-left: 8px;
   content: ""; }
-ul a.menu_hasChildren.closed:after {
+ul a.menu_hasChildren.has-closed:after {
   content: "\f105"; }
-ul a.menu_hasChildren.open:after {
-  content: "\f107"; }
 ul.is-closed {
   display: none; }
 

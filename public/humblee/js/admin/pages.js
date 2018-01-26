@@ -10,18 +10,18 @@ function loadPages()
 	$.get(XHR_PATH + 'loadPagesTable', function(response){
 		$("#pages").html(response);
 		$("#pages ul").addClass('menu-list').not(':first').addClass('is-closed');
-		$("#pages ul li a").not(':first').addClass('closed');
+		$("#pages ul li a").not(':first').addClass('has-closed');
 			
-		$("a.menu_hasChildren").on('click',function(){
+		$("a.menu_hasChildren").on('click', function(){
 			var firstUL = $(this).parent().next('ul');
 			if(firstUL.hasClass('is-closed'))
 			{
-				$(this).removeClass('closed');
+				$(this).removeClass('has-closed');
 				firstUL.removeClass('is-closed');	
 			}
 			else
 			{
-				$(this).addClass('closed');
+				$(this).addClass('has-closed');
 				firstUL.addClass('is-closed');
 			}
 		});
