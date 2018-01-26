@@ -6,49 +6,10 @@ $(document).ready(function(){
 
 function loadPages()
 {
-	$("#content").append( $("#page_toolbar").fadeOut(0) ); // move the toolbar out of the hovered div before reloading the list
-	$(".pages_menu_item").off('hover'); // stop the hover effect while the div is reloading
-	
 	$.get(XHR_PATH + 'loadPagesTable', function(response){
 		$("#pages").html(response);
 		$("#pages ul").addClass('menu-list');
-
-		//add tool bar on hover
-		$(".pages_menu_item").hover( function(){		
-			var item_id = $(this).attr('data');
-			var page_name = $("span",this).html();
-			
-			$("a", this).append( $("#page_toolbar") );
-				//bind "Edit Project" pop-up box
-				$(".page_toolbar_button.edit").on('click', function(e){ e.preventDefault(); openPagePropertiesModal(item_id) });
-							
-				//bind "Add Supbage" function
-				$(".page_toolbar_button.newpage").on('click', function(e){ e.preventDefault(); addPage(item_id) });
-				
-				//bind "Remove Project" delete action
-				$(".page_toolbar_button.trash").on('click', function(e){ e.preventDefault(); 
-					var x = confirm("Are you sure you want to PERMANENTLY DELETE the page \""+page_name+"\"?\n\nAll content, past and present, associated with this page will be lost!\n\nThis action can not be undone");
-					if(x){
-						$.get(XHR_PATH +'delete_page/',{page_id:item_id},function(data){
-							if($.trim(data) != "done"){
-								alert(data);
-							}else{
-								loadPages();
-								return false;
-							}
-						});
-					}else{
-						return false;
-					}
-				
-				 });
-					
-			$("#page_toolbar").fadeIn(0);
-		}, function(){
-			$(".page_toolbar_button.edit, .page_toolbar_button.order, .page_toolbar_button.newpage, .page_toolbar_button.trash").off('click');
-			$("#page_toolbar").fadeOut(0);
-		});
-
+		initiateToolBar();
 	});
 }
 
@@ -90,6 +51,34 @@ function openPagePropertiesModal(page_id)
             alert(response);
         }
     });
+}
+
+//add tool bar on hover of pages menu items
+function initiateToolBar()
+{
+	console.log('initiating toolbar');
+	$('body').append($("#page_toolbar")); // move the toolbar off the pages menu
+	$(".pages_menu_item")
+	.off( "mouseenter mouseleave" ) // remove any previous hover states bound to the pages menu
+	.hover(function(){		
+		var item_id = $(this).attr('data');
+		var page_name = $("a",this).html();
+		
+		$("a", this).append( $("#page_toolbar") );
+			//bind "Edit Project" pop-up box
+			$(".page_toolbar_button.edit").on('click', function(e){ e.preventDefault(); openPagePropertiesModal(item_id) });
+						
+			//bind "Add Supbage" function
+			$(".page_toolbar_button.newpage").on('click', function(e){ e.preventDefault(); addPage(item_id) });
+			
+			//bind "Remove Project" delete action
+			$(".page_toolbar_button.trash").on('click', function(e){ e.preventDefault(); deletePage(item_id,page_name); });
+				
+		$("#page_toolbar").fadeIn(0);
+	}, function(){
+		$(".page_toolbar_button.edit, .page_toolbar_button.order, .page_toolbar_button.newpage, .page_toolbar_button.trash").off('click');
+		$("#page_toolbar").fadeOut(0);
+	});
 }
 
 function scrubURL(val){
@@ -144,7 +133,6 @@ function savePageProperties()
        
         if(response.success)
         {
-            //do something here to oupdate the list of pages to reflect any changes made to this page
             var page_id = $("#page_id").val();
             $(".pages_menu_item[data='"+ page_id +"'] a").html($("#label").val()).attr('title',$("#slug").val() );
             
@@ -167,6 +155,7 @@ function closePagePropertiesModal()
 {
     $("#editPageDialog").removeClass('is-active');
     $("#saveButton").off("click"); // unbind the "onclick" event
+    initiateToolBar();
 }
 
 function addPage(parent_id)
@@ -184,10 +173,57 @@ function addPage(parent_id)
 			{
 				parentPageItem.addClass('menu_hasChildren').after('<ul class="menu-list">'+newPageItem+'</ul>');
 			}
+			initiateToolBar();
+		}
+		else if(response.error)
+		{
+			alert(response.error);
 		}
 		else
 		{
 			alert(response);
 		}
 	});
+}
+
+function deletePage(page_id,page_name)
+{
+	$("#confirm_delete_pagename").html('&ldquo;<em>'+page_name+'</em>&rdquo;');
+
+    //open the modal
+    $("#deletePageConfirmation").addClass('is-active');
+
+    //register ESC key and other ways to close the modal
+    setEscEvent('deletePageConfirmation',function () { closeDeletePageConfirmation() });
+    $("#deletePageConfirmation button.cancel").on("click",function(){
+        closeDeletePageConfirmation();
+    });
+    
+    $("#deleteButton").on('click',function(){
+    	$(this).attr('disabled',true);
+    	
+    	$.post(XHR_PATH +'delete_page',{page_id:page_id},function(response){
+    		$("#deleteButton").attr('disabled',false);
+			if(response.success)
+			{
+				$("#pageID_"+page_id).remove();
+				closeDeletePageConfirmation();
+			}
+			else if(response.error)
+			{
+				alert(response.error)
+			}
+			else
+			{
+				alert(response);
+			}
+		});
+    });
+}
+
+function closeDeletePageConfirmation()
+{
+	$("#deletePageConfirmation").removeClass('is-active');
+	$("#deleteButton").off("click"); // unbind the "onclick" event
+	initiateToolBar();
 }

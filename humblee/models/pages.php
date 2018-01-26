@@ -5,43 +5,70 @@ class Core_Model_Pages {
 	/**
 	 * INSERT or UPDATE a page with user submited POST data
 	 *
-	 * 	$action string	"update" or "add"
-	 *	$post	ARRAY	$_POST data	
+	 * 	$action string	"update" or "add" or "delete"
+	 *	$post	ARRAY	$_POST data	(requires "parent_id" for adding a page and "page_id" for updating or deleting a page)
+	 * 
+	 *	@returns MIXED	page_id (for adding/updating) string "success" (for delete) or error string
 	 */
 	public function add_or_update($action,$post)
     {	
-		//make sure a PARENT ID was set
-		if(!isset($post['parent_id']) || !is_numeric($post['parent_id'])){ exit("Invalid Parent ID"); }
-		
-		//make sure PAGE ID was set IF this is an "update" command
-		if($action == "update" && ( !isset($post['id']) || !is_numeric($post['id'])) ){ exit("Invalid Page ID"); }
-	
-		//if this is a child page (it has a parent id) make sure the parent isn't the homepage
-		if($post['parent_id'] != 0)
-        {		
-				$parent = ORM::for_table( _table_pages )->find_one($post['parent_id']);
-				if($parent->slug == "" || $parent->slug == "/"){ exit("Can not create subpage of homepage or a page without a valid uri slug"); }
-		}
-		
 		// update the pages table with this action
 		if($action == "add")
         {
+			//make sure a PARENT ID was set
+			if(!isset($post['parent_id']) || !is_numeric($post['parent_id']))
+			{ 
+				return "Invalid Parent ID"; 
+			}
+			
+			//if this is a child page (it has a parent id) make sure the parent isn't the homepage
+			if($post['parent_id'] != 0)
+	        {		
+					$parent = ORM::for_table( _table_pages )->find_one($post['parent_id']);
+					if($parent->slug == "" || $parent->slug == "/")
+					{
+						return "Can not create child page of the homepage or a page without a valid uri slug";
+					}
+			}
 			$page = ORM::for_table( _table_pages )->create();
+			$page->parent_id = $post['parent_id'];
 		}
+        elseif($action == "update" && ( isset($post['page_id']) || is_numeric($post['page_id'])))
+        {
+			$page = ORM::for_table( _table_pages )->find_one($post['page_id']);
+			if(!$page)
+			{
+				return "Could not find specified page to update.";
+			}
+        }
+        elseif($action == "delete" && ( isset($post['page_id']) || is_numeric($post['page_id'])))
+        {
+			$page = ORM::for_table( _table_pages )->find_one($post['page_id']);
+			if(!$page)
+			{
+				return "Could not find specified page to delete.";
+			}
+			$subpages = ORM::for_table( _table_pages)->where('parent_id',$post['page_id'])->find_many();
+			if($subpages){
+				return ("Can not delete this page becomes it has ".count($subpages)." subpage(s).  Please move or delete child pages first.");
+			}
+			$page->delete();
+			return "success";
+        }
         else
         {
-			$page = ORM::for_table( _table_pages )->find_one($post['id']);	
-		}
-			$page->parent_id = $post['parent_id'];
-			$page->slug = (isset($post['slug']) && $post['slug'] != "") ? $post['slug'] : "new-".date("YmdHis");
-			$page->label = (isset($post['label']) && $post['label'] != "") ? $post['label'] : "New Page";
-			$page->display_order = (isset($post['display_order']) && $post['display_order'] != "") ? $post['display_order'] : 0;
-			$page->template_id = (isset($post['template_id']) && $post['template_id'] != "") ? $post['template_id'] : 1;
-			$page->active = (isset($post['active']) && is_numeric($post['active']) ) ? $post['active'] : 1;
-			$page->searchable = (isset($post['searchable']) && is_numeric($post['searchable']) ) ? $post['searchable'] : 1;
-			$page->display_in_sitemap = (isset($post['display_in_sitemap']) && is_numeric($post['display_in_sitemap']) ) ? $post['display_in_sitemap'] : 1;
-			$page->save();
-		
+        	return "Error: missing page action or page id";
+        }
+
+		$page->slug = (isset($post['slug']) && $post['slug'] != "") ? $post['slug'] : "new-".date("YmdHis");
+		$page->label = (isset($post['label']) && $post['label'] != "") ? $post['label'] : "New Page";
+		$page->display_order = (isset($post['display_order']) && $post['display_order'] != "") ? $post['display_order'] : 0;
+		$page->template_id = (isset($post['template_id']) && $post['template_id'] != "") ? $post['template_id'] : 1;
+		$page->active = (isset($post['active']) && is_numeric($post['active']) ) ? $post['active'] : 1;
+		$page->searchable = (isset($post['searchable']) && is_numeric($post['searchable']) ) ? $post['searchable'] : 1;
+		$page->display_in_sitemap = (isset($post['display_in_sitemap']) && is_numeric($post['display_in_sitemap']) ) ? $post['display_in_sitemap'] : 1;
+		$page->save();
+
 		return $page->id(); 
 	}
 	

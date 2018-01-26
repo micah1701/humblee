@@ -1,7 +1,14 @@
 /* global $ */
 
 $(document).ready(function(){
-   setFooterPosition();
+    setFooterPosition();
+   
+    //add a "data-tooltip" attribute to any element with a "tooltip" class
+    //value of the attribut is equal to the title, if set
+    $('.tooltip').each(function(el){
+        $(this).attr('data-tooltip',$(this).attr('title'));
+    });
+
 });
 
 $(window).resize(function(){
@@ -9,7 +16,10 @@ $(window).resize(function(){
 });
 
 //move footer to bottom if page doesn't have much content
-function setFooterPosition(){
+function setFooterPosition()
+{
+    return false; // lets revist this later
+    
     if ($(document.body).height() < $(window).outerHeight() - $("footer").outerHeight() )
     {
         $('footer.footer').attr('style', 'position: fixed!important; bottom: 0px; width: 100%');

@@ -108,3 +108,32 @@
     </div>
 
 </div><!-- end "editPageDialog" page properties pop-up -->
+
+<div id="deletePageConfirmation" class="modal">
+    <div class="modal-background"></div>
+        <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Delete <span id="confirm_delete_pagename"><em>"Your Page Name that is really long and just keeps going on forever"</em></span></p>
+        </header>
+        
+        <section class="modal-card-body">
+            <article class="media">
+                <div class="media-content">
+                    <p><strong>Are you sure you want to <span class="has-text-danger">PERMANENTLY DELETE</span> this page?</strong></p>
+                    <p>All content, past and present, associated with this page will be lost!</p>
+                </div>      
+                <figure class="media-right">
+                    <span class="icon is-large">
+                        <i class="fas fa-3x fa-exclamation-circle has-text-danger"></i>
+                    </span>
+                </figure>
+            </article>
+        </section>
+    
+        <footer class="modal-card-foot">
+          <button id="deleteButton" class="button is-danger">Delete Page</button>
+          <button class="button cancel">Cancel</button>
+          <span class="has-text-info">This action can not be undone</span>    
+        </footer>
+    </div>
+</div><!-- end of deletePageConfirmation -->

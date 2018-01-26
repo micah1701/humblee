@@ -245,34 +245,46 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 	public function setPageProperties()
 	{
 		$this->require_role('pages');
-		if(!isset($_POST['page_id']) || !is_numeric($_POST['page_id']))
+		$pages = new Core_Model_Pages;
+		$page = $pages->add_or_update("update",$_POST);
+		if(is_numeric($page))
 		{
-			$this->json(array("error"=>"Invalid or missing page ID"));
+			$this->json(array('success'=>true,'page_id'=>$page));			
 		}
-		
-		$page = ORM::for_table(_table_pages)->find_one($_POST['page_id']);
-        if(!$page)
-        {
-        	$this->json(array("error"=>"Page data not found"));
-        }
-        
-        $page->label = $_POST['label'];
-		$page->slug = $_POST['slug'];
-		$page->template_id = $_POST['template_id'];
-		$page->required_role = $_POST['required_role'];
-		$page->active = ($_POST['active'] == 1) ? 1 : 0;
-		$page->display_in_sitemap = ($_POST['display_in_sitemap'] == 1) ? 1 : 0;
-		$page->save();
-		
-		$this->json( array('success'=>true));
+
+		$this->json(array('error'=>$page));
 	}
 	
 	public function add_page()
     {
 		$this->require_role('pages');
         $pages = new Core_Model_Pages;
-		$newPageId = $pages->add_or_update("add",$_POST);
-		$this->json(array('success'=>true,'page_id'=>$newPageId));
+		$newPage = $pages->add_or_update("add",$_POST);
+		if(is_numeric($newPage))
+		{
+			$this->json(array('success'=>true,'page_id'=>$newPage));			
+		}
+		
+		$this->json(array('error'=>$newPage));
 	}
+
+	//delete a page and all of its contents
+	public function delete_page()
+    {
+		$this->require_role('pages');
+        $pages = new Core_Model_Pages;
+        $deletePage = $pages->add_or_update("delete",$_POST);
+        if($deletePage == "success")
+        {
+        	$contents = ORM::for_table( _table_content)->where('page_id',$_POST['page_id'])->find_many();
+			foreach($contents as $content)
+			{
+				$content->delete();
+			}
+			$this->json(array('success'=>true));
+        }
+        
+        $this->json(array('error'=>$deletePage));
+    }
 
 }
