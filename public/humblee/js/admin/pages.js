@@ -7,6 +7,7 @@ $(document).ready(function(){
 
 function loadPages()
 {
+	saveToolbar();
 	$.get(XHR_PATH + 'loadPagesTable', function(response){
 		$("#pages").html(response);
 		$("#pages ul").addClass('menu-list').not(':first').addClass('is-closed');
@@ -25,7 +26,6 @@ function loadPages()
 				firstUL.addClass('is-closed');
 			}
 		});
-		
 		initiateToolBar();
 	});
 }
@@ -70,11 +70,15 @@ function openPagePropertiesModal(page_id)
     });
 }
 
+// move the toolbar off the pages menu so it doesn't accidently get deleted
+function saveToolbar()
+{
+	$('body').append($("#page_toolbar"));
+}
+
 //add tool bar on hover of pages menu items
 function initiateToolBar()
 {
-	console.log('initiating toolbar');
-	$('body').append($("#page_toolbar")); // move the toolbar off the pages menu
 	$(".pages_menu_item")
 	.off( "mouseenter mouseleave" ) // remove any previous hover states bound to the pages menu
 	.hover(function(){		
@@ -137,6 +141,7 @@ function updateSlug(page_name){
 
 function savePageProperties()
 {
+    saveToolbar();
     var postData = {
                     page_id : $("#page_id").val(),
                     label : $("#label").val(),
@@ -177,6 +182,7 @@ function closePagePropertiesModal()
 
 function addPage(parent_id)
 {
+	saveToolbar();
 	$.post(XHR_PATH +'add_page',{parent_id:parent_id}, function(response){
 		if(response.success)
 		{
@@ -215,6 +221,8 @@ function deletePage(page_id,page_name)
 {
 	$("#confirm_delete_pagename").html('&ldquo;<em>'+page_name+'</em>&rdquo;');
 
+    saveToolbar();
+    
     //open the modal
     $("#deletePageConfirmation").addClass('is-active');
 
