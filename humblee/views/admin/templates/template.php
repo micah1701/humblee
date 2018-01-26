@@ -7,10 +7,12 @@
 
 <link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>node_modules/bulma/css/bulma.css">
 <link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>node_modules/bulma-tooltip/bulma-tooltip.min.css">
+<link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!--
 <script defer src="https://use.fontawesome.com/releases/v5.0.0/js/all.js"></script>
-
+-->
 <script type="text/javascript">var  APP_PATH = "<?php echo  _app_path ?>", XHR_PATH = "<?php echo  _app_path ?>core-request/";</script>
 <script src="<?php echo  _app_path ?>humblee/js/admin/admin.js"></script>
 <?php echo (isset($extra_head_code) ) ? $extra_head_code : '' ?>

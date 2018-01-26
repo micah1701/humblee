@@ -2,13 +2,30 @@
 
 $(document).ready(function(){
 	loadPages();
+	
 });
 
 function loadPages()
 {
 	$.get(XHR_PATH + 'loadPagesTable', function(response){
 		$("#pages").html(response);
-		$("#pages ul").addClass('menu-list');
+		$("#pages ul").addClass('menu-list').not(':first').addClass('is-closed');
+		$("#pages ul li a").not(':first').addClass('closed');
+			
+		$("li.menu_hasChildren").on('click',function(){
+			var firstUL = $("ul",this).first();
+			if(firstUL.hasClass('is-closed'))
+			{
+				$("a",this).removeClass('closed').addClass('open');
+				firstUL.removeClass('is-closed');	
+			}
+			else
+			{
+				$("a",this).removeClass('open').addClass('closed');
+				firstUL.addClass('is-closed');
+			}
+		});
+		
 		initiateToolBar();
 	});
 }
