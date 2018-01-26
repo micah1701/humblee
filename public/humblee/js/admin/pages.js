@@ -87,13 +87,13 @@ function initiateToolBar()
 		
 		$("a", this).append( $("#page_toolbar") );
 			//bind "Edit Project" pop-up box
-			$(".page_toolbar_button.edit").on('click', function(e){ e.preventDefault(); openPagePropertiesModal(item_id) });
+			$(".page_toolbar_button.edit").on('click', function(e){ e.stopPropagation(); openPagePropertiesModal(item_id) });
 						
 			//bind "Add Supbage" function
-			$(".page_toolbar_button.newpage").on('click', function(e){ e.preventDefault(); addPage(item_id) });
+			$(".page_toolbar_button.newpage").on('click', function(e){ e.stopPropagation(); addPage(item_id) });
 			
 			//bind "Remove Project" delete action
-			$(".page_toolbar_button.trash").on('click', function(e){ e.preventDefault(); deletePage(item_id,page_name); });
+			$(".page_toolbar_button.trash").on('click', function(e){ e.stopPropagation(); deletePage(item_id,page_name); });
 				
 		$("#page_toolbar").fadeIn(0);
 	}, function(){
