@@ -71,8 +71,14 @@
                     <div class="navbar-item has-dropdown is-hoverable">
                         <div class="navbar-link">Account</div>
                         <div class="navbar-dropdown">
-                            <a class="navbar-item" href="<?php echo  _app_path ?>user/profile/?fwd=<?php echo _app_path . Core::getURI(); ?>">Update Profile</a>
-                            <a class="navbar-item" href="<?php echo  _app_path ?>user/logout">Log Out</a>
+                            <a class="navbar-item" href="<?php echo  _app_path ?>user/profile/?fwd=<?php echo _app_path . Core::getURI(); ?>">
+                                <span class="icon"><i class="fas fa-user" aria-hidden="true"></i></span>
+                                Update Profile
+                            </a>
+                            <a class="navbar-item" href="<?php echo  _app_path ?>user/logout">
+                                <span class="icon"><i class="fas fa-sign-out" aria-hidden="true"></i></span>
+                                Log Out
+                            </a>
                         </div>   
                     </div>
                     

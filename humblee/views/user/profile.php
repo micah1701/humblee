@@ -33,7 +33,7 @@
 <section class="columns is-variable is-8">
 
   <div class="column">  
-  <form action="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? "?fwd=".$_GET['fwd'] : '' ?>" method="post">
+  <form action="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? "?fwd=".$_GET['fwd'] : '' ?>" autocomplete="off" method="post">
     
     <div class="field">
       <label class="label" for="name">Full Name</label> 
@@ -134,13 +134,13 @@
     <div class="field">
       <label class="label" for="name">New Password <span class="has-text-weight-normal has-text-grey">(optional)</span></label>
       <div class="control">
-        <input class="input" type="password" id="password" name="password" placeholder="Leave blank to keep exisiting password">
+        <input class="input" type="password" id="password" name="password" placeholder="Leave blank to keep exisiting password" autocomplete="new-password" value="">
       </div>
     </div>
     <div id="confirm_password_block" class="field" style="display: none">
       <label class="label" for="password_check">Confirm Password</label> 
       <div class="control">
-        <input class="input" type="password" id="password_check" name="password_check">
+        <input class="input" type="password" id="password_check" autocomplete="new-password" name="password_check">
       </div>
     </div>
     </div>
@@ -249,6 +249,12 @@
         $("#confirm_password_block").fadeIn('fast');
       }
     });
+    
+    //override browser trying to be nice and prefilling the password field.
+    //the field needs to be blank if the user is not changing their password.
+    setTimeout(function(){
+      $("#password").val('');
+    },100);
   });
 </script>
 
