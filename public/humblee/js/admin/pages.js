@@ -6,11 +6,13 @@ $(document).ready(function(){
 
 function loadPages()
 {
+	$("#content").append( $("#page_toolbar").fadeOut(0) ); // move the toolbar out of the hovered div before reloading the list
+	$(".pages_menu_item").off('hover'); // stop the hover effect while the div is reloading
+	
 	$.get(XHR_PATH + 'loadPagesTable', function(response){
 		$("#pages").html(response);
 		$("#pages ul").addClass('menu-list');
-		
-		
+
 		//add tool bar on hover
 		$(".pages_menu_item").hover( function(){		
 			var item_id = $(this).attr('data');
@@ -18,20 +20,20 @@ function loadPages()
 			
 			$("a", this).append( $("#page_toolbar") );
 				//bind "Edit Project" pop-up box
-				$(".page_toolbar_button.edit").on('click', function(e){ e.stopPropagation(); openPagePropertiesModal(item_id) });
+				$(".page_toolbar_button.edit").on('click', function(e){ e.preventDefault(); openPagePropertiesModal(item_id) });
 							
 				//bind "Add Supbage" function
-				$(".page_toolbar_button.newpage").on('click', function(e){ e.stopPropagation(); addPage(item_id) });
+				$(".page_toolbar_button.newpage").on('click', function(e){ e.preventDefault(); addPage(item_id) });
 				
 				//bind "Remove Project" delete action
-				$(".page_toolbar_button.trash").on('click', function(e){ e.stopPropagation(); 
+				$(".page_toolbar_button.trash").on('click', function(e){ e.preventDefault(); 
 					var x = confirm("Are you sure you want to PERMANENTLY DELETE the page \""+page_name+"\"?\n\nAll content, past and present, associated with this page will be lost!\n\nThis action can not be undone");
 					if(x){
 						$.get(XHR_PATH +'delete_page/',{page_id:item_id},function(data){
 							if($.trim(data) != "done"){
 								alert(data);
 							}else{
-								loadPagesTable();
+								loadPages();
 								return false;
 							}
 						});
@@ -43,14 +45,10 @@ function loadPages()
 					
 			$("#page_toolbar").fadeIn(0);
 		}, function(){
-			$(".page_toolbar_button.edit, .page_toolbar_button.order, .page_toolbar_button.newpage, .page_toolbar_button.trash").unbind('click');
+			$(".page_toolbar_button.edit, .page_toolbar_button.order, .page_toolbar_button.newpage, .page_toolbar_button.trash").off('click');
 			$("#page_toolbar").fadeOut(0);
-		})
-		
-		.on('click', function(e){ e.stopPropagation(); openPagePropertiesModal($(this).attr('data')) });
-		
-		
-		
+		});
+
 	});
 }
 
@@ -61,7 +59,6 @@ function openPagePropertiesModal(page_id)
     $.post(XHR_PATH + 'getPageProperties', {page_id:page_id}, function(response){
         if(response.success)
         {
-            
             $("#label").val(response.label);
             $("#slug").val(response.slug);
             $("#original_slug").val(response.slug);
@@ -83,7 +80,6 @@ function openPagePropertiesModal(page_id)
             $("#editPageDialog .delete, #editPageDialog button.cancel").on("click",function(){
                 closePagePropertiesModal();
             });
-            
         }
         else if(response.error != undefined)
         {
@@ -151,7 +147,8 @@ function savePageProperties()
         if(response.success)
         {
             //do something here to oupdate the list of pages to reflect any changes made to this page
-            var doSomething = "something";
+            var page_id = $("#page_id").val();
+            $(".pages_menu_item[data='"+ page_id +"'] a").html($("#label").val()).attr('title',$("#slug").val() );
             
             //then close the modal
             closePagePropertiesModal();
@@ -172,4 +169,27 @@ function closePagePropertiesModal()
 {
     $("#editPageDialog").removeClass('is-active');
     $("#saveButton").off("click"); // unbind the "onclick" event
+}
+
+function addPage(parent_id)
+{
+	$.post(XHR_PATH +'add_page',{ parent_id:parent_id }, function(response){
+		if(response.success)
+		{
+			var newPageItem = '<li id="pageID_'+response.page_id+'"><div class="pages_menu_item" data="'+ response.page_id +'"><a>New Page!</a></div></li>';
+			var parentPageItem = $(".pages_menu_item[data='"+ parent_id +"']").closest('li');
+			if(parentPageItem.hasClass('menu_hasChildren'))
+			{
+				parentPageItem.find('ul').first().append(newPageItem);
+			}
+			else
+			{
+				parentPageItem.addClass('menu_hasChildren').after('<ul class="menu-list">'+newPageItem+'</ul>');
+			}
+		}
+		else
+		{
+			alert(response);
+		}
+	});
 }

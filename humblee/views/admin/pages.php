@@ -4,14 +4,12 @@
 
 <div id="pages" class="menu">Loading...</div>
 
-<div id="page_toolbar">
+<div id="page_toolbar" class="is-pulled-right">
 	<span class="icon page_toolbar_button tooltip edit" title="Edit page properties"><i class="fas fa-edit"></i></span></span>
 	<span class="icon page_toolbar_button tooltip order" title="Re-order this page in the sitemap"><i class="fas fa-arrows-alt-v"></i></span>
 	<span class="icon page_toolbar_button tooltip newpage" title="Create a new subpage"><i class="fas fa-plus"></i></span>
     <span class="icon page_toolbar_button tooltip trash" title="Remove this page from the site"><i class="fas fa-trash"></i></div>
 </div>
-
-<button class="button is-info" onclick="openPagePropertiesModal('2');">Test Modal</button>
 
 <div id="editPageDialog" class="modal">
     <div class="modal-background"></div>

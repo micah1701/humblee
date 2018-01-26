@@ -266,7 +266,14 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		$page->save();
 		
 		$this->json( array('success'=>true));
-        
+	}
+	
+	public function add_page()
+    {
+		$this->require_role('pages');
+        $pages = new Core_Model_Pages;
+		$newPageId = $pages->add_or_update("add",$_POST);
+		$this->json(array('success'=>true,'page_id'=>$newPageId));
 	}
 
 }

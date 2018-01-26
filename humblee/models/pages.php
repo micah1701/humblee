@@ -23,11 +23,6 @@ class Core_Model_Pages {
 				if($parent->slug == "" || $parent->slug == "/"){ exit("Can not create subpage of homepage or a page without a valid uri slug"); }
 		}
 		
-		// TO DO: check auth to make sure user can add page
-			// should have either a "master" role that allows adding pages
-			// or their id should match the table of specific user id's that can edit specific page ids
-			// if the parent id is zero, make sure they have access to add top level pages
-		
 		// update the pages table with this action
 		if($action == "add")
         {

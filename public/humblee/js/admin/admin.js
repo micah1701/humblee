@@ -34,7 +34,6 @@ var escEvents = new Array();
     function unsetEscEvent(eventName)
     {
       $.each(escEvents, function (index, value) {
-          console.log(value);
           if (value['eventName'] == eventName)
           {
               escEvents.splice(index);
