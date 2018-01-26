@@ -2,13 +2,13 @@
 
 <button class="button is-link" onclick="addPage(0); return false">+ Create New Page</button>
 
-<div id="pages"></div>
+<div id="pages" class="menu">Loading...</div>
 
 <div id="page_toolbar">
-	<div class="page_toolbar_button tooltip" title="Edit page properties">Edit Page</div>
-	<div class="page_toolbar_button tooltip" title="Re-order this page in the sitemap">Reorder</div>
-	<div class="page_toolbar_button tooltip" title="Create a new subpage">New Subpage</div>
-    <div class="page_toolbar_button tooltip" title="Remove this page from the site">Delete</div>
+	<span class="icon page_toolbar_button tooltip edit" title="Edit page properties"><i class="fas fa-edit"></i></span></span>
+	<span class="icon page_toolbar_button tooltip order" title="Re-order this page in the sitemap"><i class="fas fa-arrows-alt-v"></i></span>
+	<span class="icon page_toolbar_button tooltip newpage" title="Create a new subpage"><i class="fas fa-plus"></i></span>
+    <span class="icon page_toolbar_button tooltip trash" title="Remove this page from the site"><i class="fas fa-trash"></i></div>
 </div>
 
 <button class="button is-info" onclick="openPagePropertiesModal('2');">Test Modal</button>

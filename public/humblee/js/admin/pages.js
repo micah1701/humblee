@@ -1,8 +1,58 @@
 /* global $, setEscEvent, XHR_PATH, APP_PATH */
 
 $(document).ready(function(){
-	
+	loadPages();
 });
+
+function loadPages()
+{
+	$.get(XHR_PATH + 'loadPagesTable', function(response){
+		$("#pages").html(response);
+		$("#pages ul").addClass('menu-list');
+		
+		
+		//add tool bar on hover
+		$(".pages_menu_item").hover( function(){		
+			var item_id = $(this).attr('data');
+			var page_name = $("span",this).html();
+			
+			$("a", this).append( $("#page_toolbar") );
+				//bind "Edit Project" pop-up box
+				$(".page_toolbar_button.edit").on('click', function(e){ e.stopPropagation(); openPagePropertiesModal(item_id) });
+							
+				//bind "Add Supbage" function
+				$(".page_toolbar_button.newpage").on('click', function(e){ e.stopPropagation(); addPage(item_id) });
+				
+				//bind "Remove Project" delete action
+				$(".page_toolbar_button.trash").on('click', function(e){ e.stopPropagation(); 
+					var x = confirm("Are you sure you want to PERMANENTLY DELETE the page \""+page_name+"\"?\n\nAll content, past and present, associated with this page will be lost!\n\nThis action can not be undone");
+					if(x){
+						$.get(XHR_PATH +'delete_page/',{page_id:item_id},function(data){
+							if($.trim(data) != "done"){
+								alert(data);
+							}else{
+								loadPagesTable();
+								return false;
+							}
+						});
+					}else{
+						return false;
+					}
+				
+				 });
+					
+			$("#page_toolbar").fadeIn(0);
+		}, function(){
+			$(".page_toolbar_button.edit, .page_toolbar_button.order, .page_toolbar_button.newpage, .page_toolbar_button.trash").unbind('click');
+			$("#page_toolbar").fadeOut(0);
+		})
+		
+		.on('click', function(e){ e.stopPropagation(); openPagePropertiesModal($(this).attr('data')) });
+		
+		
+		
+	});
+}
 
 function openPagePropertiesModal(page_id)
 {

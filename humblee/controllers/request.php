@@ -198,7 +198,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 	public function loadPagesTable()
     {
    		$this->require_role('pages');
-        $li_contents = '<div class=\"pages_menu_item\" data=\"$item->thisID\"><span $drawClass title=\"$newSlug\">$item->label</span></div>'; // raw php code to be eval'd in function
+        $li_contents = '<div class=\"pages_menu_item\" data=\"$item->thisID\"><a $drawClass title=\"$newSlug\">$item->label</a></div>'; // raw php code to be eval'd in function
     	
     	$pages = new Core_Model_Pages;
 		
