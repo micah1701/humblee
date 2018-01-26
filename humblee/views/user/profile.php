@@ -22,7 +22,7 @@
     
     <a class="button is-secondary is-pulled-right" href="<?php echo _app_path ?>user/logout">
       <span class="icon has-text-danger">
-        <i class="fas fa-times"></i>
+        <i class="fas fa-sign-out-alt"></i>
       </span>
       <span class="is-pulled-right">Log out</span>
     </a>   

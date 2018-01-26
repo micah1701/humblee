@@ -245,6 +245,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 	public function setPageProperties()
 	{
 		$this->require_role('pages');
+		$this->require_hmac();
 		if(!isset($_POST['page_id']) || !is_numeric($_POST['page_id']))
 		{
 			$this->json(array("error"=>"Invalid or missing page ID"));
@@ -261,7 +262,6 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		$page->template_id = $_POST['template_id'];
 		$page->required_role = $_POST['required_role'];
 		$page->active = ($_POST['active'] == 1) ? 1 : 0;
-		$page->searchable = ($_POST['searchable'] == 1) ? 1 : 0;
 		$page->display_in_sitemap = ($_POST['display_in_sitemap'] == 1) ? 1 : 0;
 		$page->save();
 		

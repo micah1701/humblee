@@ -1,14 +1,17 @@
 /* global $, setEscEvent, XHR_PATH, APP_PATH */
 
 $(document).ready(function(){
-
+	
 });
 
 function openPagePropertiesModal(page_id)
 {
+    $("#page_id").val(page_id);
+    
     $.post(XHR_PATH + 'getPageProperties', {page_id:page_id}, function(response){
         if(response.success)
         {
+            
             $("#label").val(response.label);
             $("#slug").val(response.slug);
             $("#original_slug").val(response.slug);
@@ -16,6 +19,11 @@ function openPagePropertiesModal(page_id)
             $("#active").attr('checked',response.active);
             $("#display_in_sitemap").attr('checked',response.display_in_sitemap);
             $("#required_role").val(response.required_role);
+            
+            $("#saveButton").on('click',function(e){
+            	e.preventDefault();
+            	savePageProperties();
+			});
             
             //open the modal
             $("#editPageDialog").addClass('is-active');
@@ -69,7 +77,9 @@ function updateSlug(page_name){
 	}
 	else
 	{
-		$("#reset_slug_link").fadeOut('fast');	
+		$("#reset_slug_link")
+		 .off("click")
+		 .fadeOut('fast');
 	}	
 }
 
@@ -78,14 +88,15 @@ function savePageProperties()
     var postData =  {
                         hmac_token : $("#hmac_token").val(),
                         hmac_key : $("#hmac_key").val(),
+                        page_id : $("#page_id").val(),
                         label : $("#label").val(),
                         slug : $("#slug").val(),
-                        template_id : $("#template_id"),
+                        template_id : $("#template_id").val(),
                         active: ( $("#active").is(':checked')) ? 1 : 0,
                         display_in_sitemap: ( $("#display_in_sitemap").is(':checked')) ? 1 : 0,
                         required_role: $("#required_role").val() 
                     };
-    $.post(XHR_PATH + 'setPageProperties', {postData}, function(response){
+    $.post(XHR_PATH + 'setPageProperties', postData, function(response){
        
         if(response.success)
         {
@@ -110,4 +121,5 @@ function savePageProperties()
 function closePagePropertiesModal()
 {
     $("#editPageDialog").removeClass('is-active');
+    $("#saveButton").off("click"); // unbind the "onclick" event
 }

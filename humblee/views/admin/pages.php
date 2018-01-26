@@ -27,6 +27,7 @@
                 <label class="label" for="label">Nav Label</label> 
                 <div class="control">
                     <input class="input" type="text" id="label" name="label" size="45" value="" onkeyup="updateSlug(this.value)">
+                    <input type="hidden" id="page_id">
                 </div>
             </div>    
 
@@ -103,7 +104,7 @@
         </section>
         
         <footer class="modal-card-foot">
-          <button class="button is-success">Save changes</button>
+          <button id="saveButton" class="button is-success">Save changes</button>
           <button class="button cancel">Cancel</button>
         </footer>
     </div>

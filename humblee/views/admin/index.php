@@ -12,10 +12,8 @@ if(!Core::auth(array('content','developer')))
         <p class="is-size-5">Edit Content by Page</p>
         <aside id="contentMenu" class="menu">&nbsp; loading...</aside>
     </div>
-
-            
+  
     <div  class="column">       
-
         <p class="is-size-5">Recently Edited Content Elements:</p>
         <aside id="recentlyeditedcontent">
         <?php
