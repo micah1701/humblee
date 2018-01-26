@@ -11,7 +11,7 @@
     <div class="page_toolbar_button tooltip" title="Remove this page from the site">Delete</div>
 </div>
 
-<button class="button is-info" onclick="openPagePropertiesModal('1');">Test Modal</button>
+<button class="button is-info" onclick="openPagePropertiesModal('2');">Test Modal</button>
 
 <div id="editPageDialog" class="modal">
     <div class="modal-background"></div>
@@ -33,11 +33,13 @@
             <div class="field">
                 <label class="label" for="slug">
                     URL Slug
-                    <span class="inline" style="display: none" id="reset_slug_link"><a href="" onclick="$('#slug').val( $('#original_slug').val() ); return false">(reset slug)</a></span>
+                    <span class="inline is-size-7 has-text-info tooltip" title="Reset URL Slug to previous state" style="display: none" id="reset_slug_link">
+                        <span class="icon is-small"><i class="fas fa-undo"></i></span>
+                    </span>
                 </label> 
                 <div class="control">
                     <input class="input" type="text" id="slug" name="slug">
-                    <input type="hidden" id="original_slug" value="">
+                    <input type="hidden" id="original_slug">
                 </div>
             </div>     
             
@@ -105,4 +107,12 @@
           <button class="button cancel">Cancel</button>
         </footer>
     </div>
+
+    <?php
+    $crypto = new Core_Model_Crypto;
+    $hmac_pair = $crypto->get_hmac_pair(); 
+    ?>
+    <input type="hidden" id="hmac_token" value="<?php echo $hmac_pair['message'] ?>">
+    <input type="hidden" id="hmac_key" value="<?php echo $hmac_pair['hmac'] ?>">
+
 </div><!-- end "editPageDialog" page properties pop-up -->

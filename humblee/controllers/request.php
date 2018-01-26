@@ -240,5 +240,33 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 					
 		$this->json( $array );		
 	}
+	
+	// save properties for a given page
+	public function setPageProperties()
+	{
+		$this->require_role('pages');
+		if(!isset($_POST['page_id']) || !is_numeric($_POST['page_id']))
+		{
+			$this->json(array("error"=>"Invalid or missing page ID"));
+		}
+		
+		$page = ORM::for_table(_table_pages)->find_one($_POST['page_id']);
+        if(!$page)
+        {
+        	$this->json(array("error"=>"Page data not found"));
+        }
+        
+        $page->label = $_POST['label'];
+		$page->slug = $_POST['slug'];
+		$page->template_id = $_POST['template_id'];
+		$page->required_role = $_POST['required_role'];
+		$page->active = ($_POST['active'] == 1) ? 1 : 0;
+		$page->searchable = ($_POST['searchable'] == 1) ? 1 : 0;
+		$page->display_in_sitemap = ($_POST['display_in_sitemap'] == 1) ? 1 : 0;
+		$page->save();
+		
+		$this->json( array('success'=>true));
+        
+	}
 
 }
