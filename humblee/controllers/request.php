@@ -286,5 +286,54 @@ class Core_Controller_Request extends Core_Controller_Xhr {
         
         $this->json(array('error'=>$deletePage));
     }
+    
+    public function order_pages()
+    {
+    	$this->require_role('pages');
+        if(!isset($_POST['list_order']) || $_POST['list_order'] == "")
+        {
+        	exit("Missing list order post data");
+        }
+        
+        //convert string to an array
+		$list_string = urldecode($_POST['list_order']);
+		$list_string = preg_replace('/&/',';',$list_string).";";
+		$list_string = preg_replace('/null/','0',$list_string).";";
+		$list_string = preg_replace('/pageID/','$page_id',$list_string);
+		eval($list_string);
+			
+		$current_parent = 0;
+		$last_level = 0;
+		foreach($page_id as $id => $level)
+		{
+			if($level > $last_level) 
+			{ 
+				// we've started a new sub section
+				$parent_level[$last_level] = $current_parent; // save previous level's parent id for use later
+				$current_parent = $last_id;
+			}
+			if($level < $last_level)
+			{ 
+				// we've gone back a section to the previous parent
+				$current_parent = $parent_level[$level];
+			}
+			if($level == 0)
+			{
+				$current_parent = 0;
+			}
+		
+			$order_pointer[$level] = (isset($order_pointer[$level])) ? $order_pointer[$level] + 1 : 0; // this page's display order within it's level				
+		
+			$orderpage = ORM::for_table(_table_pages)->find_one($id);
+	 	 	$orderpage->parent_id = $current_parent;
+			$orderpage->display_order = $order_pointer[$current_parent];
+	 	 	$orderpage->save();
+			
+			$last_id = $id;
+			$last_level = $level;	
+		}
+		
+		$this->json(array("success"=>true));
+    }
 
 }

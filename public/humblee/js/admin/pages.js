@@ -43,7 +43,22 @@ function loadPages()
 			tolerance: 'pointer',
 			toleranceElement: '> div',
 			update: function(){
-				console.log(this.serialized);
+				if(confirm("Are you sure you want to reorder this page in the sitemap?"))
+				{
+					var order = $('#pages ul.sortable').nestedSortable('serialize'); 
+					$.post(XHR_PATH +'order_pages',{ list_order:order }, function(response){
+						if(!response.success)
+						{
+							alert(response);
+							return false;
+						}
+						loadPages();
+					});
+				}
+				else
+				{
+					return false;
+				}
 			}
 		})
 		.disableSelection();
@@ -97,6 +112,7 @@ function openPagePropertiesModal(page_id)
 // move the toolbar off the pages menu so it doesn't accidently get deleted
 function saveToolbar()
 {
+	$("#page_toolbar").fadeOut(0);
 	$('body').append($("#page_toolbar"));
 }
 
