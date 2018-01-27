@@ -42,7 +42,7 @@ $(document).ready(function(){
 <header class="section hero is-primary"><!-- extends beyond 960 container -->
 	<div class="container">
         <p class="title">Your Name Here</p>
-        <nav class="nav">
+        <nav class="navbar">
         <?php	
             $pageObj = new Core_Model_Pages;
             $menu = $pageObj->getPages();

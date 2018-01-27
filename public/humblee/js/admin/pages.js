@@ -33,7 +33,7 @@ function loadPages()
 		$('ul.sortable').nestedSortable({
 			listType: 'ul',
 			handle: '.order',
-			items: '> li',
+			items: 'li',
 			forcePlaceholderSize: true,
 			helper: 'clone',
 			opacity: .6,
@@ -52,7 +52,6 @@ function loadPages()
 							alert(response);
 							return false;
 						}
-						loadPages();
 					});
 				}
 				else
