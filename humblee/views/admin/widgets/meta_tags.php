@@ -24,12 +24,15 @@
     </div>
 
     <div class="column">
-        <div id="google_sample">
+        <div class="box" id="google_sample">
             <span id="google_sample_title"><?php echo (isset($content_array['page_title'])) ? $content_array['page_title'] : 'Page Title Goes Here' ?></span>
             <span id="google_sample_url"><?php echo $_SERVER['HTTP_HOST'] . _app_path . ltrim($page_data->url,"/") ?></span>
             <span id="google_sample_description"><?php echo (isset($content_array['meta_description'])) ? $content_array['meta_description'] : 'Description goes here' ?></span></span>
+            <p>
+                <br>
+                <em>This is a sample of how this page may appear in Google's search results.</em>
+            </p>
         </div>
-        <i>This is a sample of how this page may appear in Google's search results.</i>
     </div>
 
 </div>

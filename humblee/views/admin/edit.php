@@ -1,6 +1,12 @@
 <div class="columns">
     <div class="column">
-        <h1 class="title">Edit Content</h1>        
+        <h1 class="title">
+            Edit Content
+            <button class="button is-light tooltip is-tooltip-right" id="previewButton" data-url="<?php echo ltrim($page_data->url,"/") .'?preview='.$content->id ?>" data-tooltip="Preview how this revision will appear live on the site">
+                <span class="icon is-pulled-left"><i class="fas fa-eye"></i></span>
+                <span class="is-pulled-right">Preview</span>
+            </button> 
+        </h1>        
     </div>
     
     <div class="column">
@@ -48,8 +54,6 @@ if(count($revisions) > 1 && $content->revision_date != $revisions[0]->revision_d
         <?php
         } 
         ?>
-        <br>
-        <button class="button is-info is-outlined tooltip is-tooltip-right" id="previewButton" data-url="<?php echo ltrim($page_data->url,"/") .'?preview='.$content->id ?>" data-tooltip="Preview how this revision will appear live on the site"><span class="icon is-pulled-left"><i class="fas fa-eye"></i></span><span class="is-pulled-right">Preview</span></button> 
     </div>
     
     <div class="column">
