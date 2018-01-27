@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `humblee_content_types` (
 
 INSERT INTO `humblee_content_types` (`id`, `name`, `objectkey`, `description`, `output_type`, `input_type`, `input_parameters`, `required_role_id`) VALUES
 (1, 'Page Body', 'pagebody', 'Main content area of page', 'content', 'wysiwyg', '<textarea name="content" id="edit_content">{content}</textarea> \r\n<script type="text/javascript"> \r\n$(''#edit_content'').ckeditor(); \r\n</script>', 1),
-(2, 'SEO & Meta Tags', 'meta_tags', 'SEO and Meta tags read by search engines and social media sites', 'meta', 'customform', 'admin/widgets/meta_tags.php', 0),
+(2, 'SEO & Meta Tags', 'meta_tags', 'SEO and Meta tags read by search engines and social media sites', 'meta', 'customform', 'admin/contentWidgets/seo/edit.php', 0),
 (3, 'Extra Header Code', 'extraHeadCode', 'Additional hidden HTML code to be place in the header', 'meta', 'textarea', '<textarea name="content" class="u-full-width" id="edit_content">{content}</textarea>', 0);
 
 -- --------------------------------------------------------
