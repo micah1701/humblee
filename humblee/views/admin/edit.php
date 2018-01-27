@@ -18,8 +18,6 @@
                 </select>
             </div>
         </span>
-        &nbsp;
-        <button class="button is-info tooltip" id="previewButton" data-url="<?php echo ltrim($page_data->url,"/") .'?preview='.$content->id ?>" data-tooltip="Preview how this revision will appear live on the site">Preview</button> 
     </div>
 </div>
 
@@ -49,7 +47,9 @@ if(count($revisions) > 1 && $content->revision_date != $revisions[0]->revision_d
             <span class="tooltip is-tooltip-right has-text-danger" data-tooltip="The page this content is located on is currently inactive.">(inactive)</span>
         <?php
         } 
-        ?>           
+        ?>
+        <br>
+        <button class="button is-info is-outlined tooltip is-tooltip-right" id="previewButton" data-url="<?php echo ltrim($page_data->url,"/") .'?preview='.$content->id ?>" data-tooltip="Preview how this revision will appear live on the site"><span class="icon is-pulled-left"><i class="fas fa-eye"></i></span><span class="is-pulled-right">Preview</span></button> 
     </div>
     
     <div class="column">
@@ -113,4 +113,63 @@ if(count($revisions) > 1 && $content->revision_date != $revisions[0]->revision_d
     </div>
 </div>
 
-<div id="edit_form" data-content_id="<?php echo $content->id ?>">Loading...</div>
+<hr>
+
+<form action="<?php echo _app_path."admin/edit/".$content->id ?>" id="savecontent" name="savecontent" method="post">
+
+    <input type="hidden" name="content_id" id="content_id" value="<?php echo $content->id ?>">
+    <input type="hidden" name="page_id" id="page_id" value="<?php echo $content->page_id ?>">
+    <input type="hidden" name="content_type_id" id="content_type_id" value="<?php echo $content_type->id ?>">
+    <input type="hidden" name="content_type" id="content_type" value="<?php echo $content_type->input_type ?>">
+    <textarea style="display:none" id="original_content"><?php echo $content->content ?></textarea>
+
+<?php
+if( $content_type->input_type == "multifield")
+{
+	$content_array = json_decode( $content->content, true ); //convert to Array 
+	$input = json_decode( $content_type->input_parameters, true ); // convert to Array
+	foreach ($input as $row)
+	{
+		$key_index = key($row);
+	
+		if( count($content_array) > 0 )
+		{
+			$input = preg_replace('@{content}@',$content_array[$key_index],$row[$key_index]['input']);
+		}else{
+			$input = $row[$key_index]['input'];
+		}
+?>
+    <div class="one-third column label"><?php echo $row[$key_index]['label'] ?></div>
+    <div class="two-thirds column"><?php echo $input ?></div>
+<?php	
+	}
+?>
+	<input type="hidden" id="content" name="content" value="" />
+<?php
+}
+elseif( $content_type->input_type == "customform")
+{
+	$content_array = json_decode( $content->content, true ); //convert to Array for use by included file
+	include_once _app_server_path.'humblee/views/'. ltrim($content_type->input_parameters,"/");
+?>
+	<input type="hidden" id="content" name="content" value="" />
+<?php	
+}
+elseif ($content_type->input_type == "wysiwyg")
+{ 
+	echo  preg_replace('@{content}@',$content->content,$content_type->input_parameters);
+}
+else
+{
+    echo '<div class="row"><div class="eight columns">';
+    echo '<label>'.$content_type->name .':</label>';
+	echo  preg_replace('@{content}@',$content->content,$content_type->input_parameters);
+	echo '</div></div>';
+}
+?>
+
+    <input type="hidden" name="live" id="live" value="0">
+</form>
+
+<button class="button is-primary" id="save"><span class="icon is-pulled-left"><i class="far fa-save"></i></span><span class="is-pulled-right">Save Draft</span></button> &nbsp;
+<button class="button is-primary is-outlined" onClick="validate(true)"><span class="icon is-pulled-left"><i class="fas fa-rocket"></i></span><span class="is-pulled-right">Publish live to site</span></button>
