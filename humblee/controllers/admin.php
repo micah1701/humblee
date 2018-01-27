@@ -86,18 +86,6 @@ class Core_Controller_Admin {
 	public function edit(){
 	    $this->require_role('content');
 		
-		//process $_POST data on save
-		//there will either be one field named "content" or a bunch of arbitrary fields, listed in a field called "serialize_fields"
-		if(isset($_POST['content']) || isset($_POST['serialize_fields']) )
-		{
-			$content = new Core_Model_Content();
-			$new_content = $content->saveContent($_POST);
-			if($new_content !== false)
-			{
-				Core::forward('admin/edit/'.$new_content->id); //forward to new page				
-			}
-		} //end $_POST processing
-	
         // if given content ID is not passed in URL but a page ID is passed
         // attempt to find the most recent block or create a new one
         if(!is_numeric($this->_uri_parts[2]) && isset($_GET['page_id']) && is_numeric($_GET['page_id']))
@@ -129,19 +117,23 @@ class Core_Controller_Admin {
 		if(!$this->content){ exit("ERROR: content not found"); }
 		
 		$pageObj = new Core_Model_Pages;
+		$contentObj = new Core_Model_Content;
+		
+		$this->revisions = $contentObj->listRevisions($this->content->page_id,$this->content->type_id);
 		$this->content_type = ORM::for_table( _table_content_types )->find_one($this->content->type_id);
 		$this->page_data = ORM::for_table( _table_pages )->find_one( $this->content->page_id);
 		$this->page_data->url = $pageObj->buildLink($this->content->page_id); // append object with additional variable
         $this->template_data = ORM::for_table( _table_templates)->find_one($this->page_data->template_id);
+        $this->allContentTypes = ORM::for_table(_table_content_types)->where_in('id',explode(',',$this->template_data->blocks))->order_by_asc('name')->find_many();	
 		
 		$this->pagebody = Core::view( _app_server_path .'humblee/views/admin/edit.php',get_object_vars($this) ); 
+        
+        /*
         $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'core/libs/ckeditor/ckeditor.js"></script>';
         $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'core/libs/ckeditor/adapters/jquery.js"></script>';
-        $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'core/assets/js/admin-edit.js"></script>';
+        */
+        $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'core/assets/js/admin-edit.js"></script>';
         
-        $_SESSION['KCFINDER'] = array();
-        $_SESSION['KCFINDER']['disabled'] = false;
-        	
 		echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) );
 	}
 	
