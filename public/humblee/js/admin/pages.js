@@ -10,9 +10,10 @@ function loadPages()
 	saveToolbar();
 	$.get(XHR_PATH + 'loadPagesTable', function(response){
 		$("#pages").html(response);
+		$("#pages ul:first").addClass('sortable');
 		$("#pages ul").addClass('menu-list').not(':first').addClass('is-closed');
 		$("#pages ul li a").not(':first').addClass('has-closed');
-			
+		
 		$("a.menu_hasChildren").on('click', function(){
 			var firstUL = $(this).parent().next('ul');
 			if(firstUL.hasClass('is-closed'))
@@ -26,7 +27,30 @@ function loadPages()
 				firstUL.addClass('is-closed');
 			}
 		});
+		
 		initiateToolBar();
+		
+		$('ul.sortable').nestedSortable({
+			listType: 'ul',
+			handle: '.order',
+			items: '> li',
+			forcePlaceholderSize: true,
+			helper: 'clone',
+			opacity: .6,
+			placeholder: 'ui-state-highlight',
+			revert: 250,
+			tabSize: 25,
+			tolerance: 'pointer',
+			toleranceElement: '> div',
+			update: function(){
+				console.log(this.serialized);
+			}
+		})
+		.disableSelection();
+		
+		var serialized = $('ul.sortable').nestedSortable('serialize');
+		console.log(serialized);
+		
 	});
 }
 
@@ -100,6 +124,7 @@ function initiateToolBar()
 		$(".page_toolbar_button.edit, .page_toolbar_button.order, .page_toolbar_button.newpage, .page_toolbar_button.trash").off('click');
 		$("#page_toolbar").fadeOut(0);
 	});
+
 }
 
 function scrubURL(val){

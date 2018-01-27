@@ -9,4 +9,7 @@ ul a.menu_hasChildren.has-closed:after {
 ul.is-closed {
   display: none; }
 
+.icon.order {
+  cursor: move; }
+
 /*# sourceMappingURL=pages.css.map */

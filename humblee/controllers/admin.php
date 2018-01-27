@@ -69,8 +69,16 @@ class Core_Controller_Admin {
 	
 	public function pages(){
 	    $this->require_role('pages');
-	    $this->extra_head_code = '<link rel="stylesheet" type="text/css" href="'._app_path.'humblee/css/admin/pages.css">';
+	    
+	    //jquery ui library & nestedSortable extension
+	    $this->extra_head_code = '<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>';
+	    $this->extra_head_code.= '<link rel="stylesheet" href="https://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">';
+	    $this->extra_head_code.= '<script src="'. _app_path .'humblee/js/libs/jquery.mjs.nestedSortable.js"></script>';
+	    
+	    //css and js for the page manager
+	    $this->extra_head_code.= '<link rel="stylesheet" type="text/css" href="'._app_path.'humblee/css/admin/pages.css">';
         $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'humblee/js/admin/pages.js"></script>';
+        
 		$this->pagebody = Core::view( _app_server_path .'humblee/views/admin/pages.php',get_object_vars($this) ); 	
 		echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) ); 
 	}

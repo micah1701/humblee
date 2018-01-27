@@ -11,8 +11,7 @@ $(window).resize(function(){
 //move footer to bottom if page doesn't have much content
 function setFooterPosition()
 {
-    return false; // lets revist this later
-    
+    /* revist this later
     if ($(document.body).height() < $(window).outerHeight() - $("footer").outerHeight() )
     {
         $('footer.footer').attr('style', 'position: fixed!important; bottom: 0px; width: 100%');
@@ -21,6 +20,7 @@ function setFooterPosition()
     {
         $('footer.footer').attr('style', '');
     }
+    */
 }
 
 
