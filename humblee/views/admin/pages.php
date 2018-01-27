@@ -5,6 +5,7 @@
 
 <div id="pages" class="menu">Loading...</div>
 
+
 <div id="page_toolbar" class="is-pulled-right">
 	<span class="icon page_toolbar_button tooltip edit" data-tooltip="Edit page properties"><i class="fas fa-edit"></i></span></span>
 	<span class="icon page_toolbar_button tooltip order" data-tooltip="Re-order this page in the sitemap"><i class="fas fa-arrows-alt-v"></i></span>

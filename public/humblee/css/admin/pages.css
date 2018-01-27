@@ -1,4 +1,7 @@
 @charset "UTF-8";
+#pages {
+  max-width: 800px; }
+
 ul a.menu_hasChildren:after {
   font-family: Font Awesome\ 5 Free;
   font-weight: 900;
