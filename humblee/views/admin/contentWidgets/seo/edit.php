@@ -19,7 +19,6 @@
                     <label class="label" for="meta_description">SEO Page Description:</label> 
                         <div class="control">
                             <textarea class="textarea lengthcount" maxlength="300" id="meta_description" name="meta_description"><?php echo $content_array['meta_description'] ?></textarea>
-                            <p class="help" id="meta_description_count_label">test</p>
                         </div>
                 </div>
                 
@@ -52,7 +51,7 @@
                     <div class="field">
                         <label class="label" for="og_description">Open Graph Page Description:</label> 
                             <div class="control">
-                                <textarea class="textarea lengthcount" maxlength="300" id="og_description" name="og_description"><?php echo (isset($content_array['og_description'])) ? $content_array['og_description'] : '' ?></textarea>
+                                <textarea class="textarea lengthcount" maxlength="160" id="og_description" name="og_description"><?php echo (isset($content_array['og_description'])) ? $content_array['og_description'] : '' ?></textarea>
                             </div>
                     </div>
                 </div>
@@ -72,10 +71,11 @@
                 
                 <div class="box" id="facebook_sample">
                     <span id="facebook_sample_image">
+                        <?php /* this is for testing. remove it asap */ $content_array['og_image'] = 'https://placebear.com/300/200'; ?>
                         <?php if(isset($content_array['og_image']) && $content_array['og_image'] != "")
                         {
                         ?>
-                        <img src="<?php $content_array['og_image'] ?>" style="width:100%">
+                        <img src="<?php echo $content_array['og_image'] ?>">
                         <?php
                         }
                         ?>
@@ -92,13 +92,34 @@
                         }
                         else
                         {
-                            $og_title_preview = $_SERVER['HTTP_HOST'] . _app_path . ltrim($page_data->url,"/");
+                            $og_title_preview = $_SERVER['HTTP_HOST'] . _app_path . trim($page_data->url,"/");
                         }
                         echo $og_title_preview;
                         ?>
                     </span>
-
+                    <span id="facebook_sample_description">
+                        <?php
+                        if(isset($content_array['og_description']) && $content_array['og_description'] != "")
+                        {
+                            $og_description_preview = $content_array['og_description'];
+                        }
+                        elseif(isset($content_array['meta_description']) && $content_array['meta_description'] != "")
+                        {
+                            $og_description_preview = $content_array['meta_title'];
+                        }
+                        else
+                        {
+                            $og_description_preview = "description goes here but its blank now so this string should be removed";
+                        }
+                        echo $og_description_preview;
+                        ?>
+                    </span>
                     <span id="facebook_sample_domain"><?php echo $_ENV['config']['domain'] ?></span>
+                    
+                    <p>
+                        <br>
+                        <em>This is a sample of how the page may appear when shared on Facebook</em>
+                    </p>
                 </div>
                 
             </div>
