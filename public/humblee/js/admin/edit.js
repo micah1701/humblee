@@ -6,7 +6,7 @@ $(document).ready(function(){
     });    
     
     $("#save").on("click",function(){
-        submitForm();
+        validateForm(false); 
     });
     $("#publish").on("click",function(){
         validateForm(true); 
@@ -35,7 +35,7 @@ function validateForm(publish)
             latestRevisionDate = new Date( response.content.revision_date);
 		    console.log(pageLoadDate+ "  " + latestRevisionDate);
 		    
-            if( latestRevisionDate < pageLoadDate)
+            if( latestRevisionDate > pageLoadDate)
             {
                 var msg = (response.content.live == 1) ? "revision was published live to the site " : "draft was saved ";
                 var msg2 = (publish) ? "publish" : "save";
@@ -56,6 +56,7 @@ function validateForm(publish)
     });
 }
 
+//if publishing, run the validate() function first to check for more recent content
 function submitForm(publish)
 {
     if(publish)
@@ -63,6 +64,26 @@ function submitForm(publish)
         $("#live").val(1);
     }
     
-    var action = (publish) ? "publish" : "save";
-    alert('gonna '+action+' the form now');
+    // content multipart fields into a json array for stoarage
+    if( $("#content_type").val() == "multifield" || $("#content_type").val() == "customform") 
+ 	{  
+		var encoded_content = '{';
+		$("#savecontent input:not(:hidden), #savecontent select").each( function(){
+			if( $(this).attr('name') != "undefined" && $(this).attr('name') != "")
+				
+			{
+				var value = $(this).val(), type = $(this).attr('type');
+				if(type == "radio" || type == "checkbox")
+				{
+					value = ( $(this).attr('checked') ) ? 1 : 0;
+				}
+				encoded_content+='"'+ $(this).attr('name') +'":"' + value +'",';
+			}
+		});
+		encoded_content = encoded_content.substr(0, encoded_content.length - 1) + '}';  // remove trailing "," from string then add ending bracket
+		$("#edit_content").val(encoded_content);
+	}
+	
+	$(window).unbind("beforeunload");
+	document.forms["savecontent"].submit();
 }
