@@ -85,6 +85,18 @@ class Core_Controller_Admin {
 	
 	public function edit(){
 	    $this->require_role('content');
+	    
+	    //process $_POST data on save
+		//there will either be one field named "content" or a bunch of arbitrary fields listed in a field called "serialize_fields"
+		if(isset($_POST['content']) || isset($_POST['serialize_fields']) )
+		{
+			$content = new Core_Model_Content();
+			$new_content = $content->saveContent($_POST);
+			if($new_content !== false)
+			{
+				Core::forward('admin/edit/'.$new_content->id); //forward to new page				
+			}
+		} //end $_POST processing
 		
         // if given content ID is not passed in URL but a page ID is passed
         // attempt to find the most recent block or create a new one
@@ -110,11 +122,14 @@ class Core_Controller_Admin {
 
         if(!is_numeric($this->_uri_parts[2]))
         {
-            exit("Fatal error. invalid page request");
+            exit('<h1>Fatal error. invalid page request</h1>');
         }
 
 		$this->content = ORM::for_table( _table_content )->find_one( $this->_uri_parts[2] );
-		if(!$this->content){ exit("ERROR: content not found"); }
+		if(!$this->content)
+		{ 
+            exit("<h1>ERROR: content not found</h1>");
+		}
 		
 		$pageObj = new Core_Model_Pages;
 		$contentObj = new Core_Model_Content;
@@ -128,10 +143,6 @@ class Core_Controller_Admin {
 		
 		$this->pagebody = Core::view( _app_server_path .'humblee/views/admin/edit.php',get_object_vars($this) ); 
         
-        /*
-        $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'core/libs/ckeditor/ckeditor.js"></script>';
-        $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'core/libs/ckeditor/adapters/jquery.js"></script>';
-        */
         $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'tools/dateformat.js"></script>';
         $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'humblee/js/admin/edit.js"></script>';
         

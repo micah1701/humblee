@@ -145,7 +145,7 @@ if( $content_type->input_type == "multifield")
     <div class="one-third column label"><?php echo $row[$key_index]['label'] ?></div>
     <div class="two-thirds column"><?php echo $input ?></div>
 <?php	
-    }
+	}
 ?>
 	<input type="hidden" id="content" name="content" value="" />
 <?php

@@ -30,7 +30,7 @@ class Core_Model_Content {
      *					page_id
      *					content_type_id
      *					content (new content)
-     *				  option field:
+     *				  optional field:
      *					serialize_fields (a list of arbitrary content fields if there is more than one)
      *					arbitrary fields (listed in the serialize_fields list)
      * 
@@ -38,57 +38,61 @@ class Core_Model_Content {
      */
     public function saveContent($post)
 	{
-		if(!is_numeric($_POST['content_type_id']) || !is_numeric($_POST['page_id']) ){ return false; }
+		if(!is_numeric($post['content_type_id']) || !is_numeric($post['page_id']) ){ return false; }
 		
 		// if there was a bunch of fields, turn them into a JSON array and overwrite the "content" field with the array
-		if(isset($_POST['serialize_fields']))
+		if(isset($post['serialize_fields']))
 		{
-			$fields = explode(",",$_POST['serialize_fields']);
+			$fields = explode(",",$post['serialize_fields']);
 			$content_array = array();
 			foreach($fields as $field)
 			{
-				$content_array[$field] = (isset($_POST[$field])) ? $_POST[$field] : "";	
+				$content_array[$field] = (isset($post[$field])) ? $post[$field] : "";	
 			}
 			
-			$_POST['content'] = json_encode($content_array);
+			$post['content'] = json_encode($content_array);
 		}
 		
-		$current_content = ORM::for_table( _table_content)->find_one($_POST['content_id']); //what the content looked like before it was just edited
+		$current_content = ORM::for_table( _table_content)->find_one($post['content_id']); //what the content looked like before it was just edited
 		
-		$previous_revisions = ORM::for_table ( _table_content)->where('page_id',$_POST['page_id'])->where('type_id',$_POST['content_type_id'])->count();
+		$previous_revisions = ORM::for_table ( _table_content)->where('page_id',$post['page_id'])->where('type_id',$post['content_type_id'])->count();
 		
-		$content = str_replace('$','&#36;',$_POST['content']); // dollar signs are messy, convert to html equiv
+		$content = str_replace('$','&#36;',$post['content']); // dollar signs are messy, convert to html equiv
 		
-		if($current_content->content != $content){ // new content
-		
+		// new content
+		if($current_content->content != $content)
+		{ 
 			//if there is only 1 revision of this content and it is blank then this is the initial save so use this same content ID;  Otherwise, create new record
 			$new_content = ($previous_revisions == 1 && trim($current_content->content) == "" ) ? $current_content : ORM::for_table( _table_content)->create();
 			
-			$new_content->type_id = $_POST['content_type_id'];
-			$new_content->page_id = $_POST['page_id'];
+			$new_content->type_id = $post['content_type_id'];
+			$new_content->page_id = $post['page_id'];
 			$new_content->content = $content;
 			$new_content->revision_date = date("Y-m-d H:i:s");
 			$new_content->updated_by = $_SESSION[session_key]['user_id']; 
 			$new_content->save();
-		}else{
+		}
+		else
+		{
 			$new_content = false;
 		}
 		
-		if($_POST['live'] == "1"){
+		if($post['live'] == "1"){
 			
 			//dethrown the old live version
 			$old_live = ORM::for_table( _table_content )
-				 ->where('page_id',$_POST['page_id'])
-				 ->where('type_id',$_POST['content_type_id'])
-				 ->where('live',1)
-				 ->find_one();
+				->where('page_id',$post['page_id'])
+				->where('type_id',$post['content_type_id'])
+				->where('live',1)
+				->find_one();
 			if($old_live)
 			{	 
 				$old_live->live = 0;
 				$old_live->save();
 			}
 			
-			if(!$new_content){
+			if(!$new_content)
+			{
 				if($current_content->live == 0)
 				{
 					$current_content->publish_date = date("Y-m-d H:i:s");		

@@ -39,7 +39,7 @@
                             </span>
                         </span>
                         -->
-                        <input class="input" placeholder="example: https://<?php echo $_ENV['config']['domain'] ?>/applications/images/your-file.png">
+                        <input class="input" id="og_image" name="og_image" placeholder="example: https://<?php echo $_ENV['config']['domain'] ?>/applications/images/your-file.png" value="<?php echo (isset($content_array['og_image'])) ? $content_array['og_image'] : '' ?>">
                         <p class="help">Must be fully qualified URL starting with <em>http</em></p>
                          
                     </div>
@@ -75,7 +75,6 @@
                 
                 <div class="box" id="facebook_sample">
                     <span id="facebook_sample_image">
-                        <?php /* this is for testing. remove it asap */ $content_array['og_image'] = 'https://placebear.com/300/200'; ?>
                         <?php if(isset($content_array['og_image']) && $content_array['og_image'] != "")
                         {
                         ?>
