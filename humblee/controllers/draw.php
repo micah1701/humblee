@@ -3,7 +3,7 @@
 class Draw {
     
     /**
-     * Out put a given content block's HTML.
+     * Output a given content block's HTML.
      * If admin with content role is logged in, wrap the output in div for inline editing
      * 
      * $contentArray    (Array) Passed from the controller to the view and now passed to this function
@@ -22,7 +22,8 @@ class Draw {
         
         if(!isset($contentArray[$objectKey]))
         {
-            echo "Invalid Block Object Key";
+            //this content doesn't exist
+            echo "";
             return;
         }
         
@@ -60,7 +61,49 @@ class Draw {
         {
             echo $content;   
         }
+    }
+    
+    /**
+     * Output the <title> and other meta tags set from the "SEO & Meta Tags" content editor block
+     */
+    public static function metaTags($contentArray=false)
+    {
+        if(!$contentArray || !is_array($contentArray))
+        {
+            echo "";
+            return;
+        }
+        if(!isset($contentArray['meta_tags']))
+        {
+            echo "";
+            return false;
+        }
         
+        $meta_tags = json_decode($contentArray['meta_tags']['content']);
+        
+        echo "<title>";
+        echo (isset($meta_tags->page_title)) ? $meta_tags->page_title : '';
+        echo "</title>\n";
+        
+        if(isset($meta_tags->meta_description) && $meta_tags->meta_description != "")
+        {
+            echo "<meta name=\"description\" content=\"$meta_tags->meta_description\">\n";   
+        }
+        
+        if(isset($meta_tags->og_title) && $meta_tags->og_title != "")
+        {
+            echo "<meta property=\"og:title\" content=\"$meta_tags->og_title\">\n";   
+        }
+        
+        if(isset($meta_tags->og_description) && $meta_tags->og_description != "")
+        {
+            echo "<meta property=\"og:description\" content=\"$meta_tags->og_description\">\n";   
+        }
+        
+        if(isset($meta_tags->og_image) && $meta_tags->og_image != "")
+        {
+            echo "<meta property=\"og:image\" content=\"$meta_tags->og_image\">\n";   
+        }
     }
     
 }
