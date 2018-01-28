@@ -1,28 +1,12 @@
 /* global $ */
 
 $(document).ready(function(){
-    setFooterPosition();
+
 });
 
 $(window).resize(function(){
-   setFooterPosition(); 
+
 });
-
-//move footer to bottom if page doesn't have much content
-function setFooterPosition()
-{
-    /* revist this later
-    if ($(document.body).height() < $(window).outerHeight() - $("footer").outerHeight() )
-    {
-        $('footer.footer').attr('style', 'position: fixed!important; bottom: 0px; width: 100%');
-    }
-    else
-    {
-        $('footer.footer').attr('style', '');
-    }
-    */
-}
-
 
 /**
  * Register and listen for multiple "Esc" key presses
@@ -58,3 +42,26 @@ var escEvents = new Array();
             runEscEvent();
         }
     });
+    
+/**
+ * Custom "confirmation" alert box
+ */
+function confirmation(message,callbackConfirm,callbackCancel)
+{
+    $("#confirmationBox .modal-card-body .media-content").html(message);
+    $("#confirmationBox").addClass('is-active');
+    $("#confirmationBox #confirmButton").on("click",callbackConfirm);
+    $("#confirmationBox button.cancel").on("click",callbackCancel);
+    
+    //register ESC key and other ways to close the modal
+    setEscEvent('confirmationBox',function () { confirmationClose() });
+    $("#confirmationBox button").on("click",function(){
+        confirmationClose();
+    });
+}
+    function confirmationClose()
+    {
+        $("#confirmationBox").removeClass('is-active');
+    	$("#confirmationBox #confirmButton").off("click"); // unbind the "onclick" events
+    	$("#confirmationBox button").off('click');
+    }    

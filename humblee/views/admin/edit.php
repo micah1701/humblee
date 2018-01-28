@@ -2,10 +2,10 @@
     <div class="column">
         <h1 class="title">
             Edit Content
-            <button class="button is-light tooltip is-tooltip-right" id="previewButton" data-url="<?php echo ltrim($page_data->url,"/") .'?preview='.$content->id ?>" data-tooltip="Preview how this revision will appear live on the site">
+            <a class="button is-light tooltip is-tooltip-right" id="previewButton" href="<?php echo _app_path . ltrim($page_data->url,"/") .'?preview='.$content->id ?>" data-tooltip="Preview how this revision will appear live on the site" target="_blank">
                 <span class="icon is-pulled-left"><i class="fas fa-eye"></i></span>
                 <span class="is-pulled-right">Preview</span>
-            </button> 
+            </a> 
         </h1>        
     </div>
     

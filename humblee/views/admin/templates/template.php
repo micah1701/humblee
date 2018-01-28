@@ -105,5 +105,28 @@
         </div>
     </footer>
 
+    <div id="confirmationBox" class="modal">
+        <div class="modal-background"></div>
+            <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Are you sure?</p>
+            </header>
+            <section class="modal-card-body">
+                <article class="media">
+                    <div class="media-content"></div>      
+                    <figure class="media-right">
+                        <span class="icon is-large">
+                            <i class="fas fa-3x fa-exclamation-circle has-text-info"></i>
+                        </span>
+                    </figure>
+                </article>
+            </section>
+            <footer class="modal-card-foot">
+              <button id="confirmButton" class="button is-info">Confirm</button>
+              <button class="button cancel">Cancel</button>   
+            </footer>
+        </div>
+    </div><!-- end of deletePageConfirmation -->
+
 </body>
 </html>
