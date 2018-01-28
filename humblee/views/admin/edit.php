@@ -119,7 +119,7 @@ if(count($revisions) > 1 && $content->revision_date != $revisions[0]->revision_d
 <hr>
 
 <form action="<?php echo _app_path."admin/edit/".$content->id ?>" id="savecontent" name="savecontent" method="post">
-
+    <input type="hidden" id="edit_time" value="<?php echo date("Y-m-d H:i:s") ?>">
     <input type="hidden" name="content_id" id="content_id" value="<?php echo $content->id ?>">
     <input type="hidden" name="page_id" id="page_id" value="<?php echo $content->page_id ?>">
     <input type="hidden" name="content_type_id" id="content_type_id" value="<?php echo $content_type->id ?>">

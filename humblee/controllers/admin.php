@@ -132,8 +132,8 @@ class Core_Controller_Admin {
         $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'core/libs/ckeditor/ckeditor.js"></script>';
         $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'core/libs/ckeditor/adapters/jquery.js"></script>';
         */
-        $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'humblee/js/tools/dateformat.js"></script>';
-        $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'humblee/js/admin/edit.js"></script>';
+        $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'tools/dateformat.js"></script>';
+        $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'humblee/js/admin/edit.js"></script>';
         
 		echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) );
 	}

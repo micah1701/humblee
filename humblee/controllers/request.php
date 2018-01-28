@@ -335,5 +335,35 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		
 		$this->json(array("success"=>true));
     }
+    
+    /**
+     * Content Management
+     */
+     
+	//return ARRAY of most recent content for a given block on a given page
+	//includes the username of the user who updated the content
+    public function latestRevision()
+    {
+    	$this->require_role('content');
+    	if(!isset($_POST['content_type']) || !is_numeric($_POST['content_type']) || !isset($_POST['page_id']) || !is_numeric($_POST['page_id']))
+    	{
+    		$this->json(array("error"=>"Missing required parameters"));
+    	}
+    	$content = ORM::for_table( _table_content)
+    					->select(_table_content.'.*')
+    					->select(_table_users.'.name')
+						->join( _table_users, array( _table_content.'.updated_by', '=', _table_users.'.id'))
+                        ->where('page_id',$_POST['page_id'])
+                        ->where('type_id',$_POST['content_type'])
+                        ->order_by_asc('revision_date')
+                        ->limit(1)
+                        ->find_array();
+		if(!$content)
+		{
+			$this->json(array("error"=>"could not confirm previously saved content"));
+		}
+		
+		$this->json(array("success"=>true,"content"=>$content[0]));
+    }
 
 }

@@ -6,10 +6,10 @@ $(document).ready(function(){
     });    
     
     $("#save").on("click",function(){
-        submitForm(false);
+        submitForm();
     });
     $("#publish").on("click",function(){
-       submitForm(true); 
+        validateForm(true); 
     });
     
 });
@@ -29,23 +29,40 @@ function validateForm(publish)
 		    alert(response);
 		    return false;
 		}
-		
-		var pageLoadDate = new Date($("#edit_time").val() ),
-	        latestRevisionDate = new Date( response.revision_date);
-		
-		if( latestRevisionDate > pageLoadDate)
+		else if(response.content)
 		{
-			var msg = (response.live == 1) ? "revision was published live to the site " : "draft was saved ";
-			var msg2 = (publish) ? "publish" : "save";
-            var confirmMessage = "While you were editing this content, a more recent "+msg
-                                +"by <strong>"+ response.updated_name +'</strong> ('+ dateFormat('M j, Y g:ia',response.revision_date) +")<br><br>"
-                                +"Do you still want to "+msg2+" your changes?";
-            confirmation(confirmMessage,function(){ submitForm() }, function() { return false; });                    
-		}	
+            var pageLoadDate = new Date($("#edit_time").val() ),
+            latestRevisionDate = new Date( response.content.revision_date);
+		    console.log(pageLoadDate+ "  " + latestRevisionDate);
+		    
+            if( latestRevisionDate < pageLoadDate)
+            {
+                var msg = (response.content.live == 1) ? "revision was published live to the site " : "draft was saved ";
+                var msg2 = (publish) ? "publish" : "save";
+                var confirmMessage = "While you were editing this content, a more recent "+msg
+                                    +"by <strong>"+ response.content.name +'</strong> ('+ dateFormat('M j, Y g:ia',response.content.revision_date) +")<br><br>"
+                                    +"Do you still want to "+msg2+" your changes?";
+                confirmation(confirmMessage,function(){ submitForm(publish) }, function() { return false; });                    
+            }
+            else
+            {
+                submitForm(publish);
+            }
+		}
+		else
+		{
+		    alert("Error. Could not validate form at this time");
+		}
     });
 }
 
-function submitForm()
+function submitForm(publish)
 {
+    if(publish)
+    {
+        $("#live").val(1);
+    }
     
+    var action = (publish) ? "publish" : "save";
+    alert('gonna '+action+' the form now');
 }
