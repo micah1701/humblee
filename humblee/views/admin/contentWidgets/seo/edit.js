@@ -3,7 +3,7 @@
 function shrinkToFit(field_id,max_width)
 {
     var field = $("#"+field_id),
-        text = field.html();
+        text = field.html()+" ";
         
         if( field.width() > max_width)
         {
@@ -11,13 +11,11 @@ function shrinkToFit(field_id,max_width)
             var lastIndex = text.lastIndexOf(" ");
             var newText = text.substring(0, lastIndex);
             console.log(field.width() +" of "+ max_width +": "+ text +"/"+ newText);
-            field.html( newText + " ...");
-            // this makes a horrible endless loop
-            //return shrinkToFit(field_id,max_width);
+            field.html( newText + "...");
         }
         else
         {
-            //it short enough, return true
+            //it's short enough, return true
             return true;
         }
 }
@@ -44,15 +42,24 @@ function charCount(element)
 }
 
 $(document).ready(function(){
-   $("#page_title").on("keyup",function(){
-       var title_val = $(this).val();
+   $("#page_title, #og_title").on("keyup",function(){
+       
+       var title_val = $("#page_title").val();
        $("#google_sample_title").html(title_val);
        shrinkToFit('google_sample_title',300);
+       
+       var fb_title = ($("#og_title").val() == "") ?  title_val : $("#og_title").val();
+       $("#facebook_sample_title").html(fb_title);
+       shrinkToFit('facebook_sample_title',500);
+
    });
    
-   $("#meta_description").on("keyup",function(){
-       var desc_val = $(this).val();
+   $("#meta_description, #og_description").on("keyup",function(){
+       var desc_val = $("#meta_description").val();
        $("#google_sample_description").html(desc_val);
+       
+       var fb_desc = ($("#og_description").val() == "") ? desc_val : $("#og_description").val();
+       $("#facebook_sample_description").html(fb_desc)
    });
    
    $(".lengthcount").each(function(){
@@ -60,18 +67,3 @@ $(document).ready(function(){
 		$(this).keyup( function(){ charCount( $(this) ) } )
 	});
 });
-
-
-function openKCFinder(field) {
-    window.KCFinder = {
-        callBack: function(url) {
-            field.value = url;
-            $("#og_image_preview").attr('src',url).fadeIn('fast');
-            window.KCFinder = null;
-        }
-    };
-    window.open('<?php echo _app_path ?>core/libs/kcfinder/browse.php?type=images&dir=images', 'og_image',
-        'status=0, toolbar=0, location=0, menubar=0, directories=0, ' +
-        'resizable=1, scrollbars=0, width=800, height=600'
-    );
-}

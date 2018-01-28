@@ -30,6 +30,7 @@
                         <label class="label" for="og_image">Open Graph Image Path:
                             <span class="icon tooltip is-tooltip-right has-text-info" data-tooltip="Primary photo shown when sharing this page"><i class="fas fa-info-circle"></i></span>
                         </label>
+                        <!--
                         <input class="file-input" type="file" id="og_image" name="og_image">
                         <span class="file-cta">
                             <span class="file-icon"><i class="fas fa-upload"></i></span>
@@ -37,6 +38,9 @@
                                 Choose a file…
                             </span>
                         </span>
+                        -->
+                        <input class="input" placeholder="example: https://<?php echo $_ENV['config']['domain'] ?>/applications/images/your-file.png">
+                        <p class="help">Must be fully qualified URL starting with <em>http</em></p>
                          
                     </div>
                     
@@ -92,7 +96,7 @@
                         }
                         else
                         {
-                            $og_title_preview = $_SERVER['HTTP_HOST'] . _app_path . trim($page_data->url,"/");
+                            $og_title_preview = rtrim($_SERVER['HTTP_HOST'] . _app_path . trim($page_data->url,"/"),"/");
                         }
                         echo $og_title_preview;
                         ?>
@@ -118,7 +122,7 @@
                     
                     <p>
                         <br>
-                        <em>This is a sample of how the page may appear when shared on Facebook</em>
+                        <em>This is a sample of how the page may appear on Facebook</em>
                     </p>
                 </div>
                 

@@ -17,30 +17,33 @@
     font-size: small;
     color: #545454; }
 
-#facebook_sample #facebook_sample_image {
-  display: block; }
-  #facebook_sample #facebook_sample_image img {
-    width: 100%;
-    max-width: 500px; }
-#facebook_sample #facebook_sample_title {
-  display: block;
-  color: #1d2129;
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 22px; }
-#facebook_sample #facebook_sample_description {
-  display: block;
-  font-size: 12px;
-  color: #90949c;
-  line-height: 16px;
-  max-height: 80px;
-  overflow: hidden;
-  text-overflow: ellipsis; }
-#facebook_sample #facebook_sample_domain {
-  display: block;
-  padding-top: 9px;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: #90949c; }
+#facebook_sample {
+  width: 100%;
+  max-width: 500px; }
+  #facebook_sample #facebook_sample_image {
+    display: block; }
+    #facebook_sample #facebook_sample_image img {
+      width: 100%;
+      max-width: 500px; }
+  #facebook_sample #facebook_sample_title {
+    display: block;
+    color: #1d2129;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 22px; }
+  #facebook_sample #facebook_sample_description {
+    display: block;
+    font-size: 12px;
+    color: #90949c;
+    line-height: 16px;
+    max-height: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis; }
+  #facebook_sample #facebook_sample_domain {
+    display: block;
+    padding-top: 9px;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #90949c; }
 
 /*# sourceMappingURL=edit.css.map */
