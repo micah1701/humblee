@@ -57,6 +57,10 @@ class Core_Controller_Template {
 		if(	isset($_GET['preview'])
 		    && Core::auth('admin') // require "admin" role to view preview.  comment out this line for open access.
 		){
+			if(preg_match("/[^0-9,]/",$_GET['preview']))
+			{
+				exit('invalid GET parameters');
+			}
 			$preview_ids = explode(",",$_GET['preview']);
 			$getPreviewContent = ORM::for_table( _table_content )
 						  			->join( _table_content_types, array( _table_content.".type_id","=", _table_content_types.".id") )
