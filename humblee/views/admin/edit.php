@@ -13,7 +13,6 @@
         <span class="tooltip" data-tooltip="Select another block of content associated with this page to edit">
             <div class="select">
                 <select id="select_content_type">
-                    <option value="">Select Content to Edit</option>
                     <?php 
                     foreach ($allContentTypes as $allContentType)
                     {
