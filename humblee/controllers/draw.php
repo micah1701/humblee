@@ -79,7 +79,7 @@ class Draw {
             return false;
         }
         
-        $meta_tags = json_decode($contentArray['meta_tags']['content']);
+        $meta_tags = json_decode($contentArray['meta_tags']->content);
         
         echo "<title>";
         echo (isset($meta_tags->page_title)) ? $meta_tags->page_title : '';

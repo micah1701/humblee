@@ -158,14 +158,24 @@ elseif( $content_type->input_type == "customform")
 	<input type="hidden" id="content" name="content" value="" />
 <?php	
 }
+
+// if it's a WYSIWYG editor, load as a textarea and generate neccessary js/css to implement the WYSIWYG editor
 elseif ($content_type->input_type == "wysiwyg")
 { 
 	echo  preg_replace('@{content}@',$content->content,$content_type->input_parameters);
+?>
+    <script src="https://cdn.quilljs.com/1.3.5/quill.js"></script>
+    <script src="<?php echo _app_path ?>tools/quill.js"></script>
+    
+<?php    
 }
+
+// for all other types of single input content block, show a basic label and the field
 else
 {
-    echo '<div class="row"><div class="eight columns">';
-    echo '<label>'.$content_type->name .':</label>';
+    echo '<div class="field">';
+    echo '<label class="label" for="content">'.$content_type->name .':</label>';
+    echo '<div class="control">';
 	echo  preg_replace('@{content}@',$content->content,$content_type->input_parameters);
 	echo '</div></div>';
 }
