@@ -366,4 +366,28 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		$this->json(array("success"=>true,"content"=>$content[0]));
     }
 
+	/**
+	 * media file manager
+	 */
+	 
+	public function listMediaFolders()
+	{
+		$this->require_role('content');
+		$media = new Core_Model_Media;
+		$this->json($media->listFolders());
+	}
+	
+	public function listMediaFilesByFolder()
+	{
+		$this->require_role('content');
+		if(!isset($_GET['folder']) || !is_numeric($_GET['folder']))
+		{
+			$result['error'] = "missing folder ID";
+		}
+		$media = new Core_Model_Media;
+		
+		$this->json($media->listFilesByFolder($_GET['folder']));
+		
+	}
+
 }
