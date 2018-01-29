@@ -369,7 +369,6 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 	/**
 	 * media file manager
 	 */
-	 
 	public function listMediaFolders()
 	{
 		$this->require_role('content');
@@ -387,7 +386,6 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		$media = new Core_Model_Media;
 		
 		$this->json($media->listFilesByFolder($_GET['folder']));
-		
 	}
 
 }

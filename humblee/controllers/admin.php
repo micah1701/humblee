@@ -149,12 +149,12 @@ class Core_Controller_Admin {
 		echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) );
 	}
 	
-	public function files()
+	public function media()
 	{
 	    $this->require_role('content');
-	    $_SESSION['KCFINDER'] = array();
-        $_SESSION['KCFINDER']['disabled'] = false;    
-	    $this->pagebody = Core::view( _app_server_path .'humblee/views/admin/filemanager.php',get_object_vars($this) ); 
+	    
+	    $this->pagebody = Core::view( _app_server_path .'humblee/views/admin/media.php',get_object_vars($this) ); 
+	    $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'humblee/js/admin/media.js"></script>';
 	    echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) );
 	}
 	

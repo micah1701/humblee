@@ -27,3 +27,5 @@ define("_table_roles","humblee_roles");
 define("_table_user_roles","humblee_user_roles");
 define("_table_validation","humblee_validation");
 define("_table_accesslog","humblee_accesslog");
+define("_table_media","humblee_media");
+define("_table_media_folders","humblee_media_folders");
