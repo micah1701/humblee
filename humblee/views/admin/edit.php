@@ -186,3 +186,21 @@ else
 
 <button class="button is-primary" id="save"><span class="icon is-pulled-left"><i class="far fa-save"></i></span><span class="is-pulled-right">Save Draft</span></button> &nbsp;
 <button class="button is-primary is-outlined" id="publish"><span class="icon is-pulled-left"><i class="fas fa-rocket"></i></span><span class="is-pulled-right">Publish live to site</span></button>
+
+
+<div id="quickviewDefault" class="quickview is-active">
+  <header class="quickview-header">
+    <p class="title">Quickview title</p>
+    <span class="delete" data-dismiss="quickview"></span>
+  </header>
+
+  <div class="quickview-body">
+    <div class="quickview-block">
+      ...
+    </div>
+  </div>
+
+  <footer class="quickview-footer">
+
+  </footer>
+</div>
