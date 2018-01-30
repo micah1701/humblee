@@ -9,7 +9,16 @@ ul a.menu-has-children.has-closed:after {
 ul.is-closed {
   display: none; }
 
-table {
-  width: 100%; }
+#files {
+  height: 100vh;
+  overflow-y: auto; }
+
+.editable-text:after {
+  font-family: Font Awesome\ 5 Free;
+  font-weight: 900;
+  margin-left: 5px;
+  content: "\f303";
+  font-size: .6em;
+  vertical-align: super; }
 
 /*# sourceMappingURL=media.css.map */

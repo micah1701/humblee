@@ -50,7 +50,13 @@ function loadFolders(){
 		$("#folders a").on("click",function(){
             $("#folders a.is-active").removeClass('is-active');
             $(this).addClass('is-active');
-            loadFiles($(this).data('id')); 
+            
+            $("#folder_name")
+                .addClass('editable-text')
+                .data('fieldID',$(this).data('id'))
+                .html( $(this).html());
+                
+            loadFiles($(this).data('id'));
         });
         
     });
@@ -58,7 +64,7 @@ function loadFolders(){
 
 var folderCache = [];
 function loadFiles(folder,updateCache)
-{
+{  
     var folderKey = "folder_"+folder;
     var cacheData = eval(folderCache[folderKey]);
     
@@ -100,7 +106,6 @@ function drawFilesTable(cacheData)
     });
 
     $("#files table tbody").html(tableData);
-    $("#files p").addClass('is-invisible');
     $("#files table").removeClass('is-invisible');
     
     $("#files td").on("click",function(){
@@ -117,10 +122,67 @@ function loadFileData(folder,id)
     var fileData = eval(folderCache['folder_'+folder][id]);
     console.log(fileData);
     $("#file_image img").attr('src',fileData.filepath);
-    $("#filename").html(fileData.name);
+    $("#file_name").html(fileData.name).data('fieldID',fileData.id);
     $("#filesize").html(friendlyFilesize(fileData.size));
     $("#filetype").html(fileData.type);
     $("#uploadby").html(fileData.uploadname);
     $("#uploaddate").html(dateFormat("F d, Y h:ia",fileData.upload_date));
 
 }
+
+
+$(document).on("click", ".editable-text", function() {
+    var original_text = $(this).text();
+    var field_id = $(this).data('fieldID');
+    var dom_id = $(this).attr('id');
+    
+    var new_input = $("<input class=\"input\"/>");
+    new_input.val(original_text);
+    
+    $(this).replaceWith(new_input);
+    new_input.focus();
+    
+    new_input.on("blur", function() {
+      var newValue = new_input.val();
+      var updated_text = $('<p class="is-size-5 editable-text">');
+          updated_text.data('fieldID',field_id);
+          updated_text.attr('id',dom_id);
+          
+      if(newValue == original_text)
+      {
+        //no change was made, just put the text back
+        updated_text.text(original_text);
+      }
+      else
+      {
+        
+        $.post(XHR_PATH +'updateMediaName',{type:dom_id,record:field_id,value:new_input.val()},function(response){
+          if(response.success)
+          {
+            updated_text.text(new_input.val());
+            
+            if(dom_id == "folder_name")
+            {
+                $("#folder a[data-id='"+ field_id +"']").html(new_input.val());
+            }
+            if(dom_id == "file_name")
+            {
+                //find the table tr row with this file id and update the name
+                //or refresh the table maybe, I dunno whatever is easier
+            }
+            
+          }
+          else
+          {
+            alert("Error: changes could not be saved at this time"); 
+            updated_text.text(original_text);
+          }
+        });  
+      }
+      
+      $(this).replaceWith(updated_text);
+      new_input.remove();
+      
+    }); // end onBlur check of text_editor class input
+    
+  }); // end onClick of editable-text string

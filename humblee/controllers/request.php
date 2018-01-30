@@ -388,6 +388,33 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		$this->json($response);
 	}
 	
+	//update the name of a file or folder
+	public function updateMediaName()
+	{
+		$this->require_role('content');
+		if(!isset($_POST['type']) || !isset($_POST['record']) || !is_numeric($_POST['record']))
+		{
+			$this->json(array("error"=>"invalid request"));
+		}
+		if($_POST['type'] == "folder_name")
+		{
+			$record = ORM::for_table(_table_media_folders)->where('id',$_POST['record'])->find_one();
+		}
+		if($_POST['type'] == "file_name")
+		{
+			$record = ORM::for_table(_table_media)->where('id',$_POST['record'])->find_one();
+		}
+		
+		if(!$record)
+		{
+			$this->json(array("error"=>"record not found"));
+		}
+		
+		$record->name = $_POST['value'];
+		$this->json(array("success"=>true));
+		
+	}
+	
 	public function updateMediaFile()
 	{
 		//change the name, required role, encryption state or move to different folder
