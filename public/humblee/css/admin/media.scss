@@ -17,6 +17,7 @@ ul {
     }
 }
 
-table {
-    width: 100%;
+#files {
+    height: 100vh;
+    overflow-y: auto;
 }

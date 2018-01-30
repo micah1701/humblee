@@ -387,5 +387,35 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		$response = array("success"=>true,"files"=>$media->listFilesByFolder($_GET['folder']));
 		$this->json($response);
 	}
+	
+	public function updateMediaFile()
+	{
+		//change the name, required role, encryption state or move to different folder
+	}
+	
+	public function deleteMediaFile()
+	{
+		//delete a file from the server and remove record from database
+	}
 
+	public function createMediaFolder()
+	{
+		//set name name and parent
+	}
+	
+	public function updateMediaFolder()
+	{
+		//rename or move folder (maybe combine with create function )
+	}
+	
+	public function deleteMediaFolder()
+	{
+		//remove all files in a folder
+		//delete the folder record in database
+	}
+	
+	public function uploadMediaFiles()
+	{
+		//process and save uploaded files
+	}
 }
