@@ -411,6 +411,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		}
 		
 		$record->name = $_POST['value'];
+		$record->save();
 		$this->json(array("success"=>true));
 		
 	}
