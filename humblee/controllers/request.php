@@ -384,8 +384,8 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 			$result['error'] = "missing folder ID";
 		}
 		$media = new Core_Model_Media;
-		
-		$this->json($media->listFilesByFolder($_GET['folder']));
+		$response = array("success"=>true,"files"=>$media->listFilesByFolder($_GET['folder']));
+		$this->json($response);
 	}
 
 }

@@ -33,7 +33,7 @@
                     if(Core::auth('content') || $is_dev)
                     {
                     ?>
-                    <a class="navbar-item" href="<?php echo _app_path ?>admin/files" class="tooltip" title="Manage Uploaded Content (files &amp; images)">Files Manager</a>
+                    <a class="navbar-item" href="<?php echo _app_path ?>admin/media" class="tooltip" title="Manage Uploaded Content (files &amp; images)">Media Manager</a>
                     <?php
                     }
                     ?>

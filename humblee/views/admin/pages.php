@@ -123,7 +123,7 @@
                 <div class="media-content">
                     <p><strong>Are you sure you want to <span class="has-text-danger">PERMANENTLY DELETE</span> this page?</strong></p>
                     <p>All content, past and present, associated with this page will be lost!</p>
-                </div>      
+                </div>
                 <figure class="media-right">
                     <span class="icon is-large">
                         <i class="fas fa-3x fa-exclamation-circle has-text-danger"></i>

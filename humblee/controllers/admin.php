@@ -153,8 +153,12 @@ class Core_Controller_Admin {
 	{
 	    $this->require_role('content');
 	    
-	    $this->pagebody = Core::view( _app_server_path .'humblee/views/admin/media.php',get_object_vars($this) ); 
-	    $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'humblee/js/admin/media.js"></script>';
+	    $this->pagebody = Core::view( _app_server_path .'humblee/views/admin/media.php',get_object_vars($this) );
+	    
+	    $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'tools/dateformat.js"></script>';
+	    $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'tools/friendlyfilesize.js"></script>';
+	    $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'humblee/js/admin/media.js"></script>';
+	    $this->extra_head_code.= '<link rel="stylesheet" type="text/css" href="'._app_path.'humblee/css/admin/media.css">';
 	    echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) );
 	}
 	
