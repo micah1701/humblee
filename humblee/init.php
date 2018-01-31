@@ -96,6 +96,12 @@ switch ($_called_controller)
 		
 	break;
 	
+	case "media" : // controller for reading files out of /storage folder
+	
+		$controller = new Core_Controller_Media;
+		$controller->index();
+	break;
+	
 	default : // everything should run through the template controller unless a custom controller is specified above
 	
 		$controller = new Core_Controller_Template;
