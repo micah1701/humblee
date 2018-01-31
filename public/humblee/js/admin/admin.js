@@ -74,14 +74,13 @@ function quickNotice(message,cssClass,timeOnScreen)
     cssClass = (cssClass) ? cssClass : 'is-success';
     timeOnScreen = (timeOnScreen) ? timeOnScreen : 3000;
     
-    var html = '<div id="quickNotice" style="position: absolute; z-index: 100; width: 100%; text-align: center" class="notification '+cssClass+'">';
+    var html = '<div id="quickNotice" style="position: absolute; z-index: 100; width: 100%" class="notification has-text-centered has-text-weight-semibold '+cssClass+'">';
         html+= message;
         html+= '</div>';
     
     $('body').append(html);
     var notice = $("#quickNotice"),
         startPosition = (notice.innerHeight()) * -1;
-        console.log('postion: '+startPosition);
         notice.css({'bottom':startPosition+'px'});
         notice.animate({bottom:0},300);
         setTimeout(function(){

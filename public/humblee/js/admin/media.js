@@ -1,4 +1,4 @@
-/* global $, XHR_PATH, friendlyFilesize, dateFormat */
+/* global $, XHR_PATH, friendlyFilesize, quickNotice, dateFormat */
 $(document).ready(function(){
    
    loadFolders();
@@ -55,6 +55,8 @@ function loadFolders(){
                 .addClass('editable-text')
                 .data('fieldID',$(this).data('id'))
                 .html( $(this).html());
+            
+            $("#files .level .level-right.is-invisible").removeClass('is-invisible');    
                 
             loadFiles($(this).data('id'));
         });
@@ -128,6 +130,7 @@ function loadFileData(folder,id)
     $("#uploadby").html(fileData.uploadname);
     $("#uploaddate").html(dateFormat("F d, Y h:ia",fileData.upload_date));
 
+    $("#fileProperties.is-invisible").removeClass('is-invisible');
 }
 
 
@@ -160,16 +163,20 @@ $(document).on("click", ".editable-text", function() {
           if(response.success)
           {
             updated_text.text(new_input.val());
-            
+            var objectLable;
             if(dom_id == "folder_name")
             {
-                $("#folder a[data-id='"+ field_id +"']").html(new_input.val());
+                objectLable = "Folder";
+                $("#folders a[data-id='"+ field_id +"']").html(new_input.val());
             }
             if(dom_id == "file_name")
             {
+                objectLable = "File";
                 //find the table tr row with this file id and update the name
                 //or refresh the table maybe, I dunno whatever is easier
             }
+            
+            quickNotice(objectLable+" name updated!");
             
           }
           else
