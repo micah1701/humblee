@@ -64,4 +64,29 @@ function confirmation(message,callbackConfirm,callbackCancel)
         $("#confirmationBox").removeClass('is-active');
     	$("#confirmationBox #confirmButton").off("click"); // unbind the "onclick" events
     	$("#confirmationBox button").off('click');
-    }    
+    }
+
+/**
+ * display a quick notification box that slides up from the bottom for a few seconds
+ */
+function quickNotice(message,cssClass,timeOnScreen)
+{
+    cssClass = (cssClass) ? cssClass : 'is-success';
+    timeOnScreen = (timeOnScreen) ? timeOnScreen : 3000;
+    
+    var html = '<div id="quickNotice" style="position: absolute; z-index: 100; width: 100%; text-align: center" class="notification '+cssClass+'">';
+        html+= message;
+        html+= '</div>';
+    
+    $('body').append(html);
+    var notice = $("#quickNotice"),
+        startPosition = (notice.innerHeight()) * -1;
+        console.log('postion: '+startPosition);
+        notice.css({'bottom':startPosition+'px'});
+        notice.animate({bottom:0},300);
+        setTimeout(function(){
+            notice.animate({bottom:startPosition+'px'},500,function(){
+                notice.remove();    
+            });
+        },timeOnScreen);
+}
