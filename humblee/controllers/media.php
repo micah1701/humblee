@@ -21,11 +21,8 @@ class Core_Controller_Media {
 		{
 		    $this->file = false;
 		}
-	}
-    
-    public function index()
-    {
-        if(!$this->file)
+		
+		if(!$this->file)
         {
             header('HTTP/1.1 404 Not Found'); 
             $this->content = array();
@@ -40,27 +37,55 @@ class Core_Controller_Media {
 			exit( "<h1>403 Forbidden</h1>You do not have permission to view this file");
         }
         
-        //read the file to a string
-        $raw_file = file_get_contents(_app_server_path.'storage/'.$this->file->filepath); // read the file
+        $this->filelocation = _app_server_path.'storage/'.$this->file->filepath;
         
-        // if the raw file isn't found or can't be read
-        if($raw_file === false)
+        if(!file_exists($this->filelocation))
         {
             header('HTTP/1.1 500 Internal Server Error');
-			exit( "<h1>500 Internal Server Error</h1>The file system could not read the requested resource");
+			exit( "<h1>500 Internal Server Error</h1>The file system could not find the requested resource");
         }
-        
+	}
+	
+	private function setHeaders($force_download=false)
+	{
+	    $cachControl = ($this->file->require_role != 0) ? 'private' : 'public';
+	    
+	    header('Content-Type: ' . $this->file->type);
+	    header('Cache-Control: '. $cachControl);
+	    header('Content-Length: ' . filesize($this->filelocation));
+	    
+	    if($force_download)
+	    {
+	        header('Content-Disposition: attachment; filename='. $this->file->name);
+	    }
+	    
+	}
+    
+    public function index()
+    {
+  
         //if file is encrypted, decrypt now
         if($this->file->encrypted == 1)
         {
+            //read the file to a string
+            $encrypted_content = file_get_contents($this->filelocation);
+            
+            // if the raw file isn't found or can't be read
+            if($encrypted_content === false)
+            {
+                header('HTTP/1.1 500 Internal Server Error');
+    			exit( "<h1>500 Internal Server Error</h1>The file system could not read the requested resource");
+            }
+            
+            $this->setHeaders();
             $crypto = new Core_Model_Crypto;
-            $raw_file = $crypto->decrypt($raw_file,$this->file->crypto_nonce);
+            echo $crypto->decrypt($encrypted_content,$this->file->crypto_nonce);
         }
-        
-        //set headers
-        
-        echo $raw_file;
-        
+        else
+        {
+            $this->setHeaders();
+            readfile(_app_server_path.'storage/'.$this->filelocation);
+        }
     }
     
 }
