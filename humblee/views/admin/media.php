@@ -80,7 +80,7 @@
             <form class="file">
                 <label class="file-label">
                     <input type="hidden" name="folder_id" id="folder_id">
-                    <input class="file-input" type="file" name="uploaderFiles[]" multiple>
+                    <input class="file-input" type="file" name="uploaderFiles[]" multiple="multiple">
                     <span class="file-cta">
                         <span class="file-icon">
                             <i class="fas fa-upload"></i>

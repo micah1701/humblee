@@ -442,8 +442,74 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		//delete the folder record in database
 	}
 	
+	//helper function to re-image array of uploaded files
+	//see http://php.net/manual/en/features.file-upload.multiple.php#53240
+	private function reArrayFiles(&$file_post) {
+	    $file_ary = array();
+	    $file_count = count($file_post['name']);
+	    $file_keys = array_keys($file_post);
+	
+	    for ($i=0; $i<$file_count; $i++) {
+	        foreach ($file_keys as $key) {
+	            $file_ary[$i][$key] = $file_post[$key][$i];
+	        }
+	    }
+	
+	    return $file_ary;
+	}
+	
+	//process and save uploaded files
 	public function uploadMediaFiles()
 	{
-		//process and save uploaded files
+		$this->require_role('content');
+		$errors = array();
+		
+		if(!$_FILES['uploaderFiles'])
+		{
+			$errors[] = "No Files Uploaded";
+		}
+		else
+		{
+			$files = $this->reArrayFiles($_FILES['uploaderFiles']);
+		}
+		
+		foreach($files as $file)
+		{
+			$cleanFilename = filter_var($file['name'],FILTER_SANITIZE_URL);
+			$cleanFilename = str_replace(" ","-",$cleanFilename);
+			
+			$fileRecord = ORM::for_table(_table_media)->create();
+			$fileRecord->folder = (isset($_POST['folder_id']) && is_numeric($_POST['folder_id'])) ? $_POST['folder_id'] : 0;
+			$fileRecord->name = $cleanFilename;
+			$fileRecord->size = $file['size'];
+			$fileRecord->type = $file['type'];
+			$fileRecord->upload_by = $_SESSION[session_key]['user_id'];
+			$fileRecord->upload_date = date("Y-m-d H:i:s");
+			$fileRecord->save();
+			
+			$id = $fileRecord->id();
+			$nameParts = explode(".",$file['name']);
+			$storageName = time().$id.".".strtolower(array_pop($nameParts));
+			
+			if(move_uploaded_file($file['tmp_name'], _app_server_path."storage/".$storageName))
+			{
+				$fileRecord->filepath = $storageName;
+				$fileRecord->save();				
+			}
+			else
+			{
+				$errors[] = 'could not save file '.$file['name'];
+				$fileRecord->delete();
+			}
+		}	
+		
+		if(count($errors) == 0)
+		{
+			$this->json(array("success"=>true));			
+		}
+		else
+		{
+			$this->json(array("success"=>false,"errors"=>$errors));
+		}
 	}
 }

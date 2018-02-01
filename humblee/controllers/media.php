@@ -58,7 +58,6 @@ class Core_Controller_Media {
 	    {
 	        header('Content-Disposition: attachment; filename='. $this->file->name);
 	    }
-	    
 	}
     
     public function index()

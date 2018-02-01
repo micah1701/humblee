@@ -255,7 +255,7 @@ function uploaderSubmit(droppedFiles) {
         .removeClass('is-error')
         .html('<span class="icon"><i class="fas fa-spinner fa-pulse"></i></span>&nbsp;<span id="processingMessage">Uploading…</span>');
 
-    var ajaxData = new FormData($("#uploader form").get(0));
+    var ajaxData = new FormData($("#uploaderModal form").get(0));
 
     if(droppedFiles)
     {
@@ -265,7 +265,7 @@ function uploaderSubmit(droppedFiles) {
     }
 
     $.ajax({
-        url: XHR_PATH+'uploadFiles',
+        url: XHR_PATH+'uploadMediaFiles',
         type: 'post',
         data: ajaxData,
         dataType: 'json',
