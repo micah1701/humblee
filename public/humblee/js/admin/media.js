@@ -1,8 +1,16 @@
-/* global $, XHR_PATH, friendlyFilesize, quickNotice, dateFormat */
+/* global $, XHR_PATH, friendlyFilesize, quickNotice, dateFormat, setEscEvent */
 $(document).ready(function(){
    
    loadFolders();
-   
+   $("#files button.uploadButton").on("click",function(){
+        $("#uploaderModal").addClass('is-active');
+        
+        //register ESC key and other ways to close the modal
+        setEscEvent('fileUploader',function () { closeUploaderModal() });
+        $("#uploaderModal .delete").on("click",function(){
+            closeUploaderModal();
+        });
+   });
     
 });
 
@@ -55,8 +63,9 @@ function loadFolders(){
                 .addClass('editable-text')
                 .data('fieldID',$(this).data('id'))
                 .html( $(this).html());
-            
-            $("#files .level .level-right.is-invisible").removeClass('is-invisible');    
+                
+            $("#folder_id").val($(this).data('id'));
+            $("#files .level .level-right.is-invisible").removeClass('is-invisible'); 
                 
             loadFiles($(this).data('id'));
         });
@@ -286,4 +295,8 @@ function uploaderSubmit(droppedFiles) {
           quickNotice(data,'is-warning');
         }
     });
+}
+function closeUploaderModal()
+{
+    $("#uploaderModal").removeClass('is-active');
 }

@@ -13,7 +13,7 @@
             <div class="level-right is-invisible">
                 <button class="button">Add Subfolder</button>
                 &nbsp;
-                <button class="button is-primary">Upload File(s)</button>
+                <button class="button is-primary uploadButton">Upload File(s)</button>
             </div>
         </div>
         
@@ -66,7 +66,7 @@
 
 </div>
 
-<div id="uploaderModal" class="modal is-active">
+<div id="uploaderModal" class="modal">
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
@@ -79,6 +79,7 @@
             </div>
             <form class="file">
                 <label class="file-label">
+                    <input type="hidden" name="folder_id" id="folder_id">
                     <input class="file-input" type="file" name="uploaderFiles[]" multiple>
                     <span class="file-cta">
                         <span class="file-icon">
