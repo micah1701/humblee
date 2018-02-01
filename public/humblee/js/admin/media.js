@@ -1,4 +1,4 @@
-/* global $, XHR_PATH, friendlyFilesize, quickNotice, dateFormat, setEscEvent */
+/* global $, XHR_PATH, APP_PATH, friendlyFilesize, quickNotice, dateFormat, setEscEvent */
 $(document).ready(function(){
    
    loadFolders();
@@ -132,7 +132,7 @@ function loadFileData(folder,id)
 {
     var fileData = eval(folderCache['folder_'+folder][id]);
     console.log(fileData);
-    $("#file_image img").attr('src',fileData.filepath);
+    $("#file_image img").attr('src',APP_PATH +"media/" + fileData.id +"/"+fileData.name);
     $("#file_name").html(fileData.name).data('fieldID',fileData.id);
     $("#filesize").html(friendlyFilesize(fileData.size));
     $("#filetype").html(fileData.type);
@@ -283,6 +283,7 @@ function uploaderSubmit(droppedFiles) {
             if(data.success == true)
             {
                 quickNotice('Upload Complete','is-success');
+                loadFiles($("#folder_id").val(),true);
             }
             else
             {

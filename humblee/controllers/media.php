@@ -83,7 +83,7 @@ class Core_Controller_Media {
         else
         {
             $this->setHeaders();
-            readfile(_app_server_path.'storage/'.$this->filelocation);
+            readfile($this->filelocation);
         }
     }
     
