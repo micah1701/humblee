@@ -192,4 +192,98 @@ $(document).on("click", ".editable-text", function() {
       
     }); // end onBlur check of text_editor class input
     
-  }); // end onClick of editable-text string
+}); // end onClick of editable-text string
+
+/** file uploader **/
+// https://css-tricks.com/drag-and-drop-file-uploading/
+var drapAndDropMessage = "Drag &amp; Drop";
+
+$(document).ready(function(){
+    
+    var isAdvancedUpload = function() {
+      var div = document.createElement('div');
+      return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 'FormData' in window && 'FileReader' in window;
+    }();
+    
+    var dropZone = $(".dropZone");
+
+    if(!isAdvancedUpload)
+    {
+        dropZone.css({display:'none'});
+    }
+    else
+    {
+        dropZone.on('drag dragstart dragend dragover dragenter dragleave drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        })
+        .on('dragover dragenter', function() {
+            dropZone.addClass('is-dragover');
+        })
+        .on('dragleave dragend drop', function() {
+            dropZone.removeClass('is-dragover');
+        })
+            .on('drop', function(e) {
+            var droppedFiles = e.originalEvent.dataTransfer.files;
+            uploaderSubmit(droppedFiles);
+        });
+    }
+    
+    $("#uploaderModal input").on('change', function(e) { //when manually selecting files
+        uploaderSubmit(false);
+    });
+
+});
+
+function uploaderSubmit(droppedFiles) {
+    var dropZone = $(".dropZone");
+    
+    if (dropZone.hasClass('is-uploading')){
+        return false;
+    }
+
+    dropZone.addClass('is-uploading')
+        .removeClass('is-error')
+        .html('<span class="icon"><i class="fas fa-spinner fa-pulse"></i></span>&nbsp;<span id="processingMessage">Uploading…</span>');
+
+    var ajaxData = new FormData($("#uploader form").get(0));
+
+    if(droppedFiles)
+    {
+        $.each( droppedFiles, function(i, file) {
+            ajaxData.append( $("#uploader form input[name='uploaderFiles']").attr('name'), file );
+        });
+    }
+
+    $.ajax({
+        url: XHR_PATH+'uploadFiles',
+        type: 'post',
+        data: ajaxData,
+        dataType: 'json',
+        cache: false,
+        contentType: false,
+        processData: false,
+        complete: function() {
+          $('.dropZone').removeClass('is-uploading');
+          $('.dropZone span#processingMessage').html('Processing…')
+          
+        },
+        success: function(data) {
+            $('.dropZone').html(drapAndDropMessage);
+            
+            if(data.success == true)
+            {
+                quickNotice('Upload Complete','is-success');
+            }
+            else
+            {
+                quickNotice('Upload Failed','is-danger');
+            }
+        },
+        error: function(data) {
+          // Log the error, show an alert, whatever works for you
+          $('.dropZone').html(drapAndDropMessage);
+          quickNotice(data,'is-warning');
+        }
+    });
+}

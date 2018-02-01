@@ -1,12 +1,12 @@
-@charset "UTF-8";
-ul a.menu-has-children:after {
+ul.menu-list a.menu-has-children:after {
   font-family: Font Awesome\ 5 Free;
   font-weight: 900;
   margin-left: 8px;
-  content: ""; }
-ul a.menu-has-children.has-closed:after {
+  content: "\f107";
+  float: right; }
+ul.menu-list a.menu-has-children.has-closed:after {
   content: "\f105"; }
-ul.is-closed {
+ul.menu-list.is-closed {
   display: none; }
 
 #files {
@@ -20,5 +20,22 @@ ul.is-closed {
   content: "\f303";
   font-size: .6em;
   vertical-align: super; }
+
+/**
+ * uploader
+ */
+#uploaderModal .modal-card-body .dropZone {
+  text-align: center;
+  padding: 50px 0;
+  border: 2px #333 dashed;
+  border-radius: 20px; }
+  #uploaderModal .modal-card-body .dropZone.is-dragover {
+    background-color: #f3f3f3 !important;
+    border: 2px #23d160 dashed;
+    color: #336699; }
+  #uploaderModal .modal-card-body .dropZone.is-uploading {
+    border: 2px #336699 solid; }
+#uploaderModal .modal-card-body .file {
+  margin-top: 20px; }
 
 /*# sourceMappingURL=media.css.map */

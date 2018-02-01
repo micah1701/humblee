@@ -4,7 +4,7 @@
  * Read files out of the /storage folder and send to browser
  *
  * URI to this file should look like /media/INT/filename.ext
- * where N = the ID is the row ID in the media table and
+ * where INT = the ID is the row ID in the media table and
  * where filename.ext is the arbitrary file name associated with the file
  */
 class Core_Controller_Media {
