@@ -79,6 +79,7 @@ class Core_Controller_Admin {
 	    $this->extra_head_code.= '<link rel="stylesheet" type="text/css" href="'._app_path.'humblee/css/admin/pages.css">';
         $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'humblee/js/admin/pages.js"></script>';
         
+        $this->access_roles = ORM::for_table(_table_roles)->where('role_type','access')->find_many();
 		$this->pagebody = Core::view( _app_server_path .'humblee/views/admin/pages.php',get_object_vars($this) ); 	
 		echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) ); 
 	}

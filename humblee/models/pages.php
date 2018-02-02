@@ -67,6 +67,10 @@ class Core_Model_Pages {
 		$page->active = (isset($post['active']) && is_numeric($post['active']) ) ? $post['active'] : 1;
 		$page->searchable = (isset($post['searchable']) && is_numeric($post['searchable']) ) ? $post['searchable'] : 1;
 		$page->display_in_sitemap = (isset($post['display_in_sitemap']) && is_numeric($post['display_in_sitemap']) ) ? $post['display_in_sitemap'] : 1;
+		if(isset($post['required_role']))
+		{
+			$page->required_role = $post['required_role'];
+		}
 		$page->save();
 
 		return $page->id(); 
