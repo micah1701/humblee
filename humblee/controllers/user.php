@@ -300,7 +300,8 @@ class Core_Controller_User {
 		$this->user = $this->users->profile(); //get user profile data to bind to view
 		$this->userAccessLog = $this->users->access_log(); // get users access log
 		$this->template_view = Core::view( _app_server_path .'humblee/views/user/access.php',get_object_vars($this) ); 	
-		echo Core::view( _app_server_path .'application/views/templates/template.php',get_object_vars($this) );
+		$themeTemplate = (Core::auth('admin')) ? 'humblee/views/admin/templates/template.php' : 'application/views/templates/template.php';
+		echo Core::view( _app_server_path . $themeTemplate ,get_object_vars($this) );
 	}
 	
 }
