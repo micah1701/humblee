@@ -56,7 +56,7 @@
                 </div>
                 <div class="card-image">
                     <figure id="file_image" class="image is-4x3">
-                        <img width="100%">
+                        <img>
                     </figure>
                 </div>
                 <footer class="card-footer">

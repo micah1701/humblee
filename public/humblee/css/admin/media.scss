@@ -23,6 +23,17 @@ ul.menu-list {
     overflow-y: auto;
 }
 
+#file {
+    .card-image{
+        img {
+            margin: 0 auto;
+            max-height: 250px;
+            width: auto;            
+        }
+
+    }
+}
+
 .editable-text {
     &:after {
         font-family: Font Awesome\ 5 Free;

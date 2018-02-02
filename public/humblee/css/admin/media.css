@@ -13,6 +13,11 @@ ul.menu-list.is-closed {
   height: 100vh;
   overflow-y: auto; }
 
+#file .card-image img {
+  margin: 0 auto;
+  max-height: 250px;
+  width: auto; }
+
 .editable-text:after {
   font-family: Font Awesome\ 5 Free;
   font-weight: 900;
