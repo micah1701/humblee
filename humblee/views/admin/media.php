@@ -44,7 +44,7 @@
                     <p>Author: <span id="uploadby"></span></p>
                     <p>Date: <span id="uploaddate"></span></p>
                     <div class="field">
-                        <label class="label" for="required_role">Privacy:</label> 
+                        <label class="label" for="required_role">Access Role:</label> 
                         <div class="control">
                             <div class="select">
                                 <select  id="required_role" name="required_role">

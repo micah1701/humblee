@@ -416,9 +416,22 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		
 	}
 	
-	public function updateMediaFile()
+	//change the required_role for a given media file
+	public function updateMediaRole()
 	{
-		//change the name, required role, encryption state or move to different folder
+		$this->require_role('content');
+		if(!isset($_POST['file_id']) || !is_numeric($_POST['file_id']) || !isset($_POST['required_role']) || !is_numeric($_POST['required_role']))
+		{
+			exit("Invalid or missing file ID or role type");
+		}
+		$file = ORM::for_table(_table_media)->find_one($_POST['file_id']);
+		if(!$file)
+		{
+			exit("File record not found");
+		}
+		$file->required_role = $_POST['required_role'];
+		$file->save();
+		$this->json(array("success"=>true));
 	}
 	
 	public function deleteMediaFile()

@@ -12,6 +12,25 @@ $(document).ready(function(){
         });
     });
    
+    $("#required_role").on("change",function(e){
+        //don't do this if it wasn't the user who initiated the change
+        if(!e.originalEvent)
+        {
+            return;
+        }
+
+        $.post(XHR_PATH+'updateMediaRole',{file_id:$("#file_name").data('fieldID'),required_role:$(this).val()},function(response){
+            if(response.success)
+            {
+                quickNotice('Access role updated');
+            }
+            else
+            {
+                quickNotice('Could not save access role','is-danger');
+            }
+        });  
+    });
+    
     $("#fileLinkCopy").on("click",function(){
         var clipboard = new Clipboard("#fileLinkCopy");
         clipboard.on('success',function(e)
@@ -163,6 +182,7 @@ function loadFileData(folder,id)
     $("#filesize").html(friendlyFilesize(fileData.size));
     $("#filetype").html(fileData.type);
     $("#uploadby").html(fileData.uploadname);
+    $("#required_role").val(fileData.required_role);
     $("#uploaddate").html(dateFormat("F d, Y h:ia",fileData.upload_date));
     $("#fileLink").attr('href',fileData.url);
     $("#fileLinkCopy").attr('data-clipboard-text',fileData.url);

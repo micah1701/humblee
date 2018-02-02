@@ -31,7 +31,7 @@ class Core_Controller_Media {
 			exit();
         }
         
-        if($this->file->require_role != 0 && !Core::auth($this->file->require_role))
+        if($this->file->required_role != 0 && !Core::auth($this->file->required_role))
         {
             header('HTTP/1.1 403 Forbidden');
 			exit( "<h1>403 Forbidden</h1>You do not have permission to view this file");
