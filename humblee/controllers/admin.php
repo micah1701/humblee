@@ -153,6 +153,8 @@ class Core_Controller_Admin {
 	{
 	    $this->require_role('content');
 	    
+	    $this->access_roles = ORM::for_table(_table_roles)->where('role_type','access')->find_many();
+	    
 	    $this->pagebody = Core::view( _app_server_path .'humblee/views/admin/media.php',get_object_vars($this) );
 	    
 	    $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'tools/dateformat.js"></script>';

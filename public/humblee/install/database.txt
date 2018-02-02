@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `humblee_roles` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `description` varchar(255) NOT NULL,
-  `role_type` enum('access','content') NOT NULL
+  `role_type` enum('access','task') NOT NULL
 ) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 --
@@ -95,11 +95,11 @@ CREATE TABLE IF NOT EXISTS `humblee_roles` (
 INSERT INTO `humblee_roles` (`id`, `name`, `description`, `role_type`) VALUES
 (1, 'login', 'Log into website', 'access'),
 (2, 'admin', 'Log into admin area', 'access'),
-(3, 'content', 'Edit any content on the site', 'content'),
-(4, 'pages', 'Add, remove, reorder and label pages', 'access'),
-(5, 'users', 'Set access roles for all website users', 'access'),
-(6, 'designer', 'Create and edit content block types and templates', 'access'),
-(7, 'developer', 'Super user access', 'access');
+(3, 'content', 'Edit any content on the site', 'task'),
+(4, 'pages', 'Add, remove, reorder and label pages', 'task'),
+(5, 'users', 'Set access roles for all website users', 'task'),
+(6, 'designer', 'Create and edit content block types and templates', 'task'),
+(7, 'developer', 'Super user access', 'task');
 
 -- --------------------------------------------------------
 
