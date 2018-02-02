@@ -1,4 +1,4 @@
-/* global $, XHR_PATH, APP_PATH, friendlyFilesize, quickNotice, dateFormat, setEscEvent */
+/* global $, XHR_PATH, APP_PATH, friendlyFilesize, quickNotice, dateFormat, setEscEvent, Clipboard */
 $(document).ready(function(){
    
    loadFolders();
@@ -10,6 +10,23 @@ $(document).ready(function(){
         $("#uploaderModal .delete").on("click",function(){
             closeUploaderModal();
         });
+   });
+   
+   $("#fileLinkCopy").on("click",function(){
+        var clipboard = new Clipboard("#fileLinkCopy");
+        clipboard.on('success',function(e)
+        {
+            quickNotice('Copied to clipboard','is-info',1750);  
+        });
+   });
+
+   $("#file button.deletebutton").on("click",function(){
+       var fileID = $("#file_name").data('fileID');
+       var deleteFile = function(fileID){
+           alert('deleting the file #'+ fileID);
+       };
+       
+       confirmation('<strong>You are about to <span class="has-text-danger">PERMANENTLY DELETE</span> this file.</strong><br><p>This may have an adverse effect on any pages that include the file.</p>',deleteFile,function(){return false;});
    });
     
 });
@@ -144,11 +161,13 @@ function loadFileData(folder,id)
             });
     }
 
-    $("#file_name").html(fileData.name).data('fieldID',fileData.id);
+    $("#file_name").data('fileID',fileData.id).html(fileData.name);
     $("#filesize").html(friendlyFilesize(fileData.size));
     $("#filetype").html(fileData.type);
     $("#uploadby").html(fileData.uploadname);
     $("#uploaddate").html(dateFormat("F d, Y h:ia",fileData.upload_date));
+    $("#fileLink").attr('href',fileData.url);
+    $("#fileLinkCopy").attr('data-clipboard-text',fileData.url);
 
     $("#fileProperties.is-invisible").removeClass('is-invisible');
 }

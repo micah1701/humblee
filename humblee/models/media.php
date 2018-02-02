@@ -39,6 +39,9 @@ class Core_Model_Media {
         $return = array();
         foreach($files as $file)
         {
+            //overload result array with additional data
+            $file['url'] = _app_path.'media/'.$file['id'].'/'.$file['name'];
+            
             $return[$file['id']] = $file;
         }
         return $return;

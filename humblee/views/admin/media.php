@@ -34,9 +34,8 @@
             <p class="is-size-5">File Properties</p>
             <hr>
             <div class="card">
-                
                 <div class="card-content">
-                    <p class="is-size-5 editable-text" id="file_name"></p>
+                    <p class="is-size-5 editable-text" id="file_name" data-fileID=""></p>
                     <p>Size: <span id="filesize"></span></p>
                     <p>File Type: <span id="filetype"></span></p>
                     <p>Author: <span id="uploadby"></span></p>
@@ -60,6 +59,25 @@
                         <img width="100%">
                     </figure>
                 </div>
+                <footer class="card-footer">
+                    <p class="card-footer-item">
+                        <a id="fileLink" class="button is-link is-small tooltip" href="" data-tooltip="Open file in browser tab" target="_blank">
+                            <span class="is-pulled-left">Open</span>
+                            <span class="icon"><i class="fas fa-external-link-alt"></i></span>
+                        </a>                        
+                    </p>
+                    <p class="card-footer-item">
+                        <button id="fileLinkCopy" class="button is-info is-small tooltip" data-tooltip="Copy link to clipboard">
+                            <span class="is-pulled-left">Copy Link</span>
+                            <span class="icon"><i class="fas fa-copy"></i></span>
+                        </button>                        
+                    </p>
+                    <p class="card-footer-item">
+                        <button class="button deletebutton is-danger is-small is-inverted"><span class="icon"><i class="fas fa-trash"></i></span><span class="is-pulled-right">Delete</span></button>                        
+                    </p>
+                </footer>
+
+                
             </div>    
         </aside>
     </div>
