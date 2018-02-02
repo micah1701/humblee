@@ -23,6 +23,7 @@ $(document).ready(function(){
             if(response.success)
             {
                 quickNotice('Access role updated');
+                //need to update fileList cache for next time this file is selected
             }
             else
             {
