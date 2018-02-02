@@ -13,7 +13,10 @@
             <div class="level-right is-invisible">
                 <button class="button">Add Subfolder</button>
                 &nbsp;
-                <button class="button is-primary uploadButton">Upload File(s)</button>
+                <button class="button is-info uploadButton">
+                    <span class="icon is-pulled-left"><i class="fas fa-upload"></i></span>
+                    <span class="is-pulled-right">Upload File(s)</span>
+                </button>
             </div>
         </div>
         
