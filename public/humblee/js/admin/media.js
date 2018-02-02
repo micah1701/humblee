@@ -131,7 +131,7 @@ function drawFilesTable(cacheData)
 function loadFileData(folder,id)
 {
     var fileData = eval(folderCache['folder_'+folder][id]);
-    console.log(fileData);
+
     $("#file_image img").attr('src',APP_PATH +"media/" + fileData.id +"/"+fileData.name);
     $("#file_name").html(fileData.name).data('fieldID',fileData.id);
     $("#filesize").html(friendlyFilesize(fileData.size));
@@ -254,19 +254,21 @@ function uploaderSubmit(droppedFiles) {
     dropZone.addClass('is-uploading')
         .removeClass('is-error')
         .html('<span class="icon"><i class="fas fa-spinner fa-pulse"></i></span>&nbsp;<span id="processingMessage">Uploading…</span>');
-
-    var ajaxData = new FormData($("#uploaderModal form").get(0));
+    
+    var form = $("#uploaderForm");
+    var ajaxData = new FormData(form[0]);
 
     if(droppedFiles)
     {
+        var inputFieldTypeFile = $('#uploaderFiles input[type="file"]').attr('name');
         $.each( droppedFiles, function(i, file) {
-            ajaxData.append( $("#uploader form input[name='uploaderFiles']").attr('name'), file );
+            ajaxData.append( inputFieldTypeFile, file );
         });
     }
 
     $.ajax({
         url: XHR_PATH+'uploadMediaFiles',
-        type: 'post',
+        type: 'POST',
         data: ajaxData,
         dataType: 'json',
         cache: false,
@@ -279,11 +281,19 @@ function uploaderSubmit(droppedFiles) {
         },
         success: function(data) {
             $('.dropZone').html(drapAndDropMessage);
+            resetFormElement($("#uploaderFiles")); // remove the just-uploaded file(s) from the list of files to upload next time
             
-            if(data.success == true)
+            if(data.success == true && data.errors.length == 0)
             {
                 quickNotice('Upload Complete','is-success');
                 loadFiles($("#folder_id").val(),true);
+                closeUploaderModal();
+            }
+            else if(data.success == true && data.errors.length > 0)
+            {
+                quickNotice('Some files were not saved.','is-warning');
+                loadFiles($("#folder_id").val(),true);
+                closeUploaderModal();
             }
             else
             {
@@ -293,11 +303,17 @@ function uploaderSubmit(droppedFiles) {
         error: function(data) {
           // Log the error, show an alert, whatever works for you
           $('.dropZone').html(drapAndDropMessage);
-          quickNotice(data,'is-warning');
+          quickNotice('Upload Failed.\n'+data,'is-danger');
         }
     });
 }
 function closeUploaderModal()
 {
     $("#uploaderModal").removeClass('is-active');
+}
+
+//clear field
+function resetFormElement(e) {
+  e.wrap('<form>').closest('form').get(0).reset();
+  e.unwrap();
 }

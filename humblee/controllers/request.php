@@ -473,6 +473,9 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 			$files = $this->reArrayFiles($_FILES['uploaderFiles']);
 		}
 		
+		$totalFiles = count($files);
+		$savedFiles = 0;
+		
 		foreach($files as $file)
 		{
 			$cleanFilename = filter_var($file['name'],FILTER_SANITIZE_URL);
@@ -491,25 +494,28 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 			$nameParts = explode(".",$file['name']);
 			$storageName = time().$id.".".strtolower(array_pop($nameParts));
 			
-			if(move_uploaded_file($file['tmp_name'], _app_server_path."storage/".$storageName))
+			if($file['error'] == 0)
 			{
-				$fileRecord->filepath = $storageName;
-				$fileRecord->save();				
+				if(move_uploaded_file($file['tmp_name'], _app_server_path."storage/".$storageName))
+				{
+					$fileRecord->filepath = $storageName;
+					$fileRecord->save();
+					$savedFiles++;
+				}
+				else
+				{
+					$errors[] = 'could not store file '.$file['name'];
+					$fileRecord->delete();
+				}			
 			}
 			else
 			{
-				$errors[] = 'could not save file '.$file['name'];
-				$fileRecord->delete();
+				$errors[] = 'there was a problem with a file '.$file['name'];
+				$fileRecord->delete();	
 			}
 		}	
 		
-		if(count($errors) == 0)
-		{
-			$this->json(array("success"=>true));			
-		}
-		else
-		{
-			$this->json(array("success"=>false,"errors"=>$errors));
-		}
+		$success = ($savedFiles > 0) ? true : false;
+		$this->json(array("success"=>$success,"errors"=>$errors,"filesReceived"=>$totalFiles,"filesSaved"=>$savedFiles));
 	}
 }
