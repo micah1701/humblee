@@ -33,7 +33,7 @@ class Core_Controller_Admin {
         if(!Core::auth($role) && !Core::auth('developer') )
         {
          	header('HTTP/1.1 403 Forbidden');  
-            $this->pagebody = "<h1>403 Forbidden</h1><h3>You do not have access to view this page</h3><p>If you believe this is an error, please see your site administrator.</p>";
+            $this->template_view = "<h1>403 Forbidden</h1><h3>You do not have access to view this page</h3><p>If you believe this is an error, please see your site administrator.</p>";
             echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) );
             exit();
         }
@@ -63,7 +63,7 @@ class Core_Controller_Admin {
 	    
 	    $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'humblee/js/admin/index.js"></script>';
 	    
-		$this->pagebody = Core::view( _app_server_path .'humblee/views/admin/index.php',get_object_vars($this) ); 	
+		$this->template_view = Core::view( _app_server_path .'humblee/views/admin/index.php',get_object_vars($this) ); 	
 		echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) ); 
 	}
 	
@@ -80,7 +80,7 @@ class Core_Controller_Admin {
         $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'humblee/js/admin/pages.js"></script>';
         
         $this->access_roles = ORM::for_table(_table_roles)->where('role_type','access')->find_many();
-		$this->pagebody = Core::view( _app_server_path .'humblee/views/admin/pages.php',get_object_vars($this) ); 	
+		$this->template_view = Core::view( _app_server_path .'humblee/views/admin/pages.php',get_object_vars($this) ); 	
 		echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) ); 
 	}
 	
@@ -142,7 +142,7 @@ class Core_Controller_Admin {
         $this->template_data = ORM::for_table( _table_templates)->find_one($this->page_data->template_id);
         $this->allContentTypes = ORM::for_table(_table_content_types)->where_in('id',explode(',',$this->template_data->blocks))->order_by_asc('name')->find_many();	
 		
-		$this->pagebody = Core::view( _app_server_path .'humblee/views/admin/edit.php',get_object_vars($this) ); 
+		$this->template_view = Core::view( _app_server_path .'humblee/views/admin/edit.php',get_object_vars($this) ); 
         
         $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'tools/dateformat.js"></script>';
         $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'humblee/js/admin/edit.js"></script>';
@@ -156,7 +156,7 @@ class Core_Controller_Admin {
 	    
 	    $this->access_roles = ORM::for_table(_table_roles)->where('role_type','access')->find_many();
 	    
-	    $this->pagebody = Core::view( _app_server_path .'humblee/views/admin/media.php',get_object_vars($this) );
+	    $this->template_view = Core::view( _app_server_path .'humblee/views/admin/media.php',get_object_vars($this) );
 	    
 	    $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'tools/dateformat.js"></script>';
 	    $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'tools/friendlyfilesize.js"></script>';
@@ -169,7 +169,7 @@ class Core_Controller_Admin {
 	public function users(){
         $this->require_role('users');
         
-		$this->pagebody = Core::view( _app_server_path .'humblee/views/admin/users.php',get_object_vars($this) ); 
+		$this->template_view = Core::view( _app_server_path .'humblee/views/admin/users.php',get_object_vars($this) ); 
 		echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($this) ); 
 	}
     

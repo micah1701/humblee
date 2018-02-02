@@ -288,8 +288,11 @@ class Core_Controller_User {
 		} // end check for $_POST data
 		
 		$this->userAccessLog = $this->users->access_log(5); // get users access log
-		$this->template_view = Core::view( _app_server_path .'humblee/views/user/profile.php',get_object_vars($this) ); 	
-		echo Core::view( _app_server_path .'application/views/templates/template.php',get_object_vars($this) );
+		$this->template_view = Core::view( _app_server_path .'humblee/views/user/profile.php',get_object_vars($this) );	
+		$themeTemplate = (Core::auth('admin')) ? 'humblee/views/admin/templates/template.php' : 'application/views/templates/template.php';
+		
+		echo Core::view( _app_server_path . $themeTemplate,get_object_vars($this) );
+		
 	}
 	
 	public function access()

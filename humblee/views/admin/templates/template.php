@@ -93,7 +93,7 @@
 
     <section class="section">
         <div id="content" class="container">
-        <?php echo (isset($pagebody) ) ? $pagebody : '' ?>
+        <?php echo (isset($template_view) ) ? $template_view : '' ?>
         </div>
     </section><!-- end "content" -->
 
