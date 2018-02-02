@@ -423,7 +423,23 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 	
 	public function deleteMediaFile()
 	{
-		//delete a file from the server and remove record from database
+		$this->require_role('content');
+		if(!isset($_POST['file_id']) || !is_numeric($_POST['file_id']))
+		{
+			exit("Invalid or missing file ID");
+		}
+		$file = ORM::for_table(_table_media)->find_one($_POST['file_id']);
+		if(!$file)
+		{
+			exit("File record not found");
+		}
+		if(!unlink(_app_server_path."storage/".$file->filepath))
+		{
+			exit("Could not unlink file");
+		}
+		$file->delete();
+		
+		$this->json(array("success"=>true));
 	}
 
 	public function createMediaFolder()

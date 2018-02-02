@@ -1,8 +1,8 @@
-/* global $, XHR_PATH, APP_PATH, friendlyFilesize, quickNotice, dateFormat, setEscEvent, Clipboard */
+/* global $, XHR_PATH, APP_PATH, friendlyFilesize, quickNotice, confirmation, dateFormat, setEscEvent, Clipboard */
 $(document).ready(function(){
    
    loadFolders();
-   $("#files button.uploadButton").on("click",function(){
+    $("#files button.uploadButton").on("click",function(){
         $("#uploaderModal").addClass('is-active');
         
         //register ESC key and other ways to close the modal
@@ -10,24 +10,22 @@ $(document).ready(function(){
         $("#uploaderModal .delete").on("click",function(){
             closeUploaderModal();
         });
-   });
+    });
    
-   $("#fileLinkCopy").on("click",function(){
+    $("#fileLinkCopy").on("click",function(){
         var clipboard = new Clipboard("#fileLinkCopy");
         clipboard.on('success',function(e)
         {
             quickNotice('Copied to clipboard','is-info',1750);  
         });
-   });
+    });
 
-   $("#file button.deletebutton").on("click",function(){
-       var fileID = $("#file_name").data('fileID');
-       var deleteFile = function(fileID){
-           alert('deleting the file #'+ fileID);
-       };
-       
-       confirmation('<strong>You are about to <span class="has-text-danger">PERMANENTLY DELETE</span> this file.</strong><br><p>This may have an adverse effect on any pages that include the file.</p>',deleteFile,function(){return false;});
-   });
+    $("#file button.deletebutton").on("click",function(){
+        confirmation('<strong>You are about to <span class="has-text-danger">PERMANENTLY DELETE</span> this file.</strong><br><p>This may have an adverse effect on any pages that include the file.</p>',
+            function(){ deleteFile() },
+            function(){ return false; }
+        );
+    });
     
 });
 
@@ -161,7 +159,7 @@ function loadFileData(folder,id)
             });
     }
 
-    $("#file_name").data('fileID',fileData.id).html(fileData.name);
+    $("#file_name").data('fieldID',fileData.id).html(fileData.name);
     $("#filesize").html(friendlyFilesize(fileData.size));
     $("#filetype").html(fileData.type);
     $("#uploadby").html(fileData.uploadname);
@@ -172,6 +170,21 @@ function loadFileData(folder,id)
     $("#fileProperties.is-invisible").removeClass('is-invisible');
 }
 
+function deleteFile()
+{
+    var fileID = $("#file_name").data('fieldID');
+    $.post(XHR_PATH+'deleteMediaFile',{file_id:fileID},function(response){
+        if(response.success)
+        {
+            quickNotice('File Deleted');
+            loadFiles($("#folder_id").val(),true);
+        }
+        else
+        {
+            quickNotice('Could not delete file','is-warning');
+        }
+    });
+}
 
 $(document).on("click", ".editable-text", function() {
     var original_text = $(this).text();
