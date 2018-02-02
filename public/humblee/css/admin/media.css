@@ -38,4 +38,7 @@ ul.menu-list.is-closed {
 #uploaderModal .modal-card-body .file {
   margin-top: 20px; }
 
+#files table tbody tr {
+  cursor: pointer; }
+
 /*# sourceMappingURL=media.css.map */

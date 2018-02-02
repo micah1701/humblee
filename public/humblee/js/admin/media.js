@@ -105,6 +105,8 @@ function loadFiles(folder,updateCache)
 
 function drawFilesTable(cacheData)
 {
+    $("#fileProperties").addClass('is-invisible'); // stop showing the #fileProperties card until another file is selected
+    
     //draw files here:
     var tableData = (cacheData.length == 0 ) ? '<tr><td colspan="3">Folder is empty</td></tr>' : '';
     $.each(cacheData,function(index,row)
@@ -131,8 +133,17 @@ function drawFilesTable(cacheData)
 function loadFileData(folder,id)
 {
     var fileData = eval(folderCache['folder_'+folder][id]);
+    
+    $("#file .card-image").css({'display':'none'});
 
-    $("#file_image img").attr('src',APP_PATH +"media/" + fileData.id +"/"+fileData.name);
+    if(fileData.type.match("^image"))
+    {
+        $("#file_image img").attr('src',APP_PATH +"media/" + fileData.id +"/"+fileData.name)
+            .on('load',function(){
+                $("#file .card-image").fadeIn('fast');
+            });
+    }
+
     $("#file_name").html(fileData.name).data('fieldID',fileData.id);
     $("#filesize").html(friendlyFilesize(fileData.size));
     $("#filetype").html(fileData.type);
