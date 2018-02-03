@@ -344,7 +344,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 	//includes the username of the user who updated the content
     public function latestRevision()
     {
-    	$this->require_role('content');
+    	$this->require_role(array('content','publish'));
     	if(!isset($_POST['content_type']) || !is_numeric($_POST['content_type']) || !isset($_POST['page_id']) || !is_numeric($_POST['page_id']))
     	{
     		$this->json(array("error"=>"Missing required parameters"));

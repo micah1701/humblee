@@ -85,7 +85,7 @@ class Core_Controller_Admin {
 	}
 	
 	public function edit(){
-	    $this->require_role('content');
+	    $this->require_role(array('content','publish'));
 	    
 	    //process $_POST data on save
 		//there will either be one field named "content" or a bunch of arbitrary fields listed in a field called "serialize_fields"

@@ -2,6 +2,15 @@
 
 class Core_Model_Content {
 
+	function __construct(){
+		
+		//all methods in this class require either the 'content' or 'publish' role or both.
+		if(!Core::auth(array('content','publish','developer')))
+		{
+			exit("You do not have permission to access this function.");
+		}
+	}
+
     /**
      * Return all Content revisions for a given page's content type
      *
@@ -77,7 +86,7 @@ class Core_Model_Content {
 			$new_content = false;
 		}
 		
-		if($post['live'] == "1"){
+		if($post['live'] == "1" && Core::auth(array('publish','developer'))){
 			
 			//dethrown the old live version
 			$old_live = ORM::for_table( _table_content )
@@ -132,58 +141,9 @@ class Core_Model_Content {
 		
 		$limit = $order_number -1;
 		$sql = "SELECT * FROM ".$this->_table_name." WHERE page_id = ".$page_id." ORDER BY ".$column." DESC LIMIT ".$limit .",1"; 		
-		$result =  DB::query(Database::SELECT, $sql,1)->execute();   
-	 	
-		//exit("row #".$result[0]);
+		$result =  DB::query(Database::SELECT, $sql,1)->execute();
 		
 		return $result[0];
-    }
-	
-    /** THIS FUNCTION STILL NEEDS TO BE CONVERTED TO MJMWEB SYSTEM
-     * cleanup revisions
-     *
-     * $page_id	integer	REQUIRED
-     * $keep	integer	number of revisions to save
-     *
-     */
-    public function cleanupRevisions($page_id,$keep=10){
-		if(!is_numeric($page_id)){ return false; }	
-		
-		if($getRevision_N = $this->getRevisionByOrderNumber($page_id,"revision_date",$keep) ){
-			
-			$oldest_date = $getRevision_N['revision_date'];
-			if(!$oldest_date){ return false; }
-			
-			$sql = "DELETE FROM ".$this->_table_name." 
-					  WHERE revision_date < '". $oldest_date ."'
-					  	AND page_id = ".$page_id."
-						AND publish_date = '0000-00-00 00:00:00' "; 
-			return $this->_db->query(Database::DELETE, $sql,1);  
-		}
-	 
-	 }
-	 
-    /** THIS FUNCTION STILL NEEDS TO BE CONVERTED TO MJMWEB SYSTEM
-     * cleanup previously published versions, keeping only N number of revisions
-     *
-     * $page_id	integer	REQUIRED
-     * $keep	integer	number of revisions to save
-     *
-     */
-    public function cleanupPublished($page_id,$keep=10){
-        if(!is_numeric($page_id)){ return false; }	 
-		
-		if($getRevision_N = $this->getRevisionByOrderNumber($page_id,"publish_date",$keep) )
-		{
-			$oldest_date = $getRevision_N['publish_date'];
-			if(!$oldest_date){ return false; }
-			
-			$sql = "DELETE FROM ".$this->_table_name." 
-						  WHERE publish_date < '". $oldest_date ."'
-						  AND page_id = ".$page_id."
-						  AND publish_date != '0000-00-00 00:00:00' "; 
-			return $this->_db->query(Database::DELETE, $sql,1); 
-		}
     }
 	  
 }
