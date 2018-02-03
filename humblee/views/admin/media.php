@@ -3,8 +3,15 @@
         <p class="is-size-5">Folders</p>
         <hr>
         <div id="folders">Loading</div>
+        <?php
+        if(Core::auth('media'))
+        {
+        ?>
         <hr>
         <button class="button tooltip" data-tooltip="Add top level folder">Add Folder</button>
+        <?php
+        }
+        ?>
     </div>
     
     <div class="column" id="files">
@@ -13,12 +20,19 @@
                 <p class="is-size-5" id="folder_name">Select a folder to view it's contents</p>    
             </div>
             <div class="level-right is-invisible">
+            <?php
+            if(Core::auth('media'))
+            {
+            ?>
                 <button class="button">Add Subfolder</button>
                 &nbsp;
                 <button class="button is-info uploadButton">
                     <span class="icon is-pulled-left"><i class="fas fa-upload"></i></span>
                     <span class="is-pulled-right">Upload Files</span>
                 </button>
+            <?php
+            }
+            ?>
             </div>
         </div>
         
@@ -34,10 +48,16 @@
         </table>
         
         <div class="folderFooter is-invisible">
+        <?php
+        if(Core::auth('media'))
+        {
+        ?>
             <hr>
             <button class="button deletefolder is-small has-text-grey-light tooltip is-tooltip-right" data-tooltip="Delete this folder and its contents"><span class="icon"><i class="fas fa-trash"></i></span><span class="is-pulled-right">Delete Folder</span></button>             
+        <?php
+        }
+        ?>
         </div>
-
         
     </div>
     
@@ -59,7 +79,7 @@
                         </label> 
                         <div class="control">
                             <div class="select">
-                                <select  id="required_role" name="required_role">
+                                <select  id="required_role" name="required_role" <?php echo (Core::auth('media')) ? 'disabled' : '' ?>>
                                     <option value="0" >Public Access (No Login)</option>
                                     <?php foreach($access_roles as $access_role) : ?>
                             		<option value="<?php echo $access_role->id ?>" ><?php echo ucfirst($access_role->name) ?></option>
@@ -88,10 +108,16 @@
                         </button>                        
                     </p>
                     <p class="card-footer-item">
-                        <button class="button deletebutton is-danger is-small is-inverted"><span class="icon"><i class="fas fa-trash"></i></span><span class="is-pulled-right">Delete</span></button>                        
+                    <?php
+                    if(Core::auth('media'))
+                    {
+                    ?>
+                        <button class="button deletebutton is-danger is-small is-inverted"><span class="icon"><i class="fas fa-trash"></i></span><span class="is-pulled-right">Delete</span></button>
+                    <?php
+                    }
+                    ?>
                     </p>
                 </footer>
-
                 
             </div>    
         </aside>
@@ -99,6 +125,10 @@
 
 </div>
 
+<?php
+if(Core::auth('media'))
+{
+?>
 <div id="uploaderModal" class="modal">
     <div class="modal-background"></div>
     <div class="modal-card">
@@ -125,19 +155,8 @@
                 </label>
             </form>
         </section>
-
     </div>
-<!--    
-    <div class="modal-content">
-        <div class="box">
-            <div class="box__input">
-                <input class="box__file" type="file" name="files[]" id="uploadFile" data-multiple-caption="{count} files selected" multiple />
-                <label for="uploadFile"><strong>Choose a file</strong><span class="box__dragndrop"> or drag it here</span>.</label>
-                <button class="button box__button" type="submit">Upload</button>
-            </div>
-            <div class="box__uploading">Uploading&hellip;</div>
-        </div>            
-    </div>
-    <button class="modal-close is-large" aria-label="close"></button>
--->
 </div>
+<?php
+}
+?>

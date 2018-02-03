@@ -467,8 +467,20 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 	
 	public function deleteMediaFolder()
 	{
-		//remove all files in a folder
-		//delete the folder record in database
+		$this->require_role('content');
+		if(!isset($_POST['folder_id']) || !is_numeric($_POST['folder_id']))
+		{
+			exit("Invalid or missing file ID");
+		}
+		$files = ORM::for_table(_table_media_folders)->find_many($_POST['folder_id']);
+		if(!$files)
+		{
+			exit("Folder record not found");
+		}
+		foreach($files as $file)
+		{
+			
+		}
 	}
 	
 	//helper function to re-image array of uploaded files

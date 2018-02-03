@@ -95,11 +95,13 @@ CREATE TABLE IF NOT EXISTS `humblee_roles` (
 INSERT INTO `humblee_roles` (`id`, `name`, `description`, `role_type`) VALUES
 (1, 'login', 'Log into website', 'access'),
 (2, 'admin', 'Log into admin area', 'access'),
-(3, 'content', 'Edit any content on the site', 'task'),
-(4, 'pages', 'Add, remove, reorder and label pages', 'task'),
-(5, 'users', 'Set access roles for all website users', 'task'),
-(6, 'designer', 'Create and edit content block types and templates', 'task'),
-(7, 'developer', 'Super user access', 'task');
+(3, 'content', 'Create and edit content drafts', 'task'),
+(4, 'publish', 'Publish content live to the site','task'),
+(5, 'media', 'Upload, edit and delete media files','task'),
+(6, 'pages', 'Add, remove, reorder and label pages', 'task'),
+(7, 'users', 'Set access roles for all website users', 'task'),
+(8, 'designer', 'Create and edit content block types and templates', 'task'),
+(9, 'developer', 'Super user access', 'task');
 
 -- --------------------------------------------------------
 
