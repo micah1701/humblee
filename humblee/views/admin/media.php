@@ -1,10 +1,11 @@
+<input type="hidden" id="mediaAccess" value="<?php echo ($hasMediaRole) ? 'media' : 'readonly' ?>">
 <div class="columns">
     <div class="column is-one-fifth">
         <p class="is-size-5">Folders</p>
         <hr>
         <div id="folders">Loading</div>
         <?php
-        if(Core::auth('media'))
+        if($hasMediaRole)
         {
         ?>
         <hr>
@@ -21,7 +22,7 @@
             </div>
             <div class="level-right is-invisible">
             <?php
-            if(Core::auth('media'))
+            if($hasMediaRole)
             {
             ?>
                 <button class="button">Add Subfolder</button>
@@ -49,7 +50,7 @@
         
         <div class="folderFooter is-invisible">
         <?php
-        if(Core::auth('media'))
+        if($hasMediaRole)
         {
         ?>
             <hr>
@@ -79,7 +80,7 @@
                         </label> 
                         <div class="control">
                             <div class="select">
-                                <select  id="required_role" name="required_role" <?php echo (Core::auth('media')) ? 'disabled' : '' ?>>
+                                <select  id="required_role" name="required_role" <?php echo (!$hasMediaRole) ? 'disabled' : '' ?>>
                                     <option value="0" >Public Access (No Login)</option>
                                     <?php foreach($access_roles as $access_role) : ?>
                             		<option value="<?php echo $access_role->id ?>" ><?php echo ucfirst($access_role->name) ?></option>
@@ -109,7 +110,7 @@
                     </p>
                     <p class="card-footer-item">
                     <?php
-                    if(Core::auth('media'))
+                    if($hasMediaRole)
                     {
                     ?>
                         <button class="button deletebutton is-danger is-small is-inverted"><span class="icon"><i class="fas fa-trash"></i></span><span class="is-pulled-right">Delete</span></button>
@@ -126,7 +127,7 @@
 </div>
 
 <?php
-if(Core::auth('media'))
+if($hasMediaRole)
 {
 ?>
 <div id="uploaderModal" class="modal">

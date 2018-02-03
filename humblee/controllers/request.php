@@ -371,14 +371,14 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 	 */
 	public function listMediaFolders()
 	{
-		$this->require_role('content');
+		$this->require_role(array('content','media'));
 		$media = new Core_Model_Media;
 		$this->json($media->listFolders());
 	}
 	
 	public function listMediaFilesByFolder()
 	{
-		$this->require_role('content');
+		$this->require_role(array('content','media'));
 		if(!isset($_GET['folder']) || !is_numeric($_GET['folder']))
 		{
 			$result['error'] = "missing folder ID";
@@ -391,7 +391,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 	//update the name of a file or folder
 	public function updateMediaName()
 	{
-		$this->require_role('content');
+		$this->require_role('media');
 		if(!isset($_POST['type']) || !isset($_POST['record']) || !is_numeric($_POST['record']))
 		{
 			$this->json(array("error"=>"invalid request"));
@@ -419,7 +419,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 	//change the required_role for a given media file
 	public function updateMediaRole()
 	{
-		$this->require_role('content');
+		$this->require_role('media');
 		if(!isset($_POST['file_id']) || !is_numeric($_POST['file_id']) || !isset($_POST['required_role']) || !is_numeric($_POST['required_role']))
 		{
 			exit("Invalid or missing file ID or role type");
@@ -436,7 +436,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 	
 	public function deleteMediaFile()
 	{
-		$this->require_role('content');
+		$this->require_role('media');
 		if(!isset($_POST['file_id']) || !is_numeric($_POST['file_id']))
 		{
 			exit("Invalid or missing file ID");
@@ -467,7 +467,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 	
 	public function deleteMediaFolder()
 	{
-		$this->require_role('content');
+		$this->require_role('media');
 		if(!isset($_POST['folder_id']) || !is_numeric($_POST['folder_id']))
 		{
 			exit("Invalid or missing file ID");
@@ -502,7 +502,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 	//process and save uploaded files
 	public function uploadMediaFiles()
 	{
-		$this->require_role('content');
+		$this->require_role('media');
 		$errors = array();
 		
 		if(!$_FILES['uploaderFiles'])

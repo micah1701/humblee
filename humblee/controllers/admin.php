@@ -152,7 +152,8 @@ class Core_Controller_Admin {
 	
 	public function media()
 	{
-	    $this->require_role('content');
+	    $this->require_role(array('content','media')); // 'content' role gets read-only access
+	    $this->hasMediaRole = Core::auth(array('media','developer'));
 	    
 	    $this->access_roles = ORM::for_table(_table_roles)->where('role_type','access')->find_many();
 	    
