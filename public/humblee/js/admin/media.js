@@ -229,9 +229,13 @@ function deleteFolder()
             quickNotice('Folder Deleted');
             loadFolders();
         }
+        else if(response.errors)
+        {
+            quickNotice(response.errors,'is-danger',5000)
+        }
         else
         {
-            quickNotice('Could not delete folder','is-warning');
+            quickNotice('Could not delete folder','is-danger');
         }    
     });
 }

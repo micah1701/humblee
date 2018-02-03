@@ -474,6 +474,13 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 			exit("Invalid or missing file ID");
 		}
 		
+		//check if there are child folders
+		$children = ORM::for_table(_table_media_folders)->where('parent_id',$_POST['folder_id'])->find_many();
+		if($children)
+		{
+			$this->json(array("success"=>false,"errors"=>"This folder has subfolders and can not be deleted. Delete the child folders first!"));
+		}
+		
 		$files = ORM::for_table(_table_media)->where('folder',$_POST['folder_id'])->find_many();
 		$mediaObj = new Core_Model_Media;
 		$errors = array();
