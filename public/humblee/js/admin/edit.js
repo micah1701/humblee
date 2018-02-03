@@ -17,7 +17,7 @@ $(document).ready(function(){
 function validateForm(publish)
 {
     //check if a new version of this content has been saved since user began working
-    $.post(XHR_PATH+'latestRevision',{page_id: $("#page_id").val(), content_type: $("#content_type_id").val() }, function(response){
+    $.post(XHR_PATH+'latestRevisionDate',{page_id: $("#page_id").val(), content_type: $("#content_type_id").val() }, function(response){
 		
         if(response.error)
         {

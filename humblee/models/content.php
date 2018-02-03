@@ -13,22 +13,25 @@ class Core_Model_Content {
 
     /**
      * Return all Content revisions for a given page's content type
+     * includes name of user who saved content
      *
      * $page_id			integer	REQUIRED
      * $content_type	integer	REQUIRED
-     * $limit			integer	Maximum number of recent revision to display. 0 returns all.
+     * $limit			integer	Maximum number of recent revision to display. 0 or false returns all(up to 9999).
      */
-     public function listRevisions($page_id,$content_type,$max=10){
+	public function listRevisions($page_id,$content_type,$max=10){
         if(!is_numeric($content_type) || !is_numeric($page_id) ){ return false; }
 	 
-        if($max > 0)
-        {
-			return ORM::for_table(_table_content)->where('page_id',$page_id)->where('type_id',$content_type)->order_by_desc('revision_date')->limit($max)->find_many();
-		}
-		else
-		{
-			return ORM::for_table(_table_content)->where('page_id',$page_id)->where('type_id',$content_type)->order_by_desc('revision_date')->find_many();
-		}
+        $limit = ($max && $max > 0) ? $max : 9999;
+		return ORM::for_table(_table_content)
+					->select(_table_content.'.*')
+					->select(_table_users.'.name')
+					->join( _table_users, array( _table_content.'.updated_by', '=', _table_users.'.id'))
+					->where('page_id',$page_id)
+					->where('type_id',$content_type)
+					->order_by_desc('revision_date')
+					->limit($max)
+					->find_many();
 	}
 	
     /**
