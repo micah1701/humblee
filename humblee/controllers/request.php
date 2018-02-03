@@ -450,7 +450,15 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 
 	public function createMediaFolder()
 	{
-		//set name name and parent
+		$this->require_role('media');
+		
+		$folder = ORM::for_table(_table_media_folders)->create();
+		
+		$folder->name = (isset($_POST['name'])) ? $_POST['name'] : "New Folder";
+		$folder->parent_id = (isset($_POST['parent_id']) && is_numeric($_POST['parent_id'])) ? $_POST['parent_id'] : 0;
+		$folder->save();
+		
+		$this->json(array("success"=>true,"folder_id"=>$folder->id() ));
 	}
 	
 	public function updateMediaFolder()
