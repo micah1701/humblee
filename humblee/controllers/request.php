@@ -437,16 +437,13 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		{
 			exit("Invalid or missing file ID");
 		}
-		$file = ORM::for_table(_table_media)->find_one($_POST['file_id']);
-		if(!$file)
+		$mediaObj = new Core_Model_Media;
+		$delete = $mediaObj->deleteFile($_POST['file_id']);
+
+		if($delete !== true)
 		{
-			exit("File record not found");
+			$this->json(array("success"=>false, "error"=>$delete));
 		}
-		if(!unlink(_app_server_path."storage/".$file->filepath))
-		{
-			exit("Could not unlink file");
-		}
-		$file->delete();
 		
 		$this->json(array("success"=>true));
 	}
@@ -468,15 +465,33 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		{
 			exit("Invalid or missing file ID");
 		}
-		$files = ORM::for_table(_table_media_folders)->find_many($_POST['folder_id']);
-		if(!$files)
+		
+		$files = ORM::for_table(_table_media)->where('folder',$_POST['folder_id'])->find_many();
+		$mediaObj = new Core_Model_Media;
+		$errors = array();
+		foreach($files as $file)
+		{
+			$delete = $mediaObj->deleteFile($file);
+			if($delete !== true)
+			{
+				$errors[] = $delete;
+			}
+		}
+		
+		if(count($errors) > 0)
+		{
+			$this->json(array("success"=>false,"errors"=>$errors));
+		}
+		
+		//if there were no errors deleting files, delete the folder record
+		$folder = ORM::for_table(_table_media_folders)->find_one($_POST['folder_id']);
+		if(!$folder)
 		{
 			exit("Folder record not found");
 		}
-		foreach($files as $file)
-		{
-			
-		}
+		
+		$folder->delete();			
+		$this->json(array("success"=>true));
 	}
 	
 	//helper function to re-image array of uploaded files

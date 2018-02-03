@@ -223,7 +223,7 @@ function deleteFolder()
         if(response.success)
         {
             quickNotice('Folder Deleted');
-            loadFiles($("#folder_id").val(),true);
+            loadFolders();
         }
         else
         {

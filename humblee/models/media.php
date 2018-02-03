@@ -6,6 +6,12 @@
  
 class Core_Model_Media {
     
+    function __construct()
+    {
+        //folder on server where all the files are stored
+        $this->storage_path = _app_server_path."storage/";    
+    }
+    
     /**
      * Return ARRAY of folders nested by parent ID
      */
@@ -45,6 +51,38 @@ class Core_Model_Media {
             $return[$file['id']] = $file;
         }
         return $return;
+    }
+    
+    /**
+     * Delete a file
+     * 
+     * $file MIXED  INTEGER of database row or OBJECT of previously looked up row
+     */
+    public function deleteFile($file)
+    {
+        if(is_numeric($file))
+        {
+            $file = ORM::for_table(_table_media)->find_one($file);
+            if(!$file)
+            {
+                return "File not found";
+            }
+        }
+        elseif(!is_object($file))
+        {
+           return "Missing or invalid file object";
+        }
+        
+        //delete the file
+        if(!unlink($this->storage_path.$file->filepath))
+		{
+			return "Could not unlink file";
+		}
+		
+		//delete the row from the database
+		$file->delete();
+        
+        return true;
     }
 
 
