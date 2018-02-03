@@ -32,6 +32,10 @@ $(document).ready(function(){
         });  
     });
     
+    $(".addFolder").on("click",function(){
+       addFolder($(this));
+    });
+    
     $("#fileLinkCopy").on("click",function(){
         var clipboard = new Clipboard("#fileLinkCopy");
         clipboard.on('success',function(e)
@@ -229,6 +233,18 @@ function deleteFolder()
         {
             quickNotice('Could not delete folder','is-warning');
         }    
+    });
+}
+
+function addFolder(button)
+{
+    var parent_folder = (button.data('folderparent') == 0) ? 0 : $("#folder_id").val();
+    $.post(XHR_PATH+'createMediaFolder',{parent_id:parent_folder},function(response){
+        if(response.success)
+        {
+            quickNotice("Folder Created");
+            loadFolders();
+        }
     });
 }
 

@@ -9,7 +9,7 @@
         {
         ?>
         <hr>
-        <button class="button tooltip" data-tooltip="Add top level folder">Add Folder</button>
+        <button class="button tooltip addFolder" data-folderparent="0" data-tooltip="Add top level folder">Add Folder</button>
         <?php
         }
         ?>
@@ -25,7 +25,7 @@
             if($hasMediaRole)
             {
             ?>
-                <button class="button">Add Subfolder</button>
+                <button class="button addFolder">Add Subfolder</button>
                 &nbsp;
                 <button class="button is-info uploadButton">
                     <span class="icon is-pulled-left"><i class="fas fa-upload"></i></span>
