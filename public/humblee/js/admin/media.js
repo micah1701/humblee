@@ -47,6 +47,13 @@ $(document).ready(function(){
         );
     });
     
+    $("#files button.deletefolder").on("click",function(){
+        confirmation('<strong>You are about to <span class="has-text-danger">PERMANENTLY DELETE</span> this ENTIRE FOLDER</strong><br><p>ALL of the files in this folder will be removed. This may have an adverse effect on any pages that include these files.</p>',
+            function(){ deleteFolder() },
+            function(){ return false; }
+        );
+    });
+    
 });
 
 //recursive helper function to draw UL list from JSON data
@@ -91,13 +98,15 @@ function loadFolders(){
 		});
 		
 		$("#folders a").on("click",function(){
-            $("#folders a.is-active").removeClass('is-active');
+            $("#folders a").removeClass('is-active');
             $(this).addClass('is-active');
             
             $("#folder_name")
                 .addClass('editable-text')
                 .data('fieldID',$(this).data('id'))
                 .html( $(this).html());
+            
+            $(".folderFooter").removeClass('is-invisible');    
                 
             $("#folder_id").val($(this).data('id'));
             $("#files .level .level-right.is-invisible").removeClass('is-invisible'); 
@@ -204,6 +213,22 @@ function deleteFile()
         {
             quickNotice('Could not delete file','is-warning');
         }
+    });
+}
+
+function deleteFolder()
+{
+    var folderID = $("#folder_id").val();
+    $.post(XHR_PATH+'deleteMediaFolder',{folder_id:folderID},function(response){
+        if(response.success)
+        {
+            quickNotice('Folder Deleted');
+            loadFiles($("#folder_id").val(),true);
+        }
+        else
+        {
+            quickNotice('Could not delete folder','is-warning');
+        }    
     });
 }
 

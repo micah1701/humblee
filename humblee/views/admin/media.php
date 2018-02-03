@@ -3,6 +3,8 @@
         <p class="is-size-5">Folders</p>
         <hr>
         <div id="folders">Loading</div>
+        <hr>
+        <button class="button tooltip" data-tooltip="Add top level folder">Add Folder</button>
     </div>
     
     <div class="column" id="files">
@@ -15,7 +17,7 @@
                 &nbsp;
                 <button class="button is-info uploadButton">
                     <span class="icon is-pulled-left"><i class="fas fa-upload"></i></span>
-                    <span class="is-pulled-right">Upload File(s)</span>
+                    <span class="is-pulled-right">Upload Files</span>
                 </button>
             </div>
         </div>
@@ -30,6 +32,13 @@
                 
             </tbody>
         </table>
+        
+        <div class="folderFooter is-invisible">
+            <hr>
+            <button class="button deletefolder is-small has-text-grey-light tooltip is-tooltip-right" data-tooltip="Delete this folder and its contents"><span class="icon"><i class="fas fa-trash"></i></span><span class="is-pulled-right">Delete Folder</span></button>             
+        </div>
+
+        
     </div>
     
     <div class="column is-one-quarter" id="file">
