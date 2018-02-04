@@ -461,11 +461,6 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		$this->json(array("success"=>true,"folder_id"=>$folder->id() ));
 	}
 	
-	public function updateMediaFolder()
-	{
-		//rename or move folder (maybe combine with create function )
-	}
-	
 	public function deleteMediaFolder()
 	{
 		$this->require_role('media');

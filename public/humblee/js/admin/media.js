@@ -218,7 +218,9 @@ function deleteFile()
         if(response.success)
         {
             quickNotice('File Deleted');
-            loadFiles($("#folder_id").val(),true);
+            var folderKey = "folder_"+ $("#folder_id").val();
+            delete folderCache[folderKey][fileID];
+            loadFiles($("#folder_id").val());
         }
         else
         {
@@ -292,13 +294,17 @@ $(document).on("click", ".editable-text", function() {
             if(dom_id == "folder_name")
             {
                 objectLable = "Folder";
+                //update name in list of folders
                 $("#folders a[data-id='"+ field_id +"']").html(new_input.val());
             }
             if(dom_id == "file_name")
             {
                 objectLable = "File";
-                //find the table tr row with this file id and update the name
-                //or refresh the table maybe, I dunno whatever is easier
+                //update table listing
+                $('#files tr[data-file="'+field_id+'"] td').first().html(new_input.val());
+                //update cache row for this file 
+                var folderKey = "folder_"+ $("#folder_id").val();
+                folderCache[folderKey][field_id]['name'] = new_input.val();
             }
             
             quickNotice(objectLable+" name updated!");
