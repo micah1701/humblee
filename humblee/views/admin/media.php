@@ -69,6 +69,16 @@
             <div class="card">
                 <div class="card-content">
                     <p class="is-size-5 editable-text" id="file_name" data-fileID=""></p>
+                <?php
+                if($is_in_iframe){
+                ?>
+                    <button class="button is-success has-text-weight-semibold" id="selectFile">
+                        <span class="icon is-pulled-left"><i class="fa fa-check-circle"></i></span>
+                        <span class="is-pulled-right">Select this file</span>
+                    </button>
+                <?php
+                }
+                ?>
                     <p>Size: <span id="filesize"></span></p>
                     <p>File Type: <span id="filetype"></span></p>
                     <p>Author: <span id="uploadby"></span></p>
@@ -159,5 +169,15 @@ if($hasMediaRole)
     </div>
 </div>
 <?php
+}
+?>
+
+<?php
+if($is_in_iframe){
+?>
+<script>
+    setEscEvent('mediaManager',function () { parent.closeMediamanager(); parent.unsetEscEvent('mediaManager') });
+</script>
+<?php 
 }
 ?>

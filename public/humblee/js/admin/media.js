@@ -44,6 +44,18 @@ $(document).ready(function(){
             quickNotice('Copied to clipboard','is-info',1750);  
         });
     });
+    
+    //the "selectFile" button only exists when the media manager is loaded via an iframe
+    //clicking it returns a data object for the given file back to the parent window
+    //the parent must have a function named handleMediaManagerSelect() that does something with the file data
+    $("#selectFile").on("click",function(){
+        parent.closeMediamanager();
+        parent.unsetEscEvent('mediaManager');
+        var folderKey = "folder_"+ $("#folder_id").val();
+        var fileID = $("#file_name").data('fieldID');
+        var fileData = folderCache[folderKey][fileID];
+        parent.handleMediaManagerSelect(fileData);
+    });
 
     $("#file button.deletebutton").on("click",function(){
         confirmation('<strong>You are about to <span class="has-text-danger">PERMANENTLY DELETE</span> this file.</strong><br><p>This may have an adverse effect on any pages that include the file.</p>',

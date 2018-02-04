@@ -16,6 +16,8 @@ ul.menu-list.is-closed {
   margin: 0 auto;
   max-height: 250px;
   width: auto; }
+#file #selectFile {
+  margin: 20px 0; }
 
 .editable-text:after {
   font-family: Font Awesome\ 5 Free;

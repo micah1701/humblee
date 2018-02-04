@@ -30,15 +30,10 @@
                         <label class="label" for="og_image">Open Graph Image Path:
                             <span class="icon tooltip is-tooltip-right has-text-info" data-tooltip="Primary photo shown when sharing this page"><i class="fas fa-info-circle"></i></span>
                         </label>
-                        <!--
-                        <input class="file-input" type="file" id="og_image" name="og_image">
-                        <span class="file-cta">
-                            <span class="file-icon"><i class="fas fa-upload"></i></span>
-                            <span class="file-label">
-                                Choose a file…
-                            </span>
-                        </span>
-                        -->
+                        <button class="button is-primary has-text-weight-semibold og_image_picker">
+                            <span class="icon"><i class="fa fa-image"></i></span>&nbsp;
+                            Select Image
+                        </button>
                         <input class="input" id="og_image" name="og_image" placeholder="example: https://<?php echo $_ENV['config']['domain'] ?>/applications/images/your-file.png" value="<?php echo (isset($content_array['og_image'])) ? $content_array['og_image'] : '' ?>">
                         <p class="help">Must be fully qualified URL starting with <em>http</em></p>
                          

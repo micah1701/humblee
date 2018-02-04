@@ -1,4 +1,18 @@
-/* global $ */
+/* global mediamanager, $ */
+
+$(document).ready(function(){
+   $("button.og_image_picker").on("click",function(e){
+       e.preventDefault(); 
+       mediamanager();
+   });
+});
+
+//data returned from media manager iframe for a selected file
+function handleMediaManagerSelect(fileData)
+{
+    var imagePath = encodeURI(window.location.protocol +"//"+ window.location.hostname + fileData.url);
+    $("#og_image").val(imagePath);
+}
 
 function shrinkToFit(field_id,max_width)
 {

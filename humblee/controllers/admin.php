@@ -157,6 +157,7 @@ class Core_Controller_Admin {
 	    $this->hasMediaRole = Core::auth(array('media','developer'));
 	    
 	    $this->access_roles = ORM::for_table(_table_roles)->where('role_type','access')->find_many();
+	    $this->is_in_iframe = (isset($_GET['iframe'])) ? true : false;
 	    
 	    $this->template_view = Core::view( _app_server_path .'humblee/views/admin/media.php',get_object_vars($this) );
 	    
@@ -166,8 +167,7 @@ class Core_Controller_Admin {
 	    $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'humblee/js/admin/media.js"></script>';
 	    $this->extra_head_code.= '<link rel="stylesheet" type="text/css" href="'._app_path.'humblee/css/admin/media.css">';
 	    
-	    $outter_template = (isset($_GET['iframe'])) ? 'blank.php' : 'template.php';
-	    
+	    $outter_template = ($this->is_in_iframe) ? 'blank.php' : 'template.php';
 	    echo Core::view( _app_server_path .'humblee/views/admin/templates/'.$outter_template,get_object_vars($this) );
 	}
 	
