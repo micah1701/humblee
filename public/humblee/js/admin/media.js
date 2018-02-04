@@ -1,7 +1,8 @@
 /* global $, XHR_PATH, APP_PATH, friendlyFilesize, quickNotice, confirmation, dateFormat, setEscEvent, Clipboard */
 $(document).ready(function(){
    
-   loadFolders();
+   loadFolders(true);
+   
     $("#files button.uploadButton").on("click",function(){
         $("#uploaderModal").addClass('is-active');
         
@@ -78,7 +79,7 @@ function generateMenu(data,parent)
         return (children > 0) ? ul : false;
 }
 
-function loadFolders(){
+function loadFolders(openFirstFolder){
     
     $.getJSON(XHR_PATH +'listMediaFolders',function(response)
     {
@@ -118,6 +119,12 @@ function loadFolders(){
             loadFiles($(this).data('id'));
         });
         
+        //open the first folder in the tree
+        if(openFirstFolder)
+        {
+            $("#folders ul li a").first().click();            
+        }
+
     });
 }
 
@@ -227,7 +234,7 @@ function deleteFolder()
         if(response.success)
         {
             quickNotice('Folder Deleted');
-            loadFolders();
+            loadFolders(true);
         }
         else if(response.errors)
         {
@@ -247,7 +254,7 @@ function addFolder(button)
         if(response.success)
         {
             quickNotice("Folder Created");
-            loadFolders();
+            loadFolders(false);
         }
     });
 }
@@ -366,10 +373,11 @@ function uploaderSubmit(droppedFiles) {
     
     var form = $("#uploaderForm");
     var ajaxData = new FormData(form[0]);
-
+    
     if(droppedFiles)
     {
-        var inputFieldTypeFile = $('#uploaderFiles input[type="file"]').attr('name');
+        var inputFieldTypeFile = $('#uploaderForm input[type="file"]').attr('name');
+        ajaxData.delete(inputFieldTypeFile); //remove any exisitng files
         $.each( droppedFiles, function(i, file) {
             ajaxData.append( inputFieldTypeFile, file );
         });
