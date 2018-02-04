@@ -1,4 +1,4 @@
-/* global $, dateFormat, confirmation, XHR_PATH, APP_PATH */
+/* global $, dateFormat, confirmation, setEscEvent, XHR_PATH, APP_PATH */
 $(document).ready(function(){
 
     $("#select_content_type").change(function(){
@@ -13,6 +13,22 @@ $(document).ready(function(){
     });
     
 });
+
+function mediamanager()
+{
+    var iframe = '<iframe src="'+APP_PATH+'admin/media?iframe=true" border="0">';
+    $("#mediamanager").addClass('is-active');    
+    $("#mediamanager .modal-card-body").html(iframe);
+    
+    setEscEvent('mediaManager',function () { closeMediamanager() });
+    $("#mediamanager button.delete").on("click",function(){
+        closeMediamanager();
+    });
+}
+function closeMediamanager()
+{
+    $("#mediamanager").removeClass('is-active');  
+}
 
 function validateForm(publish)
 {

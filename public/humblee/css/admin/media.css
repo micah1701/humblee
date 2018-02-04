@@ -10,7 +10,6 @@ ul.menu-list.is-closed {
   display: none; }
 
 #files {
-  height: 100vh;
   overflow-y: auto; }
 
 #file .card-image img {

@@ -186,3 +186,15 @@ else
 
 <button class="button is-primary" id="save"><span class="icon is-pulled-left"><i class="far fa-save"></i></span><span class="is-pulled-right">Save Draft</span></button> &nbsp;
 <button class="button is-primary is-outlined" id="publish"><span class="icon is-pulled-left"><i class="fas fa-rocket"></i></span><span class="is-pulled-right">Publish live to site</span></button>
+
+<div id="mediamanager" class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Media Manager</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body"></section>
+
+  </div>
+</div>
