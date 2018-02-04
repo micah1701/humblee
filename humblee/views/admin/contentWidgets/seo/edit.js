@@ -5,13 +5,18 @@ $(document).ready(function(){
        e.preventDefault(); 
        mediamanager();
    });
+   
+   $("#og_image").on("change",function(){
+       $("#facebook_sample_image img").attr('src',$(this).val());       
+   });
+
 });
 
 //data returned from media manager iframe for a selected file
 function handleMediaManagerSelect(fileData)
 {
     var imagePath = encodeURI(window.location.protocol +"//"+ window.location.hostname + fileData.url);
-    $("#og_image").val(imagePath);
+    $("#og_image").val(imagePath).change();
 }
 
 function shrinkToFit(field_id,max_width)
