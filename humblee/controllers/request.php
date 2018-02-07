@@ -558,7 +558,8 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 			
 			if($file['error'] == 0)
 			{
-				if($_ENV['config']['TINYPNG_Enabled'])
+				if(stripos($file['type'],'image') !== false && $_ENV['config']['TINYPNG_Enabled'] 
+					&& isset($_POST['useCompression']) && $_POST['useCompression'] == 1)
 				{
 					try {
 						\Tinify\setKey($_ENV['config']['TINYPNG_API_Key']);

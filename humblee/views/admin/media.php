@@ -168,8 +168,8 @@ if($hasMediaRole)
                         </label>       
                     </div>
                     <div class="column is-half">
-                        <label class="checkbox is-pulled-right">
-                            Use TinyPNG Compression
+                        <label class="checkbox is-pulled-right tooltip is-tooltip-left" data-tooltip="Apply TinyPNG smart compression to reduce file size">
+                            Optimize Images
                             <input name="useCompression" value="1" type="checkbox" CHECKED>
                         </label>   
                     </div>
