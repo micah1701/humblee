@@ -28,5 +28,10 @@ return array(
     'TWILIO_Enabled' => false,
     'TWILIO_SMS_Number' => '',
     'TWILIO_AccountSid' => '',
-    'TWILIO_AuthToken' => ''
+    'TWILIO_AuthToken' => '',
+    
+    // OPTIONAL tinyPNG credentials (see https://tinypng.com/developers)
+    // install library via composer
+    'TINYPNG_Enabled' => false,
+    'TINYPNG_API_Key' => ''
 );

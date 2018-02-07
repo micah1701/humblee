@@ -558,17 +558,37 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 			
 			if($file['error'] == 0)
 			{
-				if(move_uploaded_file($file['tmp_name'], _app_server_path."storage/".$storageName))
+				if($_ENV['config']['TINYPNG_Enabled'])
 				{
-					$fileRecord->filepath = $storageName;
-					$fileRecord->save();
-					$savedFiles++;
+					try {
+						\Tinify\setKey($_ENV['config']['TINYPNG_API_Key']);
+						$source = \Tinify\fromFile($file['tmp_name']);
+						$source->toFile(_app_server_path."storage/".$storageName);
+						
+						$fileRecord->filepath = $storageName;
+						$fileRecord->size = $source->result()->size(); //new compressed size
+						$fileRecord->type = $source->result()->mediaType(); // make sure this is right
+						$fileRecord->save();
+						$savedFiles++;
+					} catch(\Tinify\Exception $e) {
+					    $errors[] = $e.getMessage();
+					    $fileRecord->delete();
+					}	
 				}
 				else
 				{
-					$errors[] = 'could not store file '.$file['name'];
-					$fileRecord->delete();
-				}			
+					if(move_uploaded_file($file['tmp_name'], _app_server_path."storage/".$storageName))
+					{
+						$fileRecord->filepath = $storageName;
+						$fileRecord->save();
+						$savedFiles++;
+					}
+					else
+					{
+						$errors[] = 'could not store file '.$file['name'];
+						$fileRecord->delete();
+					}					
+				}
 			}
 			else
 			{
