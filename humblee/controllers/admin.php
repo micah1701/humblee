@@ -223,7 +223,7 @@ class Core_Controller_Admin {
 		}
         $params = array("id"=> (isset($this->_uri_parts[2])) ? $this->_uri_parts[2] : false,
                         "table"=> _table_templates,
-                        "view" => _app_server_path."humblee/views/admin/template_tool.php", 
+                        "view" => _app_server_path."humblee/views/admin/templates.php", 
                         "post" => (isset($_POST) && count($_POST) > 0) ? $_POST : false,
                         "allow_html" =>true,
                         "validation" => array('name'=>array('if'=>'$val == ""','error_message'=>'Name field cannot be blank')
