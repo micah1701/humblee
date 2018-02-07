@@ -168,10 +168,17 @@ if($hasMediaRole)
                         </label>       
                     </div>
                     <div class="column is-half">
+                    <?php
+                    if(isset($_ENV['config']['TINYPNG_Enabled']) && $_ENV['config']['TINYPNG_Enabled'])
+                    {
+                    ?>
                         <label class="checkbox is-pulled-right tooltip is-tooltip-left" data-tooltip="Apply TinyPNG smart compression to reduce file size">
                             Optimize Images
                             <input name="useCompression" value="1" type="checkbox" CHECKED>
                         </label>   
+                    <?php
+                    }
+                    ?>
                     </div>
                 </div>
             </form>
