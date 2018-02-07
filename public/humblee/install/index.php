@@ -73,7 +73,7 @@
                     exit("EROR! could not create new user");
                 }
                 
-                $newRoles = array(1,2,7);
+                $newRoles = array(1,2,9);
                 $roles_created = "(roles: ";
                 foreach($newRoles as $newRole)
                 {
