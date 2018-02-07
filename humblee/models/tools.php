@@ -81,7 +81,11 @@ class Core_Model_Tools {
 					$crud_selected->$key = $val;
 				}
 				$crud_selected->save();
-                Core::forward(rtrim(Core::getURI(),"/") ."/". $crud_selected->id);			
+				
+				//if we new the id to begin with it's already in the URL. If not, add it to the URL we're forwarding to
+				$fwdID = ($id === false) ? "/". $crud_selected->id : "";
+				
+                Core::forward(rtrim(Core::getURI(),"/") . $fwdID);			
 			}
             else
             {
