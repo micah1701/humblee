@@ -372,7 +372,7 @@ $(document).ready(function(){
         });
     }
     
-    $("#uploaderModal input").on('change', function(e) { //when manually selecting files
+    $("#uploaderModal input[type='file']").on('change', function(e) { //when manually selecting files
         uploaderSubmit(false);
     });
 

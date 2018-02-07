@@ -30,6 +30,8 @@ ul.menu-list.is-closed {
 /**
  * uploader
  */
+#uploaderModal .modal-card-body .columns {
+  width: 100%; }
 #uploaderModal .modal-card-body .dropZone {
   text-align: center;
   padding: 50px 0;

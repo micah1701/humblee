@@ -152,20 +152,33 @@ if($hasMediaRole)
                 Drag &amp; Drop
             </div>
             <form id="uploaderForm" class="file" enctype="multipart/form-data">
-                <label class="file-label">
-                    <input type="hidden" name="folder_id" id="folder_id">
-                    <input class="file-input" id="uploaderFiles" type="file" name="uploaderFiles[]" multiple="multiple">
-                    <span class="file-cta">
-                        <span class="file-icon">
-                            <i class="fas fa-upload"></i>
-                        </span>
-                        <span class="file-label">
-                        Choose files…
-                        </span>
-                    </span>
-                </label>
+                <div class="columns">
+                    <div class="column is-half">
+                        <label class="file-label">
+                            <input type="hidden" name="folder_id" id="folder_id">
+                            <input class="file-input" id="uploaderFiles" type="file" name="uploaderFiles[]" multiple="multiple">
+                            <span class="file-cta">
+                                <span class="file-icon">
+                                    <i class="fas fa-upload"></i>
+                                </span>
+                                <span class="file-label">
+                                Choose files…
+                                </span>
+                            </span>
+                        </label>       
+                    </div>
+                    <div class="column is-half">
+                        <label class="checkbox is-pulled-right">
+                            Use TinyPNG Compression
+                            <input name="useCompression" value="1" type="checkbox" CHECKED>
+                        </label>   
+                    </div>
+                </div>
             </form>
         </section>
+        
+        
+        
     </div>
 </div>
 <?php
