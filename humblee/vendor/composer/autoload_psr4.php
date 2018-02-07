@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Twilio\\' => array($vendorDir . '/twilio/sdk/Twilio'),
+    'Tinify\\' => array($vendorDir . '/tinify/tinify/lib/Tinify'),
 );
