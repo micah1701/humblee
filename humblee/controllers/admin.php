@@ -182,7 +182,7 @@ class Core_Controller_Admin {
         $this->require_role('designer');
         $params = array("id"=> (isset($this->_uri_parts[2])) ? $this->_uri_parts[2] : false,
                         "table"=> _table_content_types,
-                        "view" => _app_server_path."humblee/views/admin/blocks.php", 
+                        "view" => _app_server_path .'humblee/views/admin/blocks.php', 
                         "post" => (isset($_POST) && count($_POST) > 0) ? $_POST : false,
                         "allow_html" =>true,
                         "validation" => array('name'=>array('if'=>'$val == ""','error_message'=>'Name field cannot be blank'),
@@ -192,8 +192,8 @@ class Core_Controller_Admin {
                         "crud_all_order_by" => "name"
                         );
                         
-        $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'core/assets/js/admin-blocks.js"></script>';
-        $this->tools->CRUD($params,$this ); 
+        $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'humblee/js/admin/blocks.js"></script>';
+        $this->tools->CRUD($params,$this); 
     }
 	
     public function templates(){
@@ -231,22 +231,6 @@ class Core_Controller_Admin {
                         "post_ignore" => array("submit","controller","controller_action","default_view"),
                         "crud_all_order_by" => "name"
                         );
-        $this->tools->CRUD($params,$this ); 
-    }
-    
-    public function spending(){
-        $this->require_role('designer');
-        $params = array("id"=> (isset($this->_uri_parts[2])) ? $this->_uri_parts[2] : false,
-                        "table"=> "spending",
-                        "view" => _app_server_path."humblee/views/admin/spending.php", 
-                        "post" => (isset($_POST) && count($_POST) > 0) ? $_POST : false,
-                        "allow_html" =>true,
-                        "validation" => array('amount'=>array('if'=>'$val == ""','error_message'=>'Name field cannot be blank')
-                                              ),
-                        "post_ignore" => array("submit"),
-                        "crud_all_order_by" => "datetime"
-                        );
-                        
         $this->tools->CRUD($params,$this ); 
     }
 }

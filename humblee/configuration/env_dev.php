@@ -30,8 +30,8 @@ return array(
     'TWILIO_AccountSid' => '',
     'TWILIO_AuthToken' => '',
     
-    // OPTIONAL tinyPNG credentials (see https://tinypng.com/developers)
-    // install library via composer
+    // OPTIONAL tinyPNG credentials (see tinypng.com/developers)
+    // install tinify library via composer
     'TINYPNG_Enabled' => false,
     'TINYPNG_API_Key' => ''
 );

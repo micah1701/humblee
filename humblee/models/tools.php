@@ -97,8 +97,8 @@ class Core_Model_Tools {
 		$thisObj->crud_selected = (isset($crud_selected->id)) ? $crud_selected : false;
         
 		// spit out the view
-        $thisObj->pagebody = Core::view( $params['view'],get_object_vars($thisObj) ); 
-        echo Core::view( _app_server_path .'core/views/admin/template.php',get_object_vars($thisObj) );	
+        $thisObj->template_view = Core::view( $params['view'],get_object_vars($thisObj) ); 
+        echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($thisObj) );
 	}
 
 
