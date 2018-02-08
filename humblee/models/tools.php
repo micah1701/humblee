@@ -248,7 +248,6 @@ class Core_Model_Tools {
 		$from = $this->cleanNumber($from);
 		if(!$to || !$from) { return false; }
 		
-//		require _app_server_path.'core/libs/twilio/sdk/Services/Twilio.php';
 		$client = new Twilio\Rest\Client($_ENV['config']['TWILIO_AccountSid'],$_ENV['config']['TWILIO_AuthToken']);
 		
 		$sms = $client->messages->create("+1".$to, array('from'=>"+1".$from, 'body'=>$message));
@@ -263,6 +262,7 @@ class Core_Model_Tools {
 		}
 	}
 	
+	//parse a 10-digit phone number and return without any spaces, dashes or other characters
 	public function cleanNumber($number)
 	{
 		$cleanNumber = substr(preg_replace("/[^0-9]/","",$number),-10);

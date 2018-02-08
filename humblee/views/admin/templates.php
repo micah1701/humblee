@@ -91,52 +91,76 @@ if( $crud_selected )
         </div>
     </div>
     
-<? /* ******************* */
-
-    <div  id="controller_fields" style="display: <?php echo (value('controller',$crud_selected) != "") ? "block" : "none" ?>">
+    <div  id="controller_fields" style="<?php echo (value('controller',$crud_selected) != "") ? "block" : "none" ?>">
         
-        <label for="controller">Controller:</label>
-        <input type="text" name="controller" id="controller" value="<?php echo value('controller',$crud_selected) ?>" placeholder="custom">
-    
-        <label for="controller_action">Action:</label>
-        <input type="text" id="controller_action" name="controller_action" value="<?php echo value('controller_action',$crud_selected) ?>" placeholder="action_index">
-        
-        <label for="dynamic_uri">Dynamic URI:</label>
-        <input type="checkbox" name="dynamic_uri" id="dynamic_uri" value="1"<?php echo (value('dynamic_uri',$crud_selected) == 1) ? " CHECKED" : "" ?> >
-        <label class="inline" for="dynamic_uri">URL may include child pages (note: will not return 404 for invalid results)</label>
+        <div class="field">
+            <label class="label" for="controller">Controller</label> 
+            <div class="control">
+                <input class="input" type="text" id="controller" name="controller" placeholder="custom" value="<?php echo value('controller',$crud_selected) ?>">
+            </div>
         </div>
+        
+        <div class="field">
+            <label class="label" for="controller_action">Action</label> 
+            <div class="control">
+                <input class="input" type="text" id="controller_action" name="controller_action" placeholder="index" value="<?php echo value('controller_action',$crud_selected) ?>">
+            </div>
+        </div>        
+        
+        <div class="field">
+            <label class="label">Dynamic URI</label>
+            <label class="checkbox" for="dynamic_uri">
+                <input type="checkbox" name="dynamic_uri" id="dynamic_uri" value="1"<?php echo (value('dynamic_uri',$crud_selected) == 1) ? " CHECKED" : "" ?> >    
+                URL may include child pages (note: will not return 404 for invalid results)
+            </label>
+        </div> 
     </div>
 
     <div id="custom_view_field" style="display: <?php echo (value('default_view',$crud_selected) != "") ? "block" : "none" ?>">
-        <label for="default_view">Custom View Path:</label>
-        <input type="text" id="default_view" name="default_view" value="<?php echo value('default_view',$crud_selected) ?>" placeholder="tier_pages/my-view">
+        <div class="field">
+            <label class="label" for="default_view">Custom View Path</label>
+            <input class="input" type="text" id="default_view" name="default_view" value="<?php echo value('default_view',$crud_selected) ?>" placeholder="tier_pages/my-view">
+        </div>
     </div>
 
+    <div class="field">
+        <label class="label">Available</label>
+        <label class="checkbox" for="available">
+            <input class="checkbox" type="checkbox" name="available" id="available" value="1"<?php echo (value('available',$crud_selected) == 1 || !isset($crud_selected->id) ) ? " CHECKED" : "" ?>>
+            This template is available for new pages
+        </label>
+        <p class="help">Unchecking this box allows only developers to use this template.<br >Once a page is assigned this template, non-developers can no longer change that page's template</p>
+    </div> 
 
-	<label for="available" style="display: block !important">Available:</label>
-    <input type="checkbox" name="available" id="available" value="1"<?php echo (value('available',$crud_selected) == 1 || !isset($crud_selected->id) ) ? " CHECKED" : "" ?>>
-    <label for="available" class="inline">This template is available for new pages</label><p>
-     Unchecking this box allows only developers to use this template.<br >Once a page is assigned this template, non-developers can no longer update that page's template</p>
 
-    <h5>Included Content Blocks:</h5>
+    <div class="field">
+        <label class="label">Included Content Blocks</label>
 
-   
-<?php 
-$template_blocks = explode(",", value('blocks',$crud_selected) );
-$blocks = ORM::for_table(_table_content_types)->order_by_asc('name')->find_many(); 
-foreach($blocks as $block)
-{
-?>
-    <input type="checkbox" id="block_<?php echo $block->id ?>" value="<?php echo $block->id ?>"<?php echo ( in_array($block->id,$template_blocks) ) ? " checked" : "" ?> name="blocks[]">
-    <label class="inline" for="block_<?php echo $block->id ?>"><?php echo $block->name ?></label><br>
-<?php	
-}
-?>
-	<p>Note: If a block was previously available and content was entered, that content may still appear on the site if the template view allows for it.  Unchecking a block above simply removes it from the list of availably editable blocks for a given template.</p>
+    <?php 
+    $template_blocks = explode(",", value('blocks',$crud_selected) );
+    $blocks = ORM::for_table(_table_content_types)->order_by_asc('name')->find_many(); 
+    foreach($blocks as $block)
+    {
+    ?>
+        <label class="checkbox tooltip is-tooltip-right" for="block_<?php echo $block->id ?>" data-tooltip="<?php echo $block->description ?>">
+            <input class="checkbox" type="checkbox" id="block_<?php echo $block->id ?>" value="<?php echo $block->id ?>"<?php echo ( in_array($block->id,$template_blocks) ) ? " checked" : "" ?> name="blocks[]">
+            <?php echo $block->name ?>
+        </label>
+        <br>
+    <?php	
+    }
+    ?>
+	<p class="help">Note: If a block was previously available and content was entered, that content will still appear on the site if the template view allows for it.
+	<br>
+	Unchecking a block above simply removes it from the list of editable blocks available for a given template.</p>
   
-    <p><input name="submit" type="submit" value="Save" ></p>
+    </div>
+    
+    <div class="field">
+        <input class="button is-primary" name="submit" type="submit" value="Save Template">
+    </div>
    
-    </form>
+</form>
 
 
 

@@ -107,8 +107,8 @@ function value($field,$crud_selected,$htmlentities=false)
         </div>
     </div> 
     
-    <p>
-        <input class="button is-primary" name="submit" type="submit" value="Save">
-    </p>
+    <div class="field">
+        <input class="button is-primary" name="submit" type="submit" value="Save Block">
+    </div>
   
 </form>
