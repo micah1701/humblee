@@ -31,7 +31,7 @@
             foreach ($roles as $roleID => $roleName)
             {
             ?>
-                <option value="<?php echo $roleID ?>"<?php echo (isset($_GET['filter']) && $_GET['filter'] == $roleID) ? " SELECTED" : "" ?>><?php echo $roleName ?></option>
+                <option value="<?php echo $roleID ?>"<?php echo (isset($_GET['filter']) && $_GET['filter'] == $roleID) ? " SELECTED" : "" ?>><?php echo ucwords($roleName) ?></option>
             <?php
             }
             ?>
@@ -87,7 +87,7 @@ else
             <td><?php echo $user->username ?></td>
             <td class="rolesColumn" data-userroles="<?php echo implode(',', array_column($user_roles, 'role_id')); ?>">
     <?php 
-            echo implode(', ', array_column($user_roles, 'role_name'));
+            echo ucwords(implode(', ', array_column($user_roles, 'role_name')));
     ?>
             </td>
             <td>
@@ -126,3 +126,39 @@ else
 <?php
 } // end count($users) > 0
 ?>
+
+<div id="manageRolesDialog" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Manage User Roles</p>
+            <button class="delete" aria-label="close" title="close dialog"></button>    
+        </header>
+        <section class="modal-card-body">
+            <div class="columns is-multiline">
+                
+            <?php
+            foreach($roles as $roleID => $roleName)
+            {
+                if($roleName == "developer" && !Core::auth('developer'))
+                {
+                    continue; // only developers can add other developers
+                }
+            ?>
+                <div class="column is-one-quarter">
+                    <label class="checkbox">
+                        <input type="checkbox" name="roles[]" value="<?php echo $roleID ?>">
+                        <?php echo ucwords($roleName) ?>
+                    </label>                    
+                </div>
+            <?php
+            }
+            ?>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-info saveUserRoles">Save Roles</button>
+            <button class="button cancel">Cancel</button>
+        </footer>
+    </div>
+</div>

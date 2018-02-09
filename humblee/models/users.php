@@ -191,6 +191,37 @@ class Core_Model_Users {
 		
 		return $user->id;
 	}
+	
+	/**
+	 * remove all roles for a given user
+	 */
+	public function stripRoles($user_id)
+	{
+		if(!isset($user_id) || !is_numeric($user_id))
+		{
+			return false;
+		}
+		$roles = ORM::for_table( _table_user_roles )->where('user_id',$user_id)->find_many();
+		if(!$roles)
+		{
+			return false;
+		}
+		foreach ($roles as $role){
+			$role->delete();
+		}
+		return true;
+	}
+	
+	/**
+	 * add a role for a given user
+	 */
+	public function addRole($user_id, $role_id){
+		$role = ORM::for_table(_table_user_roles)->create();
+		$role->user_id = $user_id;
+		$role->role_id = $role_id;
+		$role->save();
+		return true;
+	}
 	 
     /**
      * Delete a user
@@ -207,10 +238,7 @@ class Core_Model_Users {
 		
 		
 		//delete this user's associated  roles
-		$roles = ORM::for_table( _table_user_roles )->where('user_id',$user_id)->find_many();
-		foreach ($roles as $role){
-			$role->delete();
-		}
+		$this->stripRoles($user_id);
 	
 		//delete user
 		if($complete_removal){

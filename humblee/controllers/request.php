@@ -623,4 +623,28 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 			$this->json(array("success"=>false,"error"=>"Could not delete the user"));	
 		}
 	}
+	
+	public function setUserRoles(){
+		$this->require_role('users');
+		if(!isset($_POST['userID']) || !is_numeric($_POST['userID']))
+		{
+			$this->json(array("success"=>false,"error"=>"invalid or missing user ID"));	
+		}
+		$userObj = new Core_Model_Users;
+		
+		//remove any existing roles for this user
+		$userObj->stripRoles($_POST['userID']);
+		
+		//add the new roles
+		$roles = explode(",",$_POST['roles']);
+		foreach($roles as $role)
+		{
+			if(!is_numeric($role))
+			{
+				continue;
+			}
+			$userObj->addRole($_POST['userID'],$role);
+		}
+		$this->json(array("success"=>true));
+	}
 }
