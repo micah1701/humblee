@@ -10,23 +10,6 @@ function value($field,$crud_selected,$htmlentities=false)
 		return '';
 	}
 } 
-if( $crud_selected )
-{
-	switch ($crud_selected->page_type) {
-		case "controller" :
-		$meta = unserialize($crud_selected->page_meta);		
-		$crud_selected->controller = $meta['controller'];
-		$crud_selected->controller_action = $meta['action'];
-		break;
-		
-		case "view" :
-		$crud_selected->default_view = $crud_selected->page_meta;
-		break;
-		
-		default :	
-		$crud_selected->default_view = $crud_selected->page_meta;
-	}
-}
 ?>
 <h2 class="title">Page Templates</h2>
 <div class="field">
@@ -90,9 +73,16 @@ if( $crud_selected )
             </label>
         </div>
     </div>
-    
-    <div  id="controller_fields" style="<?php echo (value('controller',$crud_selected) != "") ? "block" : "none" ?>">
-        
+
+    <div  id="controller_fields" style="display: <?php echo (is_object($crud_selected) && value('page_type',$crud_selected) == "controller") ? "block" : "none" ?>">
+    <?php
+    if(is_object($crud_selected) && value('page_type',$crud_selected) == "controller")
+    {
+        $meta = unserialize($crud_selected->page_meta);		
+		$crud_selected->controller = $meta['controller'];
+		$crud_selected->controller_action = $meta['action'];   
+    }
+    ?>
         <div class="field">
             <label class="label" for="controller">Controller</label> 
             <div class="control">
@@ -116,14 +106,14 @@ if( $crud_selected )
         </div> 
     </div>
 
-    <div id="custom_view_field" style="display: <?php echo (value('default_view',$crud_selected) != "") ? "block" : "none" ?>">
+    <div id="custom_view_field" style="display: <?php echo (is_object($crud_selected) && value('page_type',$crud_selected) == "view") ? "block" : "none" ?>">
         <div class="field">
             <label class="label" for="default_view">Custom View Path</label>
-            <input class="input" type="text" id="default_view" name="default_view" value="<?php echo value('default_view',$crud_selected) ?>" placeholder="tier_pages/my-view">
+            <input class="input" type="text" id="default_view" name="default_view" value="<?php echo value('page_meta',$crud_selected) ?>" placeholder="tier_pages/my-view">
         </div>
     </div>
 
-    <div class="field">
+    <div class="field" style="margin-top: 10px">
         <label class="label">Available</label>
         <label class="checkbox" for="available">
             <input class="checkbox" type="checkbox" name="available" id="available" value="1"<?php echo (value('available',$crud_selected) == 1 || !isset($crud_selected->id) ) ? " CHECKED" : "" ?>>
@@ -131,7 +121,6 @@ if( $crud_selected )
         </label>
         <p class="help">Unchecking this box allows only developers to use this template.<br >Once a page is assigned this template, non-developers can no longer change that page's template</p>
     </div> 
-
 
     <div class="field">
         <label class="label">Included Content Blocks</label>
@@ -142,7 +131,7 @@ if( $crud_selected )
     foreach($blocks as $block)
     {
     ?>
-        <label class="checkbox tooltip is-tooltip-right" for="block_<?php echo $block->id ?>" data-tooltip="<?php echo $block->description ?>">
+        <label class="checkbox tooltip is-tooltip-right <?php echo (strlen($block->description) > 65) ? "is-tooltip-multiline": "" ?>" for="block_<?php echo $block->id ?>" data-tooltip="<?php echo $block->description ?>">
             <input class="checkbox" type="checkbox" id="block_<?php echo $block->id ?>" value="<?php echo $block->id ?>"<?php echo ( in_array($block->id,$template_blocks) ) ? " checked" : "" ?> name="blocks[]">
             <?php echo $block->name ?>
         </label>
