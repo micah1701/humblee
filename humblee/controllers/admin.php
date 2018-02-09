@@ -203,6 +203,7 @@ class Core_Controller_Admin {
 		{
 			$_POST['blocks'] = (isset($_POST['blocks'])) ? implode(",", $_POST['blocks']) : '';
 			$_POST['dynamic_uri'] = (isset($_POST['dynamic_uri'])) ? $_POST['dynamic_uri'] : 0;
+			$_POST['available'] = (isset($_POST['available'])) ? $_POST['available'] : 0;
 			
 			if(isset($_POST['page_type']))
 			{	
