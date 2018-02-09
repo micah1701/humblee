@@ -204,7 +204,7 @@ class Core_Model_Tools {
 		$diff = date_diff($datetime1, $datetime2);
 		$timemsg = '';
 		if($diff->y > 0){
-			$timemsg = $diff->y .' year'. ($diff->y > 1?"s":'') . 'ago';
+			$timemsg = $diff->y .' year'. ($diff->y > 1?"s":'') . ' ago';
 		}
 		else if($diff->m > 0){
 			$timemsg = $diff->m . ' month'. ($diff->m > 1?"s":'') .' ago';

@@ -601,4 +601,26 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		$success = ($savedFiles > 0) ? true : false;
 		$this->json(array("success"=>$success,"errors"=>$errors,"filesReceived"=>$totalFiles,"filesSaved"=>$savedFiles));
 	}
+	
+	/**
+	 * User Management
+	 */
+
+	public function removeUser(){
+		$this->require_role('users');
+		
+		if(!isset($_POST['userID']) || !is_numeric($_POST['userID']))
+		{
+			$this->json(array("success"=>false,"error"=>"invalid or missing user ID"));	
+		}
+		$userObj = new Core_Model_Users;
+		if($userObj->deleteUser($_POST['userID']))
+		{
+			$this->json(array("success"=>true));
+		}
+		else
+		{
+			$this->json(array("success"=>false,"error"=>"Could not delete the user"));	
+		}
+	}
 }
