@@ -28,7 +28,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		}
 		$userID = $_SESSION[session_key]['user_id'];
 		
-		$token = rand(10000,99999);		
+		$token = rand(10000,99999);	// simple 5-digit code. User is already logged so we don't need an overly complex code
 		
 		//look for exisiting entry in validation table for this user & number
 		$previousValidation = ORM::for_table(_table_validation)
@@ -123,6 +123,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		}
 		else
 		{
+			//generate a 5-character alphanumeric code (harder than the 5-digit)
 			$start_point = rand(0,10);
 			$token = strtoupper(substr(md5(rand(10000,999999)),$start_point,5));
 			

@@ -20,10 +20,11 @@ if(isset($error))
     </div>
   </div>
   
-  <div class="field">
+  <div class="field is-clearfix">
     <label class="label" for="password">Password:</label> 
     <div class="control">
       <input class="input" type="password" id="password" name="password">
+      <p class="help is-pulled-right"><a href="forgotPassword">Forgot Password?</a></p>
     </div>
   </div>
   
@@ -35,8 +36,11 @@ if(isset($error))
   <input type="hidden" name="hmac_key" value="<?php echo $hmac_pair['hmac'] ?>">
 
   <div class="field">
-    <input class="button is-primary is-outlined" name="" type="submit" value="Log In">
+    <input class="button is-primary" name="" type="submit" value="Log In">
   </div>
 
 </form>
 </section>
+
+<a href="register">Register</a>
+

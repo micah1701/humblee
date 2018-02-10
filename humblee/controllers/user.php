@@ -177,7 +177,7 @@ class Core_Controller_User {
 				/* if a role has been assigned, optionally auto-login the user */
 				$this->users->logIn($_POST['email'],$_POST['password']);
 				
-				Core::forward("/user/");
+				Core::forward("/user");
 				exit();	
 				
 			} //end validation check
@@ -304,6 +304,78 @@ class Core_Controller_User {
 		echo Core::view( _app_server_path . $themeTemplate ,get_object_vars($this) );
 	}
 	
+	public function forgotPassword()
+	{
+		// check if user is already logged in
+        if(Core::auth('login'))
+        { 
+            Core::forward('user/profile');
+	    }
+	    
+	    //if we figured out who the user is, show the verification form
+	    if(isset($_SESSION[session_key]['recovery']['user_id']))
+	    {
+	    	$this->user = ORM::for_table(_table_users)->find_one($_SESSION[session_key]['recovery']['user_id']);
+	    	
+	    	//generate a 5-character alphanumeric code (harder than the 5-digit)
+			$start_point = rand(0,10);
+			$token = strtoupper(substr(md5(rand(10000,999999)),$start_point,5));
+			$_SESSION[session_key]['recovery']['token'] = $token;
+	    	
+	    	$email_parts = explode("@",$this->user['email']);
+	    	$email_name =  $email_parts[0][0]. "****". substr($email_parts[0],-1); // first letter **** last letter
+	    	$this->email_masked = $email_name ."@". $email_parts[1];
+	    	
+	    	// if the user has two-factor authentication  turned on, prompt them to choose between e-mail and SMS
+			if(1==1)
+			{
+		    	$_SESSION[session_key]['recovery']['message_sent'] = false;
+		    	$this->cellphone_lastfour = substr($this->user['cellphone'], -4);				
+			}
+			else
+			{
+				// if 2FA is not available, just send the e-mail now
+				$userObj = new Core_Model_Users;
+				if($userObj->forgotPasswordVerifyEmail($token))
+				{
+					$_SESSION[session_key]['recovery']['message_sent'] = true;					
+				}
+				else
+				{
+					$this->error = "There was a system problem generating your recovery e-mail";
+					$_SESSION[session_key]['recovery']['message_sent'] = false;
+				}
+			}
+			$this->template_view = Core::view( _app_server_path .'humblee/views/user/recovery_verify.php',get_object_vars($this) );
+
+	    }
+	    else // show the form to figure out who the user is
+	    {
+			if(isset($_POST['username']))
+			{
+				$user = ORM::for_table(_table_users)
+						->where_any_is(
+							array(
+								array('username' => $_POST['username']),
+								array('email' => $_POST['username'])
+							), '=')
+						->find_one();	
+				if(!$user)
+				{
+					$this->error = array("No account found with this username or e-mail address");
+				}
+				else
+				{
+					$_SESSION[session_key]['recovery']['user_id'] = $user->id;
+					$fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', 'user/forgotPassword?='.$_GET['fwd'])) ? $_GET['fwd'] : 'user/forgotPassword';
+					Core::forward($fwd);
+				}
+			}
+	    	$this->template_view = Core::view( _app_server_path .'humblee/views/user/recovery.php',get_object_vars($this) ); 	
+	    }
+	    echo Core::view( _app_server_path . 'application/views/templates/template.php' ,get_object_vars($this) );
+	}
+	
 	public function resetpassword()
 	{
 		// check if user is already logged in
@@ -331,6 +403,7 @@ class Core_Controller_User {
 	    		$userObj = new Core_Model_Users;
 	    		$userObj->resetPassword($_SESSION[session_key]['recovery']['user_id'],$_POST['password']);
 				$userObj->logInSession($_SESSION[session_key]['recovery']['user_id']);
+				unset($_SESSION[session_key]['recovery']);
 				$userObj->accesslog('Password Accepted - Recovery');
 				$fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user";
 				Core::forward($fwd);

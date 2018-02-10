@@ -39,9 +39,9 @@
 </section>
 
 <?php 
-    $crypto = new Core_Model_Crypto;
-    $hmac_pair = $crypto->get_hmac_pair(); 
-  ?>
+  $crypto = new Core_Model_Crypto;
+  $hmac_pair = $crypto->get_hmac_pair(); 
+?>
   <input type="hidden" id="hmac_token" value="<?php echo $hmac_pair['message'] ?>">
   <input type="hidden" id="hmac_key" value="<?php echo $hmac_pair['hmac'] ?>">
   <input type="hidden" id="fwd" value="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user"; ?>">

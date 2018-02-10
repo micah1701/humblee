@@ -3,6 +3,18 @@
 
 <div class="columns">
     <div class="column is-one-third">
+        
+        <?php
+        if(isset($error))
+        {
+        ?>
+        <div class="message is-danger">
+            <div class="message-body"><?php echo $error; ?></div>
+        </div>
+        <?php
+        }
+        ?>
+        
         <form action="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? "?fwd=".$_GET['fwd'] : '' ?>" autocomplete="off" method="post">
     
             <div class="field">

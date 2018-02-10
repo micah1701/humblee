@@ -266,15 +266,23 @@ class Core_Model_Users {
 		$user->password = $this->stringToSaltedHash($new_password,$user_id);
 		$user->save();
 		
-		$from = _default_mail_address;
-		$subject = "Your ". $_ENV['config']['domain'] ." password has been reset";
-		$body = "Hi {$user->name},\n\n";
-		$body.= "This message is to notify that the password associated with your account has been reset.\n\n";
-		$body.= "If you did not initiate this change, you can recover your account at ". $_ENV['config']['domain'] . _app_path ."user/forgotPassword \n\n";
-		$body.=" Thanks.";
+		if($sendEmail)
+		{
+			$from = _default_mail_address;
+			$subject = "You've successfully reset your ". $_ENV['config']['domain'] ." password";
+			$body = "Hi {$user->name},\n\n";
+			$body.= "This message is to notify that the password associated with your account has been reset.\n\n";
+			$body.= "If you did not initiate this change, you can recover your account at ". $_ENV['config']['domain'] . _app_path ."user/forgotPassword \n\n";
+			$body.=" Thanks.";
+			
+			$tools = new Core_Model_Tools;
+			return $tools->sendEmail($user->email,$from,$subject,nl2br($body));			
+		}
+		else
+		{
+			return true;
+		}
 		
-		$tools = new Core_Model_Tools;
-		return $tools->sendEmail($user->email,$from,$subject,nl2br($body));		
 	}
 	
 	/**
@@ -296,4 +304,21 @@ class Core_Model_Users {
 		return $tools->sendEmail($email,$from,$subject,nl2br($body));		
 	}
 	
+	/**
+	 * Send an account verification e-mail for reseting forgotten password
+	 * 
+	 */
+	public function forgotPasswordVerifyEmail($email,$name,$token)
+	{
+		$from = _default_mail_address;
+		$subject = $_ENV['config']['domain'] ." verification access code";
+		$body = "Hi {$name},\n\n";
+		$body.= "Someone has initiated a password reset request for your account at  ". $_ENV['config']['domain'] ."!\n\n";
+		$body.= "The one-time temporary access code to complete this request is: {$token}\n\n";
+		$body.=" If you did not request this, you can ignore and delete this message.\n\n";
+		$body.=" Thanks!";
+		
+		$tools = new Core_Model_Tools;
+		return $tools->sendEmail($email,$from,$subject,nl2br($body));		
+	}
 }
