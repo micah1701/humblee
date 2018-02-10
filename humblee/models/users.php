@@ -268,7 +268,7 @@ class Core_Model_Users {
 		
 		if($sendEmail)
 		{
-			$from = _default_mail_address;
+			$from = $_ENV['config']['default_email'];
 			$subject = "You've successfully reset your ". $_ENV['config']['domain'] ." password";
 			$body = "Hi {$user->name},\n\n";
 			$body.= "This message is to notify that the password associated with your account has been reset.\n\n";
@@ -290,7 +290,7 @@ class Core_Model_Users {
 	*
 	*/
 	public function registrationEmail($email,$name,$password){
-		$from = _default_mail_address;
+		$from = $_ENV['config']['default_email'];
 		$subject = $_ENV['config']['domain'] ." Username and Password";
 		$body = "Hi {$name},\n\n";
 		$body.= "Welcome to ". $_ENV['config']['domain'] ."!\n\n";
@@ -310,7 +310,7 @@ class Core_Model_Users {
 	 */
 	public function forgotPasswordVerifyEmail($email,$name,$token)
 	{
-		$from = _default_mail_address;
+		$from = $_ENV['config']['default_email'];
 		$subject = $_ENV['config']['domain'] ." verification access code";
 		$body = "Hi {$name},\n\n";
 		$body.= "Someone has initiated a password reset request for your account at  ". $_ENV['config']['domain'] ."!\n\n";

@@ -322,12 +322,12 @@ class Core_Controller_User {
 			$token = strtoupper(substr(md5(rand(10000,999999)),$start_point,5));
 			$_SESSION[session_key]['recovery']['token'] = $token;
 	    	
-	    	$email_parts = explode("@",$this->user['email']);
+	    	$email_parts = explode("@",$this->user->email);
 	    	$email_name =  $email_parts[0][0]. "****". substr($email_parts[0],-1); // first letter **** last letter
 	    	$this->email_masked = $email_name ."@". $email_parts[1];
 	    	
 	    	// if the user has two-factor authentication  turned on, prompt them to choose between e-mail and SMS
-			if(1==1)
+			if($_ENV['config']['TWILIO_Enabled'] && $this->user->user_twofactor_auth == 1 && $this->user->cellphone_validated)
 			{
 		    	$_SESSION[session_key]['recovery']['message_sent'] = false;
 		    	$this->cellphone_lastfour = substr($this->user['cellphone'], -4);				
@@ -336,7 +336,7 @@ class Core_Controller_User {
 			{
 				// if 2FA is not available, just send the e-mail now
 				$userObj = new Core_Model_Users;
-				if($userObj->forgotPasswordVerifyEmail($token))
+				if($userObj->forgotPasswordVerifyEmail($this->user->email,$this->user->name,$token))
 				{
 					$_SESSION[session_key]['recovery']['message_sent'] = true;					
 				}
@@ -376,7 +376,7 @@ class Core_Controller_User {
 	    echo Core::view( _app_server_path . 'application/views/templates/template.php' ,get_object_vars($this) );
 	}
 	
-	public function resetpassword()
+	public function resetPassword()
 	{
 		// check if user is already logged in
         if(Core::auth('login'))

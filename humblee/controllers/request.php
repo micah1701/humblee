@@ -179,6 +179,85 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		}
     }
     
+    public function recoveryRequestVerification()
+    {
+    	if(isset($_SESSION[session_key]['recovery']['message_sent']) && $_SESSION[session_key]['recovery']['message_sent'])
+    	{
+    		$this->json(array("success"=>false,"error"=>"Access Code Already Sent"));
+    	}
+    	if(!isset($_SESSION[session_key]['recovery']['user_id']) || !isset($_SESSION[session_key]['recovery']['token']))
+    	{
+    		$this->json(array("success"=>false,"error"=>"You session has expired. Please restart the password recovery process"));
+    	}
+    	$user = ORM::for_table(_table_users)->find_one($_SESSION[session_key]['recovery']['user_id']);
+    	if(!$user)
+    	{
+    		//this shouldn't happen because the user was found in the previous step
+    		$this->json(array("success"=>false,"error"=>"User account not found"));
+    	}
+    	if(isset($_POST['method']) && $_POST['sms'])
+    	{
+    		if(!$_ENV['config']['TWILIO_Enabled'])
+			{ 
+			    //this shouldn't happen because the user wouldn't have been given the option for SMS without TWILIO_Enabled
+			    $this->json(array("error"=>"Site not configured to use SMS")); 
+			}
+			$tools = new Core_Model_Tools;
+			$txtmsg = $_ENV['config']['domain'] ." access code: ". $_SESSION[session_key]['recovery']['token']; 
+			$sms_status = $tools->sendSMS($user->cellphone,$txtmsg);
+			$_SESSION[session_key]['recovery']['message_sent'] = true;
+			$this->json($sms_status);
+    	}
+    	elseif(isset($_POST['method']) && $_POST['email'])
+    	{
+    		$userObj = new Core_Model_Users;
+    		if($userObj->forgotPasswordVerifyEmail($user->email,$user->name,$_SESSION[session_key]['recovery']['token']))
+    		{
+	    		$_SESSION[session_key]['recovery']['message_sent'] = true;
+	    		$this->json(array("success"=>true));
+    		}
+    		else
+    		{
+    			$this->json(array("success"=>false,"error"=>"There was a system problem generating your recovery e-mail"));
+    		}
+    	}
+    	else
+    	{
+    		$this->json(array("success"=>false,"error"=>"Invalid Request"));
+    	}
+    }
+    
+    public function recoverySubmitVerification()
+    {
+    	if(!isset($_SESSION[session_key]['recovery']['message_sent']) || !$_SESSION[session_key]['recovery']['message_sent'])
+    	{
+    		$this->json(array("success"=>false,"error"=>"Your session has expired. Please restart the password recovery process."));
+    	}
+    	if(!isset($_SESSION[session_key]['recovery']['user_id']) || !isset($_SESSION[session_key]['recovery']['token']))
+    	{
+    		$this->json(array("success"=>false,"error"=>"You session has expired. Please restart the password recovery process."));
+    	}
+    	if(!isset($_POST['accessCode']) || $_POST['accessCode'] == "")
+    	{
+    		$this->json(array("success"=>false,"error"=>"Missing Access Code"));
+    	}
+    	
+    	if(trim($_POST['accessCode']) != $_SESSION[session_key]['recovery']['token'])
+    	{
+    		$this->json(array("success"=>false,"error"=>"Invalid Access code"));
+    	}
+    	else
+    	{
+    		$this->json(array("success"=>true));
+    	}
+    }
+    
+    public function recoveryCancel()
+    {
+    	unset($_SESSION[session_key]['recovery']);
+    	return $this->json(array("success"=>true));
+    }
+    
     /**
      * Get list of pages with editable content
      */

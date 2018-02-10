@@ -58,16 +58,10 @@ if(!$_SESSION[session_key]['recovery']['message_sent'])
         </div>
         <br>
         <button class="button is-primary submitButton" id="login">Continue</button>
+        <button class="button recoveryCancel">Cancel</button>
     </div>
 </div>
 
 <script type="text/javascript">var APP_PATH = '<?php echo _app_path ?>';</script>
 <script type="text/javascript" src="<?php echo _app_path ?>humblee/js/user/recover_verification.js"></script>
-
-<?php 
-  $crypto = new Core_Model_Crypto;
-  $hmac_pair = $crypto->get_hmac_pair(); 
-?>
-<input type="hidden" id="hmac_token" value="<?php echo $hmac_pair['message'] ?>">
-<input type="hidden" id="hmac_key" value="<?php echo $hmac_pair['hmac'] ?>">
 <input type="hidden" id="fwd" value="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user"; ?>">
