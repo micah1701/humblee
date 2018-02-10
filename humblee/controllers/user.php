@@ -304,4 +304,41 @@ class Core_Controller_User {
 		echo Core::view( _app_server_path . $themeTemplate ,get_object_vars($this) );
 	}
 	
+	public function resetpassword()
+	{
+		// check if user is already logged in
+        if(Core::auth('login'))
+        { 
+            Core::forward('user/profile');
+	    }
+	    
+	    // make sure user has completed the recovery varification process
+	    if(!isset($_SESSION[session_key]['recovery']['user_id']) || 
+	       !isset($_SESSION[session_key]['recovery']['verified']) || 
+	       !$_SESSION[session_key]['recovery']['verified'])
+	    {
+	    	Core::forward('user/login');
+	    }
+	    
+	    if(isset($_POST['password']) && $_POST['password'] != "" && isset($_POST['password_check']))
+	    {
+	    	if($_POST['password'] != $_POST['password_check'])
+	    	{
+	    		$this->error = "Confirmation password did not match the password";
+	    	}
+	    	else
+	    	{
+	    		$userObj = new Core_Model_Users;
+	    		$userObj->resetPassword($_SESSION[session_key]['recovery']['user_id'],$_POST['password']);
+				$userObj->logInSession($_SESSION[session_key]['recovery']['user_id']);
+				$userObj->accesslog('Password Accepted - Recovery');
+				$fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user";
+				Core::forward($fwd);
+	    	}
+	    	
+	    }
+		$this->template_view = Core::view( _app_server_path .'humblee/views/user/recovery_resetpassword.php',get_object_vars($this) ); 	
+		echo Core::view( _app_server_path .'application/views/templates/template.php',get_object_vars($this) );
+	}
+	
 }

@@ -258,24 +258,20 @@ class Core_Model_Users {
 	* Reset a user's password and notify them by e-mail
 	*
 	*/
-	public function resetPassword($user_id)
+	public function resetPassword($user_id,$new_password,$sendEmail=true)
 	{
 		if(!is_numeric($user_id)){ return false; }
 		$user = ORM::for_table( _table_users)->find_one($user_id);
 		if(!$user){ return false; }
-		$new_password = $this->generatePassword();
 		$user->password = $this->stringToSaltedHash($new_password,$user_id);
 		$user->save();
 		
 		$from = _default_mail_address;
 		$subject = "Your ". $_ENV['config']['domain'] ." password has been reset";
 		$body = "Hi {$user->name},\n\n";
-		$body.= "The password associated with your account has been reset.\n\n";
-		$body.= "Please hold on to your sign-in info:\n\n";
-		$body.= "Username: {$user->email} \n";
-		$body.= "Password: {$new_password} \n\n";
-		$body.= "To change your password, log in to ". $_ENV['config']['domain'] ." and update your user profile.\n\n";
-		$body.=" Thanks!";
+		$body.= "This message is to notify that the password associated with your account has been reset.\n\n";
+		$body.= "If you did not initiate this change, you can recover your account at ". $_ENV['config']['domain'] . _app_path ."user/forgotPassword \n\n";
+		$body.=" Thanks.";
 		
 		$tools = new Core_Model_Tools;
 		return $tools->sendEmail($user->email,$from,$subject,nl2br($body));		
