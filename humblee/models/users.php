@@ -272,8 +272,8 @@ class Core_Model_Users {
 			$subject = "You've successfully reset your ". $_ENV['config']['domain'] ." password";
 			$body = "Hi {$user->name},\n\n";
 			$body.= "This message is to notify that the password associated with your account has been reset.\n\n";
-			$body.= "If you did not initiate this change, you can recover your account at <a href=\"http://". $_ENV['config']['domain'] . _app_path ."user/forgotPassword .\">". $_ENV['config']['domain'] . _app_path ."user/forgotPassword \n\n";
-			$body.=" Thanks.";
+			$body.= "If you did not initiate this change, you can recover your account at <a href=\"http://". $_ENV['config']['domain'] . _app_path ."user/forgotPassword .\">". $_ENV['config']['domain'] . _app_path ."user/forgotPassword</a> \n\n";
+			$body.=" Thanks!";
 			
 			$tools = new Core_Model_Tools;
 			$message = $tools->emailTemplate($subject,nl2br($body), _app_server_path . 'humblee/views/email/notification.php');
@@ -295,10 +295,9 @@ class Core_Model_Users {
 		$subject = $_ENV['config']['domain'] ." Username and Password";
 		$body = "Hi {$name},\n\n";
 		$body.= "Welcome to ". $_ENV['config']['domain'] ."!\n\n";
-		$body.= "Please hold on to your sign-in info:\n\n";
-		$body.= "Username: {$email} \n";
-		$body.= "Password: {$password} \n\n";
-		$body.=" To change your password, log in to ". $_ENV['config']['domain'] ." and update your user profile.\n\n";
+		$body.= "You new account has been created.\n\n";
+		$body.= "Username: {$email} \n\n";
+		$body.=" To change your password, sign in to ". $_ENV['config']['domain'] ." and update your user profile.\n\n";
 		$body.=" Thanks!";
 		
 		$tools = new Core_Model_Tools;
