@@ -101,15 +101,13 @@
         <input type="text" class="input" id="cellphone_validate" name="cellphone_validate">
       </div>
     </div>
-  
-    
     
     <?php 
       if($user->cellphone_validated != 0)
       {
     ?>    
     <div class="field">
-      <span class="label">Two Factor Authentication</span>
+      <span class="label">Two Factor Authentication <span class="icon is-small has-text-<?php echo ($user->use_twofactor_auth ==1) ? "success" : "grey-light" ?>"><i class="fas fa-key"></i></span></span>
       <div class="control">
       <label for="use_twofactor_auth" class="checkbox">
         <input type="checkbox" name="use_twofactor_auth" value="1" id="use_twofactor_auth"<?php echo ($user->use_twofactor_auth ==1) ? " checked" : "" ?>>

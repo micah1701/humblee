@@ -44,5 +44,5 @@ if(isset($error))
 </form>
 </section>
 
-<a href="register">Register</a>
+<a href="<?php echo _app_path ?>user/register">Register</a>
 

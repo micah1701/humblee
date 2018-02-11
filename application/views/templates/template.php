@@ -39,7 +39,7 @@ $(document).ready(function(){
             <nav class="navbar">
             <?php	
                 $pageObj = new Core_Model_Pages;
-                $menu = $pageObj->getPages();
+                $menu = $pageObj->getPages(array('generations'=>1));
                 $li_format = '<a href=\"$newSlug\">$item->label</a>'; // raw php code to be eval'd in function
                 echo $pageObj->drawMenu_UL($menu,array('li_format'=>$li_format));
             ?>

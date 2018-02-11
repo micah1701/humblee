@@ -1,6 +1,6 @@
 <h1 class="title">Hello? Who is it?</h1>
 <h2 class="subtitle">Register for access</h2>
-<p>Already have an account? <a href="login">Sign In</a></p>
+<p>Already have an account? <a href="<?php echo _app_path ?>user/login">Sign In</a></p>
 <?php
 /* uncomment this message if the registration process does not automatically grant "login" access.
 <div class="message is-info">
