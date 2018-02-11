@@ -9,13 +9,13 @@ $(document).ready(function(){
         
             if(response.success)
             {
-                    $("#selectSendMethod").addClass('is-invisible');
+                    $("#selectSendMethod").css('display','none');
                     if(methodText == "sms")
                     {
                         $("#messageMethod").val(phone);
                         $("#messageAddress").val($("#phonenumber").val());
                     }
-                    $("#messageSent").removeClass('is-invisible');
+                    $("#messageSent").fadeIn('fast');;
             }
             else if (response.error)
             {

@@ -2,6 +2,8 @@
 <h2 class="subtitle">Log in using your username and password</h2>
 
 <?php
+$fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? "?fwd=".$_GET['fwd'] : '';
+
 if(isset($error))
 { 
 ?>
@@ -11,7 +13,7 @@ if(isset($error))
 ?>
 
 <section class="section columns">
-<form action="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? "?fwd=".$_GET['fwd'] : '' ?>" method="post">
+<form action="<?php echo $fwd ?>" method="post">
   
   <div class="field">
     <label class="label" for="username">Username:</label> 
@@ -24,7 +26,7 @@ if(isset($error))
     <label class="label" for="password">Password:</label> 
     <div class="control">
       <input class="input" type="password" id="password" name="password">
-      <p class="help is-pulled-right"><a href="forgotPassword">Forgot Password?</a></p>
+      <p class="help is-pulled-right"><a href="<?php echo _app_path ?>user/forgotPassword<?php echo $fwd ?>">Forgot Password?</a></p>
     </div>
   </div>
   
