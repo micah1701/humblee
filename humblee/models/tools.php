@@ -105,6 +105,19 @@ class Core_Model_Tools {
         echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($thisObj) );
 	}
 
+	/**
+	 * Wrap a string of HTML text with an HTML formated E-mail Template
+	 *
+	 * $subject	STRING	Included in title meta tag of e-mail
+	 * $message STRING	HTML Formated text for the e-mail
+	 * $template_path STRING	path on server to the php file that houses the template
+	 */
+	public function emailTemplate($subject,$message,$template_path)
+	{
+		ob_start();
+		include $template_path;
+		return ob_get_clean();
+	}
 
 	/**
 	 * SEND E-MAIL
