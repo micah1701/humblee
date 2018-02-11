@@ -4,18 +4,19 @@
 <?php
 if(isset($error))
 {
-    echo '<div class="message is-danger">'.$error.'</div>';
+    echo '<div class="message is-danger"><div class="message-body">'.$error.'</div></div>';
+    return; // dont show the rest of this page
 }
 ?>
 
 <?php
-// if an e-mail validation e-mail wasn't sent from the controller
+// if an e-mail validation e-mail wasn't sent from the controller (and there was no $error message)
 // it means this user has 2 factor authentication turned on
 // let them choose which method they would like to receive the access code from
 if(!$_SESSION[session_key]['recovery']['message_sent'])
 {
 ?>
-<div class="selectSendMethod">
+<div id="selectSendMethod">
     <p>To protect your account, we need to send you a one-time <strong>temporary access code.</strong> Once you receive the code, enter it on the next step.</p>
     <div class="message is-info" style="max-width: 768px; margin-top: 15px">
         <div class="message-header">
@@ -41,14 +42,15 @@ if(!$_SESSION[session_key]['recovery']['message_sent'])
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
+    <button class="button recoveryCancel">Cancel</button>
 </div>
 <script defer src="https://use.fontawesome.com/releases/v5.0.0/js/all.js"></script>
 <?php
 }
 ?>
 
-<div class="messageSent <?php echo (!$_SESSION[session_key]['recovery']['message_sent']) ? "is-invisible" : "" ?>">
+<div id="messageSent" class="<?php echo (!$_SESSION[session_key]['recovery']['message_sent']) ? "is-invisible" : "" ?>">
     <p>To protect your account, we've sent you a one-time temporary access code.</p>
     <p>The message was sent via <span id="messageMethod">e-mail</span> to <span id="messageAddress" class="has-text-weight-semibold"><?php echo $email_masked ?></span></p>
     <div id="verificationCode" class="field" style="margin-top: 15px; max-width: 400px">

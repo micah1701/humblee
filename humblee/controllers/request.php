@@ -195,7 +195,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
     		//this shouldn't happen because the user was found in the previous step
     		$this->json(array("success"=>false,"error"=>"User account not found"));
     	}
-    	if(isset($_POST['method']) && $_POST['sms'])
+    	if(isset($_POST['method']) && $_POST['method'] == "sms")
     	{
     		if(!$_ENV['config']['TWILIO_Enabled'])
 			{ 
@@ -208,7 +208,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 			$_SESSION[session_key]['recovery']['message_sent'] = true;
 			$this->json($sms_status);
     	}
-    	elseif(isset($_POST['method']) && $_POST['email'])
+    	elseif(isset($_POST['method']) && $_POST['method'] == "email")
     	{
     		$userObj = new Core_Model_Users;
     		if($userObj->forgotPasswordVerifyEmail($user->email,$user->name,$_SESSION[session_key]['recovery']['token']))
@@ -248,6 +248,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
     	}
     	else
     	{
+    		$_SESSION[session_key]['recovery']['verified'] = true;
     		$this->json(array("success"=>true));
     	}
     }

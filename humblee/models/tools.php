@@ -173,12 +173,18 @@ class Core_Model_Tools {
 			curl_setopt($ch, CURLOPT_USERPWD, 'api:'.$_ENV['config']['MAILGUN_API_Key']);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-			curl_setopt($ch, CURLOPT_URL, rtrim($_ENV['config']['MAILGUN_Base_URL'],"/").'/messages');
+			curl_setopt($ch, CURLOPT_URL, rtrim($_ENV['config']['MAILGUN_Base_Url'],"/").'/messages');
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $mail_array);
-			            
-			$result = json_decode(curl_exec($ch));
-			curl_close($ch);
 			
+			$result = json_decode(curl_exec($ch));
+			
+			if(curl_getinfo($ch, CURLINFO_HTTP_CODE) != "200")
+			{
+				curl_close($ch);
+				return false;
+			}
+			
+			curl_close($ch);
 			return (array_key_exists('id',$result)) ? true : false;
 		}
 		else
