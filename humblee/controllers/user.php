@@ -373,7 +373,7 @@ class Core_Controller_User {
 				else
 				{
 					$_SESSION[session_key]['recovery']['user_id'] = $user->id;
-					$fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/',$_GET['fwd'])) ? 'user/forgotPassword?='.$_GET['fwd'] : 'user/forgotPassword?no';
+					$fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/',$_GET['fwd'])) ? 'user/forgotPassword?fwd='.$_GET['fwd'] : 'user/forgotPassword';
 					Core::forward($fwd);
 				}
 			}

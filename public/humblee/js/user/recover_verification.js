@@ -6,13 +6,12 @@ $(document).ready(function(){
         var method = $(this).data('method');
         $(".sendButton").prop('disabled',true);
         $.post(APP_PATH+"core-request/recoveryRequestVerification",{method:method},function(response){
-        
             if(response.success)
             {
                     $("#selectSendMethod").css('display','none');
-                    if(methodText == "sms")
+                    if(method == "sms")
                     {
-                        $("#messageMethod").val(phone);
+                        $("#messageMethod").val('phone');
                         $("#messageAddress").val($("#phonenumber").val());
                     }
                     $("#messageSent").fadeIn('fast');;
@@ -50,7 +49,7 @@ $(document).ready(function(){
        $.post(APP_PATH+"core-request/recoveryCancel",function(response){
             if(response.success)
             {
-                window.location = APP_PATH +"user";
+                window.location = APP_PATH +"user/login?fwd="+$("#fwd").val();
             }
         });
     });
