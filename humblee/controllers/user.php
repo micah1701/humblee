@@ -316,25 +316,25 @@ class Core_Controller_User {
 	    if(isset($_SESSION[session_key]['recovery']['user_id']))
 	    {
 			
+			$this->user = ORM::for_table(_table_users)->find_one($_SESSION[session_key]['recovery']['user_id']);
+			$email_parts = explode("@",$this->user->email);
+	    	$email_name =  $email_parts[0][0]. "****". substr($email_parts[0],-1); // first letter **** last letter
+	    	$this->email_masked = $email_name ."@". $email_parts[1];
+	    	$this->cellphone_lastfour = substr($this->user['cellphone'], -4);
+			
 			// if they have't had the recovery message sent to them, handle that now
 			if(!isset($_SESSION[session_key]['recovery']['message_sent']) || !$_SESSION[session_key]['recovery']['message_sent'])
 			{
-				$this->user = ORM::for_table(_table_users)->find_one($_SESSION[session_key]['recovery']['user_id']);
-			
+				
 				//generate a 5-character alphanumeric code (harder than the 5-digit)
 				$start_point = rand(0,10);
 				$token = strtoupper(substr(md5(rand(10000,999999)),$start_point,5));
 				$_SESSION[session_key]['recovery']['token'] = $token;
 		    	
-		    	$email_parts = explode("@",$this->user->email);
-		    	$email_name =  $email_parts[0][0]. "****". substr($email_parts[0],-1); // first letter **** last letter
-		    	$this->email_masked = $email_name ."@". $email_parts[1];
-		    	
 		    	// if the user has two-factor authentication  turned on, prompt them to choose between e-mail and SMS
 				if($_ENV['config']['TWILIO_Enabled'] && $this->user->use_twofactor_auth == 1 && $this->user->cellphone_validated)
 				{
 			    	$_SESSION[session_key]['recovery']['message_sent'] = false;
-			    	$this->cellphone_lastfour = substr($this->user['cellphone'], -4);				
 				}
 				else
 				{
@@ -343,6 +343,7 @@ class Core_Controller_User {
 					if($userObj->forgotPasswordVerifyEmail($this->user->email,$this->user->name,$token))
 					{
 						$_SESSION[session_key]['recovery']['message_sent'] = true;
+						$_SESSION[session_key]['recovery']['method'] = "email";
 					}
 					else
 					{
@@ -353,7 +354,6 @@ class Core_Controller_User {
 			}
 			
 			$this->template_view = Core::view( _app_server_path .'humblee/views/user/recovery_verify.php',get_object_vars($this) );
-	 	
 		}
 		else // show the form to figure out who the user is
 		{

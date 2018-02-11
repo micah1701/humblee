@@ -52,7 +52,13 @@ if(!$_SESSION[session_key]['recovery']['message_sent'])
 
 <div id="messageSent"<?php echo (!$_SESSION[session_key]['recovery']['message_sent']) ? ' style="display:none"' : '' ?>>
     <p>To protect your account, we've sent you a one-time temporary access code.</p>
-    <p>The message was sent via <span id="messageMethod">e-mail</span> to <span id="messageAddress" class="has-text-weight-semibold"><?php echo $email_masked ?></span></p>
+    <p>The message was sent via <span id="messageMethod">
+        <?php echo (isset($_SESSION[session_key]['recovery']['method']) && $_SESSION[session_key]['recovery']['method'] == "sms") ? "text" : "e-mail"; ?>
+        </span> 
+        to <span id="messageAddress" class="has-text-weight-semibold">
+            <?php   
+            echo (isset($_SESSION[session_key]['recovery']['method']) && $_SESSION[session_key]['recovery']['method'] == "sms") ? '(***) *** - '.$cellphone_lastfour : $email_masked; ?>
+        </span></p>
     <div id="verificationCode" class="field" style="margin-top: 15px; max-width: 400px">
         <label class="label" for="accessCode">Enter the access code</label> 
         <div class="control">

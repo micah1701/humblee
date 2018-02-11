@@ -206,6 +206,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 			$txtmsg = $_ENV['config']['domain'] ." access code: ". $_SESSION[session_key]['recovery']['token']; 
 			$sms_status = $tools->sendSMS($user->cellphone,$txtmsg);
 			$_SESSION[session_key]['recovery']['message_sent'] = true;
+			$_SESSION[session_key]['recovery']['method'] = "sms";
 			$this->json($sms_status);
     	}
     	elseif(isset($_POST['method']) && $_POST['method'] == "email")
@@ -214,6 +215,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
     		if($userObj->forgotPasswordVerifyEmail($user->email,$user->name,$_SESSION[session_key]['recovery']['token']))
     		{
 	    		$_SESSION[session_key]['recovery']['message_sent'] = true;
+	    		$_SESSION[session_key]['recovery']['method'] = "email";
 	    		$this->json(array("success"=>true));
     		}
     		else
@@ -242,7 +244,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
     		$this->json(array("success"=>false,"error"=>"Missing Access Code"));
     	}
     	
-    	if(trim($_POST['accessCode']) != $_SESSION[session_key]['recovery']['token'])
+    	if(trim(strtolower($_POST['accessCode'])) != strtolower($_SESSION[session_key]['recovery']['token']))
     	{
     		$this->json(array("success"=>false,"error"=>"Invalid Access code"));
     	}

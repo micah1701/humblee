@@ -11,10 +11,14 @@ $(document).ready(function(){
                     $("#selectSendMethod").css('display','none');
                     if(method == "sms")
                     {
-                        $("#messageMethod").val('phone');
-                        $("#messageAddress").val($("#phonenumber").val());
+                        $("#messageMethod").html('text');
+                        $("#messageAddress").html($("#phonenumber").html());
                     }
-                    $("#messageSent").fadeIn('fast');;
+                    
+                    $("#messageSent").fadeIn('fast',function(){
+                        $("#accessCode").focus();
+                    });
+                    
             }
             else if (response.error)
             {
@@ -37,9 +41,14 @@ $(document).ready(function(){
             {
                 window.location = APP_PATH + 'user/resetPassword?fwd='+ $("#fwd").val();
             }
+            else if (response.error)
+            {
+                alert(response.error);
+                $(".submitButton").prop('disabled',false);
+            }
             else
             {
-                alert(response);
+                alert("There was a system error and your message could not be sent.");
                 $(".submitButton").prop('disabled',false);
             }
         });
