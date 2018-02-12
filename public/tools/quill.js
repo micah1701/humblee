@@ -8,13 +8,11 @@ var quill = new Quill('#edit_content', {
     modules: {
         toolbar: [
           ['bold', 'italic', 'underline', 'strike'],
-          ['link', 'blockquote', 'code-block', 'image'],
+          ['link', 'blockquote', 'image'],
+          [{ 'header': [1, 2, 3, false] }],
           [{ list: 'ordered' }, { list: 'bullet' }],
           [{ 'script': 'sub'}, { 'script': 'super' }],
-          [{ 'indent': '-1'}, { 'indent': '+1' }],
-          [{ 'align': [] }],
           ['clean'], 
-          [{ size: [ 'small', false, 'large', 'huge' ]}]
         ]
     }
 });
