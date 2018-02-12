@@ -7,9 +7,13 @@ var quill = new Quill('#edit_content', {
     imgHandler: 'selectImage',
     modules: {
         toolbar: [
-          ['bold', 'italic'],
+          ['bold', 'italic', 'underline', 'strike'],
           ['link', 'blockquote', 'code-block', 'image'],
           [{ list: 'ordered' }, { list: 'bullet' }],
+          [{ 'script': 'sub'}, { 'script': 'super' }],
+          [{ 'indent': '-1'}, { 'indent': '+1' }],
+          [{ 'align': [] }],
+          ['clean'], 
           [{ size: [ 'small', false, 'large', 'huge' ]}]
         ]
     }
@@ -19,6 +23,7 @@ quill.getModule("toolbar").addHandler("image", selectFromMediaManager);
 
 quill.on('editor-change',function(){
     $("#content").val(quill.container.firstChild.innerHTML);
+    //console.log($("#content").val());
 });
 
 var insertPointIndex = 0;
@@ -36,7 +41,7 @@ function handleMediaManagerSelect(fileData){
     quill.insertEmbed(insertPointIndex, 'image', fileData.url);
 }
 
-$(document).on("click", "#edit_content img", function(event){
+$(document).on("dblclick", "#edit_content img", function(event){
   var image = $(this),
   declaredWidth = image[0].style.width, // just vanilla JS to get declared width. jQuery will always return calculated width
   setWidth = (declaredWidth == "") ? "100%" : declaredWidth; // default to 100%
