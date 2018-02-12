@@ -2,37 +2,6 @@
 
 $("head").append('<link href="https://cdn.quilljs.com/1.3.5/quill.snow.css" rel="stylesheet">');
 
-class Counter {
-  constructor(quill, options) {
-    this.quill = quill;
-    this.options = options;
-    this.container = document.querySelector(options.container);
-    quill.on('text-change', this.update.bind(this));
-    this.update();  // Account for initial contents
-  }
-
-  calculate() {
-    let text = this.quill.getText();
-    if (this.options.unit === 'word') {
-      text = text.trim();
-      // Splitting empty text returns a non-empty array
-      return text.length > 0 ? text.split(/\s+/).length : 0;
-    } else {
-      return text.length;
-    }
-  }
-  
-  update() {
-    var length = this.calculate();
-    var label = this.options.unit;
-    if (length !== 1) {
-      label += 's';
-    }
-    this.container.innerText = length + ' ' + label;
-  }
-}
-
-
 var quill = new Quill('#edit_content', {
     theme: 'snow',
     imgHandler: 'selectImage',
@@ -45,17 +14,19 @@ var quill = new Quill('#edit_content', {
         ]
     }
 });
-quill.getModule("toolbar").addHandler("image", selectImage);
+
+quill.getModule("toolbar").addHandler("image", selectFromMediaManager);
 
 quill.on('editor-change',function(){
-    $("#content").val(JSON.stringify(quill.getContents()));  
+    $("#content").val(quill.container.firstChild.innerHTML);
 });
 
 var insertPointIndex = 0;
 
-function selectImage()
+function selectFromMediaManager()
 {
     var range = quill.getSelection();
+    console.log(range);
     insertPointIndex = (range) ? range.index : 0;
     mediamanager();
 }
@@ -63,4 +34,30 @@ function selectImage()
 //called when a user selects a file from the media manager
 function handleMediaManagerSelect(fileData){
     quill.insertEmbed(insertPointIndex, 'image', fileData.url);
+}
+
+$(document).on("click", "#edit_content img", function(event){
+  var image = $(this);
+  $("#imageClass").val(image.attr('class'));
+  $("#imageWidth").val(image.css('max-width'));
+  $("#imageProperties").addClass('is-active'); 
+  $("#imagePropertiesSave").on("click",function(e)
+  {
+    image.attr('class',$("#imageClass").val());
+    image.css('max-width',$("#imageWidth").val());
+    closeImagePropertiesDialog();
+  });
+  $("#imagePropertiesCancel").on("click",function(){
+    closeImagePropertiesDialog();
+  });
+  
+});
+
+function closeImagePropertiesDialog()
+{
+  $("#imageProperties").removeClass('is-active');
+  $("#imagePropertiesSave").off("click");
+  $("#imagePropertiesCancel").off("click");
+  $("#imageClass").val('');
+  $("#imageWidth").val('');
 }

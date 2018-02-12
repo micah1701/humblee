@@ -187,6 +187,7 @@ else
 <button class="button is-primary" id="save"><span class="icon is-pulled-left"><i class="far fa-save"></i></span><span class="is-pulled-right">Save Draft</span></button> &nbsp;
 <button class="button is-primary is-outlined" id="publish"><span class="icon is-pulled-left"><i class="fas fa-rocket"></i></span><span class="is-pulled-right">Publish live to site</span></button>
 
+<!-- used in Quill.js to load the media manager in an iframe -->
 <div id="mediamanager" class="modal">
   <div class="modal-background"></div>
   <div class="modal-card">
@@ -195,6 +196,25 @@ else
       <button class="delete" aria-label="close"></button>
     </header>
     <section class="modal-card-body"></section>
-
   </div>
+</div>
+
+<!-- used in Quill.js editor to update an image's properties inline -->
+<div id="imageProperties" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            Edit Image Properties
+        </header>
+        <section class="modal-card-body">    
+            <label class="label" for="imageWidth">Max Width</label>
+            <input class="input" id="imageWidth">
+            <label class="label" for="imageClass">Class</label>
+            <input class="input" id="imageClass">
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-primary" id="imagePropertiesSave">Update</button>
+            <button class="button" id="imagePropertiesCancel">Cancel</button>
+        </footer>
+    </div>
 </div>
