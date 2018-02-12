@@ -207,8 +207,12 @@ else
             Edit Image Properties
         </header>
         <section class="modal-card-body">    
-            <label class="label" for="imageWidth">Max Width</label>
+            <label class="label" for="imageWidth">Width</label>
             <input class="input" id="imageWidth">
+            <p class="help">Responsive images should have a 100% width</p>
+            <label class="label" for="imageMaxWidth">Max Width</label>
+            <input class="input" id="imageMaxWidth">
+            <p class="help">Largest size the image should display, even if screen is wider</p>
             <label class="label" for="imageClass">Class</label>
             <input class="input" id="imageClass">
         </section>

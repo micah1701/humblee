@@ -37,14 +37,19 @@ function handleMediaManagerSelect(fileData){
 }
 
 $(document).on("click", "#edit_content img", function(event){
-  var image = $(this);
+  var image = $(this),
+  declaredWidth = image[0].style.width, // just vanilla JS to get declared width. jQuery will always return calculated width
+  setWidth = (declaredWidth == "") ? "100%" : declaredWidth; // default to 100%
+  
   $("#imageClass").val(image.attr('class'));
-  $("#imageWidth").val(image.css('max-width'));
+  $("#imageWidth").val(setWidth);
+  $("#imageMaxWidth").val(image.css('max-width'));  
   $("#imageProperties").addClass('is-active'); 
   $("#imagePropertiesSave").on("click",function(e)
   {
     image.attr('class',$("#imageClass").val());
-    image.css('max-width',$("#imageWidth").val());
+    image.css('width',$("#imageWidth").val());
+    image.css('max-width',$("#imageMaxWidth").val());
     closeImagePropertiesDialog();
   });
   $("#imagePropertiesCancel").on("click",function(){
@@ -60,4 +65,5 @@ function closeImagePropertiesDialog()
   $("#imagePropertiesCancel").off("click");
   $("#imageClass").val('');
   $("#imageWidth").val('');
+  $("#imageMaxWidth").val('');
 }
