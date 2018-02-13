@@ -4,26 +4,72 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e92462d559d33c985feba174df3f3c33",
+    "content-hash": "9c478cded68cd24208aee7724268227d",
     "packages": [
         {
-            "name": "j4mie/idiorm",
-            "version": "v1.5.3",
+            "name": "erusev/parsedown",
+            "version": "1.6.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/j4mie/idiorm.git",
-                "reference": "f2f170c44af4761fef8ef34d6dbc237cd95df799"
+                "url": "https://github.com/erusev/parsedown.git",
+                "reference": "fbe3fe878f4fe69048bb8a52783a09802004f548"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/j4mie/idiorm/zipball/f2f170c44af4761fef8ef34d6dbc237cd95df799",
-                "reference": "f2f170c44af4761fef8ef34d6dbc237cd95df799",
+                "url": "https://api.github.com/repos/erusev/parsedown/zipball/fbe3fe878f4fe69048bb8a52783a09802004f548",
+                "reference": "fbe3fe878f4fe69048bb8a52783a09802004f548",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Parsedown": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Emanuil Rusev",
+                    "email": "hello@erusev.com",
+                    "homepage": "http://erusev.com"
+                }
+            ],
+            "description": "Parser for Markdown.",
+            "homepage": "http://parsedown.org",
+            "keywords": [
+                "markdown",
+                "parser"
+            ],
+            "time": "2017-11-14T20:44:03+00:00"
+        },
+        {
+            "name": "j4mie/idiorm",
+            "version": "v1.5.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/j4mie/idiorm.git",
+                "reference": "d006418da9bb1fb32313e8de7bf35f9e2696c257"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/j4mie/idiorm/zipball/d006418da9bb1fb32313e8de7bf35f9e2696c257",
+                "reference": "d006418da9bb1fb32313e8de7bf35f9e2696c257",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.0"
             },
             "require-dev": {
+                "ext-pdo_sqlite": "*",
                 "phpunit/phpunit": "^4.8"
             },
             "type": "library",
@@ -65,7 +111,7 @@
                 "orm",
                 "query builder"
             ],
-            "time": "2017-03-21T01:31:25+00:00"
+            "time": "2018-01-05T06:12:59+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -117,21 +163,25 @@
         },
         {
             "name": "paragonie/sodium_compat",
-            "version": "v1.4.0",
+            "version": "v1.5.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/sodium_compat.git",
-                "reference": "9bfa05311d1851db0bbc2ad453c7083b9996b5b4"
+                "reference": "ca9d0656dbd6e6f7b23675ff7abd90d5e9cea054"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/sodium_compat/zipball/9bfa05311d1851db0bbc2ad453c7083b9996b5b4",
-                "reference": "9bfa05311d1851db0bbc2ad453c7083b9996b5b4",
+                "url": "https://api.github.com/repos/paragonie/sodium_compat/zipball/ca9d0656dbd6e6f7b23675ff7abd90d5e9cea054",
+                "reference": "ca9d0656dbd6e6f7b23675ff7abd90d5e9cea054",
                 "shasum": ""
             },
             "require": {
                 "paragonie/random_compat": "^1|^2",
                 "php": "^5.2.4|^5.3|^5.4|^5.5|^5.6|^7"
+            },
+            "provide": {
+                "ext-libsodium": "*",
+                "ext-sodium": "*"
             },
             "require-dev": {
                 "phpunit/phpunit": "^3|^4|^5"
@@ -195,7 +245,7 @@
                 "secret-key cryptography",
                 "side-channel resistant"
             ],
-            "time": "2017-11-28T15:55:13+00:00"
+            "time": "2018-01-30T13:19:20+00:00"
         },
         {
             "name": "tinify/tinify",
@@ -255,16 +305,16 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "5.16.3",
+            "version": "5.16.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "4d4d146365f584f2204e0de28e620fd717889834"
+                "reference": "d33971d26a1f6c2d7914d6df1d76601f2921fb2a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/4d4d146365f584f2204e0de28e620fd717889834",
-                "reference": "4d4d146365f584f2204e0de28e620fd717889834",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/d33971d26a1f6c2d7914d6df1d76601f2921fb2a",
+                "reference": "d33971d26a1f6c2d7914d6df1d76601f2921fb2a",
                 "shasum": ""
             },
             "require": {
@@ -297,7 +347,7 @@
                 "sms",
                 "twilio"
             ],
-            "time": "2018-01-20T02:33:56+00:00"
+            "time": "2018-02-09T23:39:06+00:00"
         }
     ],
     "packages-dev": [],

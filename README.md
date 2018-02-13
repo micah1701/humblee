@@ -36,6 +36,7 @@ Composer will create a `vendor` folder containing the following libraries by def
 * Mailgun (optional) - for sending transactional e-mails, like password recovery. <https://documentation.mailgun.com>
 * Twilio (optional) - for sending two-factor authentication (2FA) messages via SMS. <https://www.twilio.com/docs/api>
 * Tinify (optional) - Image compression API <http://tinypng.com/developers>
+* Parsedown (optional) - Convert markdown plain text to HTML
 End with an example of getting some data out of the system or using it for a little demo
 
 4. **Run NPM** to install Javascript and CSS libraries

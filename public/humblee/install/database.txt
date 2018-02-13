@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `humblee_content_types` (
   `objectkey` varchar(50) NOT NULL,
   `description` varchar(255) NOT NULL,
   `output_type` enum('meta','content') NOT NULL,
-  `input_type` enum('wysiwyg','textfield','filemanager','textarea','multifield','customform') NOT NULL,
+  `input_type` enum('wysiwyg','markdown','textfield','filemanager','textarea','multifield','customform') NOT NULL,
   `input_parameters` text NOT NULL,
   `required_role_id` int(11) NOT NULL
 ) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
