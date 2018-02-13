@@ -97,7 +97,7 @@ function submitForm(publish)
 			}
 		});
 		encoded_content = encoded_content.substr(0, encoded_content.length - 1) + '}';  // remove trailing "," from string then add ending bracket
-		$("#edit_content").val(encoded_content);
+		$("#content").val(encoded_content);
 	}
 	
 	$(window).unbind("beforeunload");
