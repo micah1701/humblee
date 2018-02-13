@@ -1,4 +1,4 @@
-/* global $, XHR_PATH, APP_PATH, friendlyFilesize, quickNotice, confirmation, dateFormat, setEscEvent, Clipboard */
+/* global $, XHR_PATH, APP_PATH, friendlyFilesize, quickNotice, confirmation, dateFormat, setEscEvent, unsetEscEvent, Clipboard */
 $(document).ready(function(){
    
    loadFolders(true);
@@ -10,6 +10,7 @@ $(document).ready(function(){
         setEscEvent('fileUploader',function () { closeUploaderModal() });
         $("#uploaderModal .delete").on("click",function(){
             closeUploaderModal();
+            unsetEscEvent('fileUploader');
         });
     });
    

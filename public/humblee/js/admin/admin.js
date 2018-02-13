@@ -57,6 +57,7 @@ function confirmation(message,callbackConfirm,callbackCancel)
     setEscEvent('confirmationBox',function () { confirmationClose() });
     $("#confirmationBox button").on("click",function(){
         confirmationClose();
+        unsetEscEvent('confirmationBox');
     });
 }
     function confirmationClose()

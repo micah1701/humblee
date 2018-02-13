@@ -21,7 +21,6 @@ quill.getModule("toolbar").addHandler("image", selectFromMediaManager);
 
 quill.on('editor-change',function(){
     $("#content").val(quill.container.firstChild.innerHTML);
-    //console.log($("#content").val());
 });
 
 var insertPointIndex = 0;
@@ -29,7 +28,6 @@ var insertPointIndex = 0;
 function selectFromMediaManager()
 {
     var range = quill.getSelection();
-    console.log(range);
     insertPointIndex = (range) ? range.index : 0;
     mediamanager();
 }

@@ -1,4 +1,4 @@
-/* global $, setEscEvent, XHR_PATH, APP_PATH */
+/* global $, setEscEvent, unsetEscEvent, XHR_PATH, APP_PATH */
 
 $(document).ready(function(){
 	loadPages();
@@ -94,6 +94,7 @@ function openPagePropertiesModal(page_id)
             setEscEvent('pageProperties',function () { closePagePropertiesModal() });
             $("#editPageDialog .delete, #editPageDialog button.cancel").on("click",function(){
                 closePagePropertiesModal();
+                unsetEscEvent('pageProperties');
             });
         }
         else if(response.error != undefined)
@@ -269,6 +270,7 @@ function deletePage(page_id,page_name)
     setEscEvent('deletePageConfirmation',function () { closeDeletePageConfirmation() });
     $("#deletePageConfirmation button.cancel").on("click",function(){
         closeDeletePageConfirmation();
+        unsetEscEvent('deletePageConfirmation');
     });
     
     $("#deleteButton").on('click',function(){

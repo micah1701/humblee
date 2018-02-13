@@ -1,4 +1,4 @@
-/* global $, XHR_PATH, confirmation, setEscEvent, quickNotice */
+/* global $, XHR_PATH, confirmation, setEscEvent, unsetEscEvent, quickNotice */
 $(document).ready(function(){
     
     $(".removeUser").on("click",function(){
@@ -49,6 +49,7 @@ $(document).ready(function(){
         setEscEvent('pageProperties',function () { closeManageRolesModal() });
         $("#manageRolesDialog .delete, #manageRolesDialog button.cancel").on("click",function(){
             closeManageRolesModal();
+            unsetEscEvent('pageProperties');
         });
         
         $("#manageRolesDialog button.saveUserRoles").on("click",function(){

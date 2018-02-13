@@ -196,7 +196,8 @@ if($hasMediaRole)
 if($is_in_iframe){
 ?>
 <script>
-    setEscEvent('mediaManager',function () { parent.closeMediamanager(); parent.unsetEscEvent('mediaManager') });
+    /* global setEscEvent */
+    setEscEvent('mediaManager',function () { parent.closeMediamanager(); parent.unsetEscEvent('mediaManager'); });
 </script>
 <?php 
 }

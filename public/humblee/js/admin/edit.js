@@ -1,4 +1,4 @@
-/* global $, dateFormat, confirmation, setEscEvent, XHR_PATH, APP_PATH */
+/* global $, dateFormat, confirmation, setEscEvent, unsetEscEvent, XHR_PATH, APP_PATH */
 $(document).ready(function(){
 
     $("#select_content_type").change(function(){
@@ -23,6 +23,7 @@ function mediamanager()
     setEscEvent('mediaManager',function () { closeMediamanager() });
     $("#mediamanager button.delete").on("click",function(){
         closeMediamanager();
+        unsetEscEvent('mediaManager');
     });
 }
 function closeMediamanager()
@@ -49,7 +50,6 @@ function validateForm(publish)
 		{
             var pageLoadDate = new Date($("#edit_time").val() ),
             latestRevisionDate = new Date( response.content.revision_date);
-		    console.log(pageLoadDate+ "  " + latestRevisionDate);
 		    
             if( latestRevisionDate > pageLoadDate)
             {

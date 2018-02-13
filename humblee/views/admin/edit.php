@@ -174,10 +174,9 @@ elseif ($content_type->input_type == "wysiwyg")
 else
 {
     echo '<div class="field">';
-    echo '<label class="label" for="content">'.$content_type->name .':</label>';
-    echo '<div class="control">';
+    echo '<label class="label" for="content">'.$content_type->name .'</label>';
 	echo  preg_replace('@{content}@',$content->content,$content_type->input_parameters);
-	echo '</div></div>';
+	echo '</div>';
 }
 ?>
 
@@ -187,7 +186,6 @@ else
 <button class="button is-primary" id="save"><span class="icon is-pulled-left"><i class="far fa-save"></i></span><span class="is-pulled-right">Save Draft</span></button> &nbsp;
 <button class="button is-primary is-outlined" id="publish"><span class="icon is-pulled-left"><i class="fas fa-rocket"></i></span><span class="is-pulled-right">Publish live to site</span></button>
 
-<!-- used in Quill.js to load the media manager in an iframe -->
 <div id="mediamanager" class="modal">
   <div class="modal-background"></div>
   <div class="modal-card">
