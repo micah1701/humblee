@@ -86,6 +86,7 @@ function value($field,$crud_selected,$htmlentities=false)
                 <select  id="input_type" name="input_type">
                     <option value="">Select...</option>
                     <option value="wysiwyg" <?php echo (value('input_type',$crud_selected) == "wysiwyg") ? "SELECTED" : "" ?>>WYSIWYG Editor</option>
+                    <option value="markdown" <?php echo (value('input_type',$crud_selected) == "markdown") ? "SELECTED" : "" ?>>Markdown Editor</option>
                     <option value="textfield" <?php echo (value('input_type',$crud_selected) == "textfield") ? "SELECTED" : "" ?>>Single line text field</option>
                     <option value="textarea" <?php echo (value('input_type',$crud_selected) == "textarea") ? "SELECTED" : "" ?>>Block text area</option>
                     <option value="multifield" <?php echo (value('input_type',$crud_selected) == "multifield") ? "SELECTED" : "" ?>>Multiple fields (JSON array)</option>

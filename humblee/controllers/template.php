@@ -49,8 +49,15 @@ class Core_Controller_Template {
 						  ->where('live',1)
 						  ->find_many();
 			//create associative array of content objects.  key is the content_type "name"
-			foreach($getContent as $content){
-				$contents[$content->objectkey] = $content;			
+			foreach($getContent as $content)
+			{
+				$contents[$content->objectkey] = $content;
+				
+				if($content->input_type == "markdown")
+				{
+					$Parsedown = new Parsedown();
+					$contents[$content->objectkey]['content'] = $Parsedown->instance()->text($contents[$content->objectkey]['content']);
+				}
 			}
 
 		//check for "preview mode" content override
@@ -70,7 +77,7 @@ class Core_Controller_Template {
 			foreach($getPreviewContent as $prevContent){
 				$contents[$prevContent->objectkey] = $prevContent;	
 			}
-		}			
+		}
 		
 		//set content for use by class
 		if(!isset($contents))
