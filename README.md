@@ -48,7 +48,7 @@ NPM will create a `node_modules` folder containing the following required librar
 * bulma-tooltip - an extension for bulma to display tooltip information
 * nestedSortable - a jQueryUI plugin used for drag/drop functionality in the CMS page manager.
 
-4. **Create database tables and master user**. In your browser, navigate to https://your-site.tld/**humblee/install**.  On first run, this page will check install the necessary tables and default content and then prompt you to create a user account.
+4. **Create database tables and master user**. In your browser, navigate to yoursite/humblee/install.  On first run, this page will check install the necessary tables and default content and then prompt you to create a user account.
 
 Note that the install file lives in the subdirectory `humblee` in the `/public` directory.  While all of the application folders reside in your site's htdocs directory, the `.htaccess` file in the root folder forwards all traffic to the public folder effectively, making it the root.
 
