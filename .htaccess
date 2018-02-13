@@ -1,0 +1,14 @@
+# Turn on URL rewriting
+RewriteEngine On
+
+# Protect hidden files from being viewed
+<Files .*>
+	Order Deny,Allow
+	Deny From All
+</Files>
+
+# Turn of Indexes
+Options -Indexes
+
+# Send All Requests to the "public" folder
+RewriteRule ^(.*)$ public/$1 [L]

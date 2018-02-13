@@ -1,0 +1,52 @@
+#google_sample {
+  width: 560px;
+  /* 600 less padding */
+  background-color: #fff;
+  height: auto;
+  padding: 10px 20px;
+  font-family: arial,sans-serif; }
+  #google_sample #google_sample_title {
+    font-size: 18px;
+    color: #1a0dab;
+    height: 24px; }
+  #google_sample #google_sample_url {
+    display: block;
+    font-size: 14px;
+    color: #006621; }
+  #google_sample #google_sample_description {
+    font-size: small;
+    color: #545454; }
+
+#facebook_sample {
+  width: 100%;
+  max-width: 500px; }
+  #facebook_sample #facebook_sample_image {
+    display: block; }
+    #facebook_sample #facebook_sample_image img {
+      width: 100%;
+      max-width: 500px; }
+  #facebook_sample #facebook_sample_title {
+    display: block;
+    color: #1d2129;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 22px; }
+  #facebook_sample #facebook_sample_description {
+    display: block;
+    font-size: 12px;
+    color: #90949c;
+    line-height: 16px;
+    max-height: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis; }
+  #facebook_sample #facebook_sample_domain {
+    display: block;
+    padding-top: 9px;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #90949c; }
+
+button.og_image_picker {
+  margin-bottom: 15px; }
+
+/*# sourceMappingURL=edit.css.map */

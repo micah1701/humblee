@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+$font-primary: 'Roboto', sans-serif;
+$color-gray-light: #f1f1f1;
+$color-gray: #d7d7d7;
+$color-gray-dark: #bfbfbf;
+$color-black: #222;
+
+body, button, input, select, textarea {
+    font-family: $font-primary;
+}
+
+.hero {
+
+    .title {
+        color: $color-gray-light;
+    }
+    .nav a {
+        
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}

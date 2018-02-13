@@ -1,0 +1,279 @@
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+--
+-- Table structure for table `humblee_content`
+--
+
+CREATE TABLE IF NOT EXISTS `humblee_content` (
+  `id` int(11) NOT NULL,
+  `type_id` int(11) NOT NULL,
+  `page_id` int(11) NOT NULL,
+  `content` text NOT NULL,
+  `revision_date` datetime NOT NULL,
+  `publish_date` datetime NOT NULL,
+  `updated_by` int(11) NOT NULL,
+  `live` tinyint(1) NOT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+INSERT INTO `humblee_content` (`id`,`type_id`,`page_id`,`content`,`updated_by`,`live`) VALUES
+(1,1,1,'<h1>Welcome to your Humblee powered website</h1>',1,1),
+(2,2,1,'{"page_title":"Welcome to Humblee!","meta_description":"","og_title":"","og_description":"","og_image":""}',1,1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `humblee_content_types`
+--
+
+CREATE TABLE IF NOT EXISTS `humblee_content_types` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `objectkey` varchar(50) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `output_type` enum('meta','content') NOT NULL,
+  `input_type` enum('wysiwyg','textfield','filemanager','textarea','multifield','customform') NOT NULL,
+  `input_parameters` text NOT NULL,
+  `required_role_id` int(11) NOT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `humblee_content_types`
+--
+
+INSERT INTO `humblee_content_types` (`id`, `name`, `objectkey`, `description`, `output_type`, `input_type`, `input_parameters`, `required_role_id`) VALUES
+(1, 'Page Body', 'pagebody', 'Main content area of page', 'content', 'wysiwyg', '<textarea name="content" id="edit_content">{content}</textarea>', 1),
+(2, 'SEO & Meta Tags', 'meta_tags', 'SEO and Meta tags read by search engines and social media sites', 'meta', 'customform', 'admin/contentWidgets/seo/edit.php', 0),
+(3, 'Extra Header Code', 'extraHeadCode', 'Additional hidden HTML code to be place in the header', 'meta', 'textarea', '<textarea name="content" class="textarea" id="edit_content">{content}</textarea>', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `humblee_pages`
+--
+
+CREATE TABLE IF NOT EXISTS `humblee_pages` (
+  `id` int(11) NOT NULL,
+  `parent_id` int(11) NOT NULL,
+  `slug` varchar(255) NOT NULL,
+  `label` varchar(255) NOT NULL,
+  `display_order` int(11) NOT NULL,
+  `template_id` int(11) NOT NULL,
+  `required_role` int(11) NOT NULL,
+  `active` tinyint(1) NOT NULL,
+  `start_date` datetime NOT NULL,
+  `end_date` datetime NOT NULL,
+  `searchable` tinyint(1) NOT NULL,
+  `display_in_sitemap` tinyint(1) NOT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `humblee_pages`
+--
+
+INSERT INTO `humblee_pages` (`id`, `parent_id`, `slug`, `label`, `display_order`, `template_id`, `required_role`, `active`, `start_date`, `end_date`, `searchable`, `display_in_sitemap`) VALUES
+(1, 0, '', 'Homepage', 0, 2, 0, 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `humblee_roles`
+--
+
+CREATE TABLE IF NOT EXISTS `humblee_roles` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `role_type` enum('access','task') NOT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `humblee_roles`
+--
+
+INSERT INTO `humblee_roles` (`id`, `name`, `description`, `role_type`) VALUES
+(1, 'login', 'Log into website', 'access'),
+(2, 'admin', 'Log into admin area', 'access'),
+(3, 'content', 'Create and edit content drafts', 'task'),
+(4, 'publish', 'Publish content live to the site','task'),
+(5, 'media', 'Upload, edit and delete media files','task'),
+(6, 'pages', 'Add, remove, reorder and label pages', 'task'),
+(7, 'users', 'Set access roles for all website users', 'task'),
+(8, 'designer', 'Create and edit content block types and templates', 'task'),
+(9, 'developer', 'Super user access', 'task');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `humblee_templates`
+--
+
+CREATE TABLE IF NOT EXISTS `humblee_templates` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `page_type` enum('default','controller','view','link') COLLATE utf8_unicode_ci NOT NULL,
+  `page_meta` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `dynamic_uri` tinyint(1) NOT NULL,
+  `blocks` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `available` tinyint(1) NOT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `humblee_templates`
+--
+
+INSERT INTO `humblee_templates` (`id`, `name`, `description`, `page_type`, `page_meta`, `dynamic_uri`, `blocks`, `available`) VALUES
+(1, 'Default', 'Standard content page', 'view', 'default', 0, '1,2,3', 1),
+(2, 'Homepage', 'Site Homepage', 'view', 'homepage', 0, '1,2,3', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `humblee_users`
+--
+
+CREATE TABLE IF NOT EXISTS `humblee_users` (
+  `id` int(11) unsigned NOT NULL,
+  `email` varchar(127) NOT NULL,
+  `email_validated` tinyint(1) NOT NULL DEFAULT '0',
+  `cellphone` varchar(20) NOT NULL,
+  `cellphone_validated` tinyint(1) NOT NULL DEFAULT '0',
+  `use_twofactor_auth` tinyint(1) NOT NULL DEFAULT '0',
+  `password` char(64) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `username` varchar(127) NOT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT '0',
+  `logins` int(10) unsigned NOT NULL DEFAULT '0',
+  `last_login` datetime NOT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `humblee_user_roles`
+--
+
+CREATE TABLE IF NOT EXISTS `humblee_user_roles` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `role_id` int(11) NOT NULL
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Table structure for table `humblee_validation`
+--
+
+CREATE TABLE IF NOT EXISTS `humblee_validation` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT ,
+  `user_id` int(11) NOT NULL,
+  `type` ENUM('email','phone','sms') NOT NULL ,
+  `old_value` VARCHAR(255) NOT NULL , 
+  `new_value` VARCHAR(255) NOT NULL ,
+  `token` VARCHAR(128) NOT NULL ,
+  `token_created` DATETIME NOT NULL ,
+  `message_id` VARCHAR(255) NOT NULL ,
+  `token_accepted` DATETIME NOT NULL ,
+  PRIMARY KEY (`id`) ) ENGINE = MyISAM;
+
+--
+-- Table structure for table `humblee_accesslog`
+--
+
+CREATE TABLE IF NOT EXISTS `humblee_accesslog` ( 
+  `id` INT NOT NULL AUTO_INCREMENT, 
+  `session_id` VARCHAR(40) NOT NULL, 
+  `user_id` INT NOT NULL, 
+  `ip_address` VARCHAR(45) NOT NULL,
+  `ip_geolocation` VARCHAR(255) NOT NULL,
+  `user_agent` VARCHAR(255) NOT NULL, 
+  `timestamp` DATETIME NOT NULL, 
+  `status` VARCHAR(32) NOT NULL, 
+  PRIMARY KEY (`id`) ) ENGINE = MyISAM;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `humblee_content`
+--
+ALTER TABLE `humblee_content`
+  ADD PRIMARY KEY (`id`), ADD KEY `page_id` (`page_id`);
+
+--
+-- Indexes for table `humblee_content_types`
+--
+ALTER TABLE `humblee_content_types`
+  ADD PRIMARY KEY (`id`), ADD KEY `name` (`name`);
+
+--
+-- Indexes for table `humblee_pages`
+--
+ALTER TABLE `humblee_pages`
+  ADD PRIMARY KEY (`id`), ADD KEY `slug` (`slug`);
+
+--
+-- Indexes for table `humblee_roles`
+--
+ALTER TABLE `humblee_roles`
+  ADD PRIMARY KEY (`id`), ADD KEY `name` (`name`), ADD KEY `role_type` (`role_type`);
+
+--
+-- Indexes for table `humblee_templates`
+--
+ALTER TABLE `humblee_templates`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `humblee_users`
+--
+ALTER TABLE `humblee_users`
+  ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `uniq_email` (`email`), ADD KEY `facebook_id` (`cellphone`);
+
+--
+-- Indexes for table `humblee_user_roles`
+--
+ALTER TABLE `humblee_user_roles`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `humblee_content`
+--
+ALTER TABLE `humblee_content`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1;
+--
+-- AUTO_INCREMENT for table `humblee_content_types`
+--
+ALTER TABLE `humblee_content_types`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
+--
+-- AUTO_INCREMENT for table `humblee_pages`
+--
+ALTER TABLE `humblee_pages`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+--
+-- AUTO_INCREMENT for table `humblee_roles`
+--
+ALTER TABLE `humblee_roles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+--
+-- AUTO_INCREMENT for table `humblee_templates`
+--
+ALTER TABLE `humblee_templates`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+--
+-- AUTO_INCREMENT for table `humblee_users`
+--
+ALTER TABLE `humblee_users`
+  MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1;
+--
+-- AUTO_INCREMENT for table `humblee_user_roles`
+--
+ALTER TABLE `humblee_user_roles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1;

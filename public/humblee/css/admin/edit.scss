@@ -1,0 +1,18 @@
+#mediamanager {
+    
+    .modal-card {
+        width: 96% !important;
+        height: 98vh;
+        
+        .modal-card-body {
+            padding: 0;
+            overflow: hidden;
+        }
+    }
+    
+    iframe {
+        width: 100%;
+        height: calc(100vh - 105px);
+    }
+    
+}

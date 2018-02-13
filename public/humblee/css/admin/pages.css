@@ -1,0 +1,18 @@
+@charset "UTF-8";
+#pages {
+  max-width: 800px; }
+
+ul a.menu_hasChildren:after {
+  font-family: Font Awesome\ 5 Free;
+  font-weight: 900;
+  margin-left: 8px;
+  content: ""; }
+ul a.menu_hasChildren.has-closed:after {
+  content: "\f105"; }
+ul.is-closed {
+  display: none; }
+
+.icon.order {
+  cursor: move; }
+
+/*# sourceMappingURL=pages.css.map */
