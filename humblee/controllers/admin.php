@@ -144,7 +144,7 @@ class Core_Controller_Admin {
 		
 		$this->template_view = Core::view( _app_server_path .'humblee/views/admin/edit.php',get_object_vars($this) ); 
         
-        $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'tools/dateformat.js"></script>';
+        $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'humblee/js/tools/dateformat.js"></script>';
         $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'humblee/js/admin/edit.js"></script>';
         $this->extra_head_code.= '<link rel="stylesheet" type="text/css" href="'._app_path.'humblee/css/admin/edit.css">';
         
@@ -161,8 +161,8 @@ class Core_Controller_Admin {
 	    
 	    $this->template_view = Core::view( _app_server_path .'humblee/views/admin/media.php',get_object_vars($this) );
 	    
-	    $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'tools/dateformat.js"></script>';
-	    $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'tools/friendlyfilesize.js"></script>';
+	    $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'humblee/js/tools/dateformat.js"></script>';
+	    $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'humblee/js/tools/friendlyfilesize.js"></script>';
 	    $this->extra_head_code.= '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.13/clipboard.min.js"></script>';
 	    $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'humblee/js/admin/media.js"></script>';
 	    $this->extra_head_code.= '<link rel="stylesheet" type="text/css" href="'._app_path.'humblee/css/admin/media.css">';
