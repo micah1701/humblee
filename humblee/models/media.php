@@ -74,10 +74,13 @@ class Core_Model_Media {
         }
         
         //delete the file
-        if(!unlink($this->storage_path.$file->filepath))
-		{
-			return "Could not unlink file";
-		}
+        if(file_exists($this->storage_path.$file->filepath))
+        {
+            if(!unlink($this->storage_path.$file->filepath))
+    		{
+    			return "Could not unlink file";
+    		}
+        }
 		
 		//delete the row from the database
 		$file->delete();
