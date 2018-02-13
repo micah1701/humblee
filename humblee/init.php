@@ -24,6 +24,8 @@ ORM::configure('password', $_ENV['config']['db_password']);
 //if using Twilio, include the class
 use Twilio\Rest\Client;
 
+//if using Markdown, include the class
+use Michelf\Markdown;
 
 /**
  * Route to a specified controller based on URI
