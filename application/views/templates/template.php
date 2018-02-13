@@ -49,7 +49,7 @@ $(document).ready(function(){
     </header><!-- end "header" -->
     
     <section id="pageBody" class="section">
-        <div id="pageBody" class="container">
+        <div class="content container">
             <?php echo (isset($template_view)) ? $template_view : '' ?>        
         </div><!-- end "pageBody" -->
     </section>
