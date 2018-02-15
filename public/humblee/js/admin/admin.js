@@ -16,6 +16,8 @@ $(document).ready(function(){
            menuOpen = false
        }
     });
+
+    responsiveTables();
 });
 
 $(window).resize(function(){
@@ -103,4 +105,13 @@ function quickNotice(message,cssClass,timeOnScreen)
                 notice.remove();
             });
         },timeOnScreen);
+}
+
+function responsiveTables(){
+    $('table').each(function(){
+        var element = $(this);
+       if(element.width() > $(window).width()){
+           element.wrap('<div style="width: 94%; overflow-x: scroll">');
+       }
+    });
 }
