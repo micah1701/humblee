@@ -1,7 +1,21 @@
 /* global $ */
 
 $(document).ready(function(){
-
+    var menuOpen = false;
+    $(".navbar .navbar-burger").on("click",function(){
+       if(!menuOpen)
+       {
+           $(this).addClass('is-active');
+           $(".navbar-menu").addClass('is-active');
+           menuOpen = true;
+       }
+       else
+       {
+           $(this).removeClass('is-active');
+           $(".navbar-menu").removeClass('is-active');
+           menuOpen = false
+       }
+    });
 });
 
 $(window).resize(function(){
@@ -34,7 +48,7 @@ var escEvents = new Array();
         eval(escEvents[lastEvent].eventFunction());
         unsetEscEvent(escEvents[lastEvent].eventName);
     }
-    
+
     // This is the listener for the escape key to be pressed
     $(document).on( 'keyup', function ( event ){
         event.preventDefault();
@@ -42,7 +56,7 @@ var escEvents = new Array();
             runEscEvent();
         }
     });
-    
+
 /**
  * Custom "confirmation" alert box
  */
@@ -52,7 +66,7 @@ function confirmation(message,callbackConfirm,callbackCancel)
     $("#confirmationBox").addClass('is-active');
     $("#confirmationBox #confirmButton").on("click",callbackConfirm);
     $("#confirmationBox button.cancel").on("click",callbackCancel);
-    
+
     //register ESC key and other ways to close the modal
     setEscEvent('confirmationBox',function () { confirmationClose() });
     $("#confirmationBox button").on("click",function(){
@@ -74,11 +88,11 @@ function quickNotice(message,cssClass,timeOnScreen)
 {
     cssClass = (cssClass) ? cssClass : 'is-success';
     timeOnScreen = (timeOnScreen) ? timeOnScreen : 3000;
-    
+
     var html = '<div id="quickNotice" style="position: absolute; z-index: 100; width: 100%" class="notification has-text-centered has-text-weight-semibold '+cssClass+'">';
         html+= message;
         html+= '</div>';
-    
+
     $('body').append(html);
     var notice = $("#quickNotice"),
         startPosition = (notice.innerHeight()) * -1;
@@ -86,7 +100,7 @@ function quickNotice(message,cssClass,timeOnScreen)
         notice.animate({bottom:0},300);
         setTimeout(function(){
             notice.animate({bottom:startPosition+'px'},500,function(){
-                notice.remove();    
+                notice.remove();
             });
         },timeOnScreen);
 }
