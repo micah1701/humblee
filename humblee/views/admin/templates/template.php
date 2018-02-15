@@ -23,12 +23,17 @@
         <div class="container">
             <div class="navbar-brand">
                 <h1 class="is-size-3">Humblee CMS</h1>
+                 <button class="button navbar-burger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
             </div>
-            
+
             <div class="navbar-menu">
                 <div class="navbar-end">
                     <a class="navbar-item" href="<?php echo  _app_path ?>admin/">Admin Homepage</a>
-    
+
                     <?php
                     if(Core::auth('content') || $is_dev)
                     {
@@ -37,7 +42,7 @@
                     <?php
                     }
                     ?>
-                    
+
                     <?php
                     if(Core::auth('pages') || $is_dev)
                     {
@@ -46,7 +51,7 @@
                     <?php
                     }
                     ?>
-                    
+
                     <?php
                     if(Core::auth('users') || $is_dev)
                     {
@@ -55,7 +60,7 @@
                     <?php
                     }
                     ?>
-                    
+
                     <?php
                     if(Core::auth('designer') || $is_dev)
                     {
@@ -65,12 +70,12 @@
                         <div class="navbar-dropdown">
                             <a class="navbar-item" href="<?php echo  _app_path ?>admin/blocks">Manage Content Blocks</a>
                             <a class="navbar-item" href="<?php echo  _app_path ?>admin/templates">Manage Templates</a>
-                        </div>   
+                        </div>
                     </div>
                     <?php
                     }
                     ?>
-                    
+
                     <div class="navbar-item has-dropdown is-hoverable">
                         <div class="navbar-link">Account</div>
                         <div class="navbar-dropdown">
@@ -82,14 +87,14 @@
                                 <span class="icon has-text-danger"><i class="fas fa-sign-out-alt" aria-hidden="true"></i></span>
                                 Log Out
                             </a>
-                        </div>   
+                        </div>
                     </div>
-                    
+
                 </div>
-            </div>    
-        </div>    
-     
-    </nav>    
+            </div>
+        </div>
+
+    </nav>
 
     <section class="section">
         <div class="container">
@@ -100,7 +105,7 @@
     <footer class="footer">
         <div class="container">
             <div class="content has-text-centered">
-               <p>Powered by <a href="https://humblee.io" target="_blank">Humblee</a> &copy; <?php echo date("Y"); ?></p> 
+               <p>Powered by <a href="https://humblee.io" target="_blank">Humblee</a> &copy; <?php echo date("Y"); ?></p>
             </div>
         </div>
     </footer>
@@ -113,7 +118,7 @@
             </header>
             <section class="modal-card-body">
                 <article class="media">
-                    <div class="media-content"></div>      
+                    <div class="media-content"></div>
                     <figure class="media-right">
                         <span class="icon is-large">
                             <i class="fas fa-3x fa-exclamation-circle has-text-info"></i>
@@ -123,7 +128,7 @@
             </section>
             <footer class="modal-card-foot">
               <button id="confirmButton" class="button is-info">Confirm</button>
-              <button class="button cancel">Cancel</button>   
+              <button class="button cancel">Cancel</button>
             </footer>
         </div>
     </div><!-- end of deletePageConfirmation -->
