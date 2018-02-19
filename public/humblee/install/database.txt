@@ -169,7 +169,7 @@ CREATE TABLE IF NOT EXISTS `humblee_validation` (
   `id` INT(11) NOT NULL AUTO_INCREMENT ,
   `user_id` int(11) NOT NULL,
   `type` ENUM('email','phone','sms') NOT NULL ,
-  `old_value` VARCHAR(255) NOT NULL , 
+  `old_value` VARCHAR(255) NOT NULL ,
   `new_value` VARCHAR(255) NOT NULL ,
   `token` VARCHAR(128) NOT NULL ,
   `token_created` DATETIME NOT NULL ,
@@ -181,16 +181,52 @@ CREATE TABLE IF NOT EXISTS `humblee_validation` (
 -- Table structure for table `humblee_accesslog`
 --
 
-CREATE TABLE IF NOT EXISTS `humblee_accesslog` ( 
-  `id` INT NOT NULL AUTO_INCREMENT, 
-  `session_id` VARCHAR(40) NOT NULL, 
-  `user_id` INT NOT NULL, 
+CREATE TABLE IF NOT EXISTS `humblee_accesslog` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `session_id` VARCHAR(40) NOT NULL,
+  `user_id` INT NOT NULL,
   `ip_address` VARCHAR(45) NOT NULL,
   `ip_geolocation` VARCHAR(255) NOT NULL,
-  `user_agent` VARCHAR(255) NOT NULL, 
-  `timestamp` DATETIME NOT NULL, 
-  `status` VARCHAR(32) NOT NULL, 
+  `user_agent` VARCHAR(255) NOT NULL,
+  `timestamp` DATETIME NOT NULL,
+  `status` VARCHAR(32) NOT NULL,
   PRIMARY KEY (`id`) ) ENGINE = MyISAM;
+
+--
+-- Table structure for table `humblee_media`
+--
+
+CREATE TABLE `humblee_media` (
+  `id` int(11) NOT NULL,
+  `folder` int(11) NOT NULL,
+  `filepath` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `type` varchar(20) NOT NULL,
+  `size` int(11) NOT NULL,
+  `required_role` int(11) NOT NULL,
+  `encrypted` tinyint(1) NOT NULL,
+  `crypto_nonce` varchar(255) NOT NULL,
+  `upload_by` int(11) NOT NULL,
+  `upload_date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `humblee_media_folders`
+--
+
+CREATE TABLE `humblee_media_folders` (
+  `id` int(11) NOT NULL,
+  `parent_id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `humblee_media_folders`
+--
+
+INSERT INTO `humblee_media_folders` (`id`, `parent_id`, `name`) VALUES
+(1, 0, 'Images'),
+(2, 0, 'Other Files');
 
 --
 -- Indexes for dumped tables
@@ -239,6 +275,21 @@ ALTER TABLE `humblee_user_roles`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `humblee_media`
+--
+ALTER TABLE `humblee_media`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `folder` (`folder`);
+
+--
+-- Indexes for table `humblee_media_folders`
+--
+ALTER TABLE `humblee_media_folders`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `parent_id` (`parent_id`);
+
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -251,7 +302,7 @@ ALTER TABLE `humblee_content`
 -- AUTO_INCREMENT for table `humblee_content_types`
 --
 ALTER TABLE `humblee_content_types`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `humblee_pages`
 --
@@ -261,7 +312,7 @@ ALTER TABLE `humblee_pages`
 -- AUTO_INCREMENT for table `humblee_roles`
 --
 ALTER TABLE `humblee_roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT for table `humblee_templates`
 --
@@ -277,3 +328,15 @@ ALTER TABLE `humblee_users`
 --
 ALTER TABLE `humblee_user_roles`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1;
+
+--
+-- AUTO_INCREMENT for table `humblee_media`
+--
+ALTER TABLE `humblee_media`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+--
+-- AUTO_INCREMENT for table `humblee_media_folders`
+--
+ALTER TABLE `humblee_media_folders`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
