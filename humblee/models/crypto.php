@@ -1,7 +1,7 @@
 <?php defined('include_only') or die('No direct script access.');
 
 class Core_Model_Crypto {
-    
+
     function __construct()
     {
         if(version_compare(phpversion(), "7.2", ">=") && extension_loaded('sodium'))
@@ -21,7 +21,7 @@ class Core_Model_Crypto {
             $this->sodium_library = false;
         }
     }
-    
+
     /**
 	 * Return a token unique to the current session
 	 * Can be included as hidden form field and checked upon POST to make sure request is coming from known user
@@ -41,10 +41,10 @@ class Core_Model_Crypto {
 			return $csrfToken;
 		}
     }
-    
+
     /**
 	 * Generate a random string and hash it to this user's session for machine authentication & CSRF protection
-	 * 
+	 *
 	 */
 	 public function get_hmac_pair()
 	 {
@@ -54,7 +54,7 @@ class Core_Model_Crypto {
 	 		'hmac' => base64_encode(hash_hmac('sha256', $random_string, $this->getCsrfToken() ))
  		);
 	 }
-	 
+
 	/**
 	* Check HMAC string and hash
 	*/
@@ -62,7 +62,7 @@ class Core_Model_Crypto {
 	{
 	  	return ($hash == base64_encode(hash_hmac('sha256', $string, $this->getCsrfToken() )) ) ? true : false;
 	}
-    
+
     private function generateCsrfToken()
     {
 		$token = uniqid(rand(), true). time() . session_id();
@@ -79,21 +79,21 @@ class Core_Model_Crypto {
 		    return md5($token);
 		}
     }
-    
+
     private function getCryptoKey()
 	{
-		require _app_server_path."humblee/configuration/crypto.php";
+		require _app_server_path.$_ENV['config']['crypto_key'];
 		return $_encryption_key;
 	}
 
 	/**
 	 * Encrypt a string
 	 * Requires the libsodium extension
-	 * 
+	 *
 	 * $plaintext	STRING	value to be encrypted
-	 * 
+	 *
 	 * Returns	ARRAY	contains encrypted text AND a unique one-time "nonce" value that is required to decrypt the file (in addition to the stored key)
-	 * 
+	 *
 	 * Be sure to save the encrypted value AND the unique $none value
 	 *
 	 */
@@ -103,12 +103,12 @@ class Core_Model_Crypto {
 		{
 			return false;
 		}
-		
+
 		$nonce = random_bytes(24);
-		
+
 		if($this->sodium_library == "native")
 		{
-    		$crypttext = sodium_crypto_secretbox($plaintext, $nonce, $this->getCryptoKey());  
+    		$crypttext = sodium_crypto_secretbox($plaintext, $nonce, $this->getCryptoKey());
 		}
 		else
 		{
@@ -117,13 +117,13 @@ class Core_Model_Crypto {
 
 		return array('crypttext'=>$crypttext,'nonce'=>$nonce);
 	}
-	
-	/** 
+
+	/**
 	 * Decrypt a previously encrypted string
-	 * 
+	 *
 	 * $crypttext	ciphered text previously encrypted by this site
 	 * $nonce		unique one-time token originally generated at the time of encryption
-	 * 
+	 *
 	 * Returns plain text
 	 *
 	 */
@@ -135,7 +135,7 @@ class Core_Model_Crypto {
 		}
 		if($this->sodium_library == "native")
 		{
-    		return sodium_crypto_secretbox_open($crypttext, $nonce,  $this->getCryptoKey());		    
+    		return sodium_crypto_secretbox_open($crypttext, $nonce,  $this->getCryptoKey());
 		}
 		else
 		{
@@ -143,5 +143,5 @@ class Core_Model_Crypto {
 		}
 
 	}
-    
+
 }

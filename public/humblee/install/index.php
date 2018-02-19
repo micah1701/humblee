@@ -1,25 +1,24 @@
 <?php
-    $_app_path = realpath(__DIR__ . '/../../..').'/humblee/';
+    $_app_root = realpath(__DIR__ . '/../../..') . '/';
+    $_app_path = $_app_root.'humblee/';
     require_once $_app_path.'vendor/autoload.php'; // to load composer files
     require_once $_app_path.'configuration/config.php';
 
     ini_set('display_errors',1);
     error_reporting(E_ALL);
-
 ?>
 <html>
 <head>
 <meta charset="utf-8">
 <title>Install Humblee Framework and CMS</title>
+
 <link rel="stylesheet" type="text/css" href="../../node_modules/bulma/css/bulma.css">
 </head>
 <body>
 <div class="container">
 
-    <h1>Install Humblee Database</h1>
-
+    <h1 class="title">Install Humblee Database</h1>
     <?php
-
        // Contect to database
         $connection = mysqli_connect($_ENV['config']['db_host'], $_ENV['config']['db_username'], $_ENV['config']['db_password']) or die('Error connecting to MySQL server: ' . mysqli_connect_error() .'<br><br>Make sure you have the correct settings configured in <code>/core/config.php</code>.</body></html>');
 
@@ -35,11 +34,14 @@
         }
         else
         {
-           $sql = file_get_contents('database.txt');
+            $sql = file_get_contents('database.txt');
 
-            if (mysqli_multi_query($connection,$sql)) {
+            if (mysqli_multi_query($connection,$sql))
+            {
                 while ($sql->next_result()) {;} // flush multi_queries
-            } else {
+            }
+            else
+            {
                 throw new Exception (mysqli_error);
             }
             $database_created = "Created";
@@ -93,62 +95,86 @@
         }
 
         //generate the secret encrpytion key
-        $encryption_key_genertaed = "";
-        if(!file_exists($_app_path.'configuration/crypto.php'))
-        {
-            $file_content = '<?php defined(\'include_only\') or die(\'No direct script access.\');';
-            $file_content.= "\n\n /**\n * THIS FILE WAS AUTO GENERATED AT THE TIME OF INSTALL\n *\n * DO NOT MODIFY THIS FILE!\n *\n";
-            $file_content.= " * Do not store this file in a public repo. \n * You may want to create a backup of this file and store it in a safe place.\n *\n */\n\n";
-            $file_content.= '$_encryption_key = "'. random_bytes(32).'";';
+        $encryption_key_generated = "";
+        $keyfilename = $_app_root . $_ENV['config']['crypto_key'];
 
-            $my_file = $_app_path.'configuration/crypto.php';
-            $handle = fopen($my_file, 'w') or die('Could not create encrpytion file at:  '.$my_file);
-            fwrite($handle, $file_content);
-
-            $encryption_key_genertaed = "Encryption Key Generated";
-        }
-        else
+        if(!file_exists($keyfilename))
         {
-            $encryption_key_genertaed = "Encryption Key Exists";
-        }
+            $dirname = dirname($keyfilename);
+            if (!is_dir($dirname))
+            {
+                if(!mkdir($dirname, 0755, true))
+                {
+                	$encryption_folder_generated = "Could not create directory (". $dirname .") for encryption key. Check folder permissions";
+                }
+                else
+                {
+                    $encryption_folder_generated = "Folder created";
+                }
+            }
+            else
+            {
+                $encryption_folder_generated = "Folder exists";
+            }
+
+			$file_content = '<?php defined(\'include_only\') or die(\'No direct script access.\');';
+			$file_content.= "\n\n /**\n * THIS FILE WAS AUTO GENERATED AT THE TIME OF INSTALL\n *\n * DO NOT MODIFY THIS FILE!\n *\n";
+			$file_content.= " * Do not store this file in a public repo. \n * You may want to create a backup of this file and store it in a safe place.\n *\n */\n\n";
+			$file_content.= '$_encryption_key = "'. random_bytes(32).'";';
+
+			$handle = fopen($keyfilename, 'w') or die('Could not create encrpytion file at:  '.$keyfilename);
+			if(!fwrite($handle, $file_content))
+			{
+				$encryption_key_generated = "Could not save generated encrpytion key. Check folder permissions";
+			}
+			else
+			{
+				$encryption_key_generated = "Key Generated";
+			}
+		}
+		else
+		{
+			$encryption_folder_generated = "Folder Exists";
+			$encryption_key_generated = "Key Exists";
+		}
 
         echo "Database: ".$database_created;
         echo "<br>";
         echo "User: ".$user_created;
         echo "<br>";
-        echo $encryption_key_genertaed;
+        echo "Encryption Key Directory: ". $encryption_folder_generated;
+        echo "<br>";
+        echo "Encryption key: ".$encryption_key_generated;
         echo "<br>";
 
-        if(isset($show_form) && $show_form !== false) {
+        if(isset($show_form) && $show_form !== false)
+        {
     ?>
     <hr>
     <form action="" method="post">
         <h3>Create a master user for your site</h3>
-				<div class="field">
-					<label for="name">Full Name:</label>
-					<input type="text" class="input" id="name" name="name" placeholder="John Smith">
+			<div class="field">
+				<label for="name">Full Name:</label>
+				<input type="text" class="input" id="name" name="name" placeholder="John Smith">
 			</div>
-				<div class="field">
-					<label for="email">Email Address:</label>
-        <input type="email" class="input" id="email" name="email" placeholder="your.email@valid-domain.com">
+			<div class="field">
+				<label for="email">Email Address:</label>
+                <input type="email" class="input" id="email" name="email" placeholder="your.email@valid-domain.com">
 			</div>
 			<div class="field">
 				<label for="password">Password:</label>
-        <input type="text" class="input" id="password" name="password" placeholder="notPassword123" id="passwrod">
-
+                <input type="text" class="input" id="password" name="password" placeholder="notPassword123" id="passwrod">
 			</div>
-
         <br>
         <input class="button is-primary" type="submit" name="submit" value="Create Master User">
     </form>
     <?php
-
         }
         else
         {
     ?>
-         <br>
-         <a href="../../admin">Log In</a>
+        <br>
+        <a href="../../admin">Log In</a>
     <?php
         }
 
