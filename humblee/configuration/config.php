@@ -1,14 +1,14 @@
-<?php 
+<?php
 define('include_only','scripts checking for this definition should die() if not set');
 
 /**
  * Set which configuration file to use
- * 
+ *
  * this could be done progromatically like:
  * $environment = ($_SERVER['HTTP_HOST'] == "my-domain.com") ? 'env_production.php' : 'env_dev.php';
  *
  */
-$environment  = 'env_production.php';
+$environment  = 'env_dev.php';
 
 // load the environment set above
 $_ENV['config'] = require_once $environment;
