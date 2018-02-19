@@ -1,5 +1,6 @@
 <?php
-    $_app_path = realpath(__DIR__ . '/../../..').'/humblee/';
+    $_app_root = realpath(__DIR__ . '/../../..') . '/';
+    $_app_path = $_app_root.'humblee/';
     require_once $_app_path.'vendor/autoload.php'; // to load composer files
     require_once $_app_path.'configuration/config.php';
 
@@ -95,7 +96,8 @@
 
         //generate the secret encrpytion key
         $encryption_key_generated = "";
-        $keyfilename = $_app_path.'configuration/crypto/key.php';
+        $keyfilename = $_app_root . $_ENV['config']['crypto_key'];
+
         if(!file_exists($keyfilename))
         {
             $dirname = dirname($keyfilename);
@@ -103,35 +105,44 @@
             {
                 if(!mkdir($dirname, 0755, true))
                 {
-                	$encryption_key_generated = "Could not create directory (". $dirname .") for encryption key. Check folder permissions";
+                	$encryption_folder_generated = "Could not create directory (". $dirname .") for encryption key. Check folder permissions";
+                }
+                else
+                {
+                    $encryption_folder_generated = "Folder created";
                 }
             }
             else
-			{
-				$file_content = '<?php defined(\'include_only\') or die(\'No direct script access.\');';
-				$file_content.= "\n\n /**\n * THIS FILE WAS AUTO GENERATED AT THE TIME OF INSTALL\n *\n * DO NOT MODIFY THIS FILE!\n *\n";
-				$file_content.= " * Do not store this file in a public repo. \n * You may want to create a backup of this file and store it in a safe place.\n *\n */\n\n";
-				$file_content.= '$_encryption_key = "'. random_bytes(32).'";';
+            {
+                $encryption_folder_generated = "Folder exists";
+            }
 
-				$handle = fopen($keyfilename, 'w') or die('Could not create encrpytion file at:  '.$keyfilename);
-				if(!fwrite($handle, $file_content))
-				{
-					$encryption_key_generated = "Could not save generated encrpytion key. Check folder permissions";
-				}
-				else
-				{
-					$encryption_key_generated = "Encryption Key Generated";
-				}
+			$file_content = '<?php defined(\'include_only\') or die(\'No direct script access.\');';
+			$file_content.= "\n\n /**\n * THIS FILE WAS AUTO GENERATED AT THE TIME OF INSTALL\n *\n * DO NOT MODIFY THIS FILE!\n *\n";
+			$file_content.= " * Do not store this file in a public repo. \n * You may want to create a backup of this file and store it in a safe place.\n *\n */\n\n";
+			$file_content.= '$_encryption_key = "'. random_bytes(32).'";';
+
+			$handle = fopen($keyfilename, 'w') or die('Could not create encrpytion file at:  '.$keyfilename);
+			if(!fwrite($handle, $file_content))
+			{
+				$encryption_key_generated = "Could not save generated encrpytion key. Check folder permissions";
+			}
+			else
+			{
+				$encryption_key_generated = "Key Generated";
 			}
 		}
 		else
 		{
-			$encryption_key_generated = "Encryption Key Exists";
+			$encryption_folder_generated = "Folder Exists";
+			$encryption_key_generated = "Key Exists";
 		}
 
         echo "Database: ".$database_created;
         echo "<br>";
         echo "User: ".$user_created;
+        echo "<br>";
+        echo "Encryption Key Directory: ". $encryption_folder_generated;
         echo "<br>";
         echo "Encryption key: ".$encryption_key_generated;
         echo "<br>";
