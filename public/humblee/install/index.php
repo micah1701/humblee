@@ -36,14 +36,15 @@
         {
             $sql = file_get_contents('database.txt');
 
-            if (mysqli_multi_query($connection,$sql))
-            {
-                while ($sql->next_result()) {;} // flush multi_queries
-            }
-            else
-            {
-                throw new Exception (mysqli_error);
-            }
+			if (mysqli_multi_query($connection,$sql))
+			{
+				while (mysqli_next_result($connection)) // flush multi_queries
+				{
+					if (!mysqli_more_results($connection)){
+						break;
+					}
+				}
+			}
             $database_created = "Created";
         }
 
