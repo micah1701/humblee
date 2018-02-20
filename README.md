@@ -2,7 +2,7 @@
 
 A humble PHP framework and CMS
 
-Humblee is for roll-your-own developers and DYI programmers who like to build things their own way.
+Humblee is for roll-your-own developers and DIY programmers who like to build things their own way.
 
 Humblee covers the boring stuff, like page routing, content managment tools, and user role authorization in an easy to use MVC framework. With the basics out of the way, you are free to ~~toil~~ tinker away on your application's custom functionality.
 
@@ -23,9 +23,9 @@ Humblee covers the boring stuff, like page routing, content managment tools, and
 git clone https://github.com/micah1701/humblee
 ```
 
-2. **Configure environment**. Open `/humblee/configuration/env_dev.php` and add your database credentials.  You can also make copies of this file for different environments, such as development, QA and production. To use a different configuration, link to the file in `humblee/configuration/config.php`
+2. **Configure environment**. Open `~/humblee/configuration/env_dev.php` and add your database credentials.  You can also make copies of this file for different environments, such as development, QA and production. To use a different configuration, link to the file in `~/humblee/configuration/config.php`
 
-3. **Run Composer** in the `/humblee` director to install the required and optional vendor libraries
+3. **Run Composer** in the `~/humblee` directory to install the required and optional vendor libraries
 ```
 $ cd ~/humblee
 $ composer install
@@ -49,14 +49,14 @@ NPM will create a `node_modules` folder containing the following required librar
 * bulma-tooltip - an extension for bulma to display tooltip information
 * nestedSortable - a jQueryUI plugin used for drag/drop functionality in the CMS page manager.
 
-5. **Create database tables and master user**. In your browser, navigate to //your-site.tld/humblee/install.  On first run, this page will install the necessary tables and default content then prompt you to create a user account.
+5. **Run the installer to create database tables and master user**. In your browser, navigate to //your-site.tld/humblee/install.  On first run, this page will install the necessary tables and default content then prompt you to create a user account.
 
-Note that the install file lives in the subdirectory `humblee` in the `/public` directory.  While all of the application folders reside in your site's webroot directory, the `.htaccess` file in the root Humblee application directory forwards all traffic to the public folder, effectively making it the root.
+Note that the install file lives in the subdirectory `humblee` of the `~/public` directory.  While all of the application folders reside in your site's webroot directory, the `.htaccess` file in the root Humblee application directory forwards all traffic to the public folder, effectively making it the root.
 
 ### Installation considerations
 **Running PHP in CGI/FastCGI mode**
 
-Humblee is configured out of the box to run on Apache's `mod_PHP` module.  If you see the message `No input file specified` it is more than likely that you are running PHP in CGI or FastCGI mode.  There are two simple steps to configure Humblee to work in this environment.
+Humblee is configured out of the box to run on Apache's `mod_php` module.  If you see the message `No input file specified` it is more than likely that you are running PHP in CGI or FastCGI mode.  There are two simple steps to configure Humblee to work in this environment.
 1. Update `~/public/.htaccess` (note, this is different then the `.htaccess` file in the root of the application.)
 ```
 #comment out or remove this line:
@@ -79,8 +79,8 @@ return (!isset($_path_info[0]) || $_path_info[0] == "") ? "" : ltrim($_path_info
 
 **Folder permissions**
 
-Depending on how you installed the application, you may encounter folder permission issues where the application is attempting to save a file to the server.  There are two areas where you may need to `chown` or `chmod` to update folders necessary for the proper functionality of the system.
-1. During installation, in step 5 above, the site attempts to  make a new directory in `~/humbleee/configuration/` and add a file with the site's encryption key.  If the installation file throws an error, you may need to temporarily change that folder's permissions.  You can (and should) change it back to at least `755` after the installation has created the file.
+Depending on how you installed the application, you may encounter folder permission issues when the application is attempting to save a file to the server.  There are two areas where you may need to use `chown` or `chmod` to update folders necessary for the proper functionality of the system.
+1. During installation, in step 5 above, the site attempts to make a new directory in `~/humbleee/configuration/` and add a file with the site's encryption key.  If the installation file throws an error, you may need to temporarily change that folder's permissions.  You can (and should) change it back to at least `755` after the installation has created the file.
 2. The site's media manager tool in the CMS saves all files to the `~/storage` folder in the root of the application. This folder must be writable by the website.
 
 ## Author
