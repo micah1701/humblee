@@ -25,7 +25,7 @@ $(document).ready(function(){
             if(response.success)
             {
                 var show = (role_id != 0) ? true : 0;
-                show_hide_encrpytion_option(show);
+                show_hide_encryption_option(show);
                 quickNotice('Access role updated');
             }
             else
@@ -38,10 +38,10 @@ $(document).ready(function(){
     $("#encrypt").on("change",function(e){
         var state = $("#encrypt").is(":checked") ? "encrypt" : "decrypt";
 
-        $.post(XHR_PATH+'encryptMedia',{file_id:$("#file_name").data('fieldID'),encrypt:state},function(response){
+        $.post(XHR_PATH+'encryptMedia',{file_id:$("#file_name").data('fieldID'),action:state},function(response){
             if(response.success)
             {
-                quickNotice('Access role updated');
+                quickNotice('File has been '+state+'ed');
                 //need to update fileList cache for next time this file is selected
             }
             else
@@ -241,12 +241,12 @@ function loadFileData(folder,id)
     $("#encrypt").prop("checked",encrption_state);
 
     var show = (encrption_state || fileData.required_role != 0) ? true : false;
-    show_hide_encrpytion_option(show,false); //show or hide the "encrypt" field, but don't animate it
+    show_hide_encryption_option(show,false); //show or hide the "encrypt" field, but don't animate it
 
     $("#fileProperties.is-invisible").removeClass('is-invisible');
 }
 
-function show_hide_encrpytion_option(show,animate)
+function show_hide_encryption_option(show,animate)
 {
     if(animate == undefined || animate)
     {

@@ -101,7 +101,7 @@
                     </div>
                     <div class="field" id="encrypt_field">
                         <label class="checkbox tooltip has-tooltip-left" data-tooltip="Encrypt stored file at rest">
-                            <input type="checkbox" id="encrypt">
+                            <input type="checkbox" id="encrypt" <?php echo (!$hasMediaRole) ? 'disabled' : '' ?>>
                             Encrypted
                         </label>
                     </div>

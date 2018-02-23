@@ -3,15 +3,15 @@
 /**
  * manage user uploaded media files
  */
- 
+
 class Core_Model_Media {
-    
+
     function __construct()
     {
         //folder on server where all the files are stored
-        $this->storage_path = _app_server_path."storage/";    
+        $this->storage_path = _app_server_path."storage/";
     }
-    
+
     /**
      * Return ARRAY of folders nested by parent ID
      */
@@ -27,9 +27,9 @@ class Core_Model_Media {
     	{
     		$result[$folder->parent_id][] = array("id"=>$folder->id, "name"=>$folder->name);
     	}
-        return $result;        
+        return $result;
     }
-    
+
     /**
      * Return ARRAY of data for all files in a given folder
      */
@@ -47,15 +47,15 @@ class Core_Model_Media {
         {
             //overload result array with additional data
             $file['url'] = _app_path.'media/'.$file['id'].'/'.$file['name'];
-            
+            unset($file['crypto_nonce']); // don't pass this value
             $return[$file['id']] = $file;
         }
         return $return;
     }
-    
+
     /**
      * Delete a file
-     * 
+     *
      * $file MIXED  INTEGER of database row or OBJECT of previously looked up row
      */
     public function deleteFile($file)
@@ -72,7 +72,7 @@ class Core_Model_Media {
         {
            return "Missing or invalid file object";
         }
-        
+
         //delete the file
         if(file_exists($this->storage_path.$file->filepath))
         {
@@ -81,10 +81,10 @@ class Core_Model_Media {
     			return "Could not unlink file";
     		}
         }
-		
+
 		//delete the row from the database
 		$file->delete();
-        
+
         return true;
     }
 
