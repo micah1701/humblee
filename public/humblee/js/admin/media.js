@@ -1,11 +1,11 @@
 /* global $, XHR_PATH, APP_PATH, friendlyFilesize, quickNotice, confirmation, dateFormat, setEscEvent, unsetEscEvent, Clipboard */
 $(document).ready(function(){
-   
+
    loadFolders(true);
-   
+
     $("#files button.uploadButton").on("click",function(){
         $("#uploaderModal").addClass('is-active');
-        
+
         //register ESC key and other ways to close the modal
         setEscEvent('fileUploader',function () { closeUploaderModal() });
         $("#uploaderModal .delete").on("click",function(){
@@ -13,39 +13,56 @@ $(document).ready(function(){
             unsetEscEvent('fileUploader');
         });
     });
-   
+
     $("#required_role").on("change",function(e){
         //don't do this if it wasn't the user who initiated the change
         if(!e.originalEvent)
         {
             return;
         }
-
-        $.post(XHR_PATH+'updateMediaRole',{file_id:$("#file_name").data('fieldID'),required_role:$(this).val()},function(response){
+        var role_id = $(this).val();
+        $.post(XHR_PATH+'updateMediaRole',{file_id:$("#file_name").data('fieldID'),required_role:role_id},function(response){
             if(response.success)
             {
+                var show = (role_id != 0) ? true : 0;
+                show_hide_encryption_option(show);
                 quickNotice('Access role updated');
-                //need to update fileList cache for next time this file is selected
             }
             else
             {
                 quickNotice('Could not save access role','is-danger');
             }
-        });  
+        });
     });
-    
+
+    $("#encrypt").on("change",function(e){
+        var state = $("#encrypt").is(":checked") ? "encrypt" : "decrypt";
+
+        $.post(XHR_PATH+'encryptMedia',{file_id:$("#file_name").data('fieldID'),action:state},function(response){
+            if(response.success)
+            {
+                quickNotice('File has been '+state+'ed');
+                //need to update fileList cache for next time this file is selected
+            }
+            else
+            {
+                quickNotice('Could change encrpytion status','is-danger');
+            }
+        });
+    });
+
     $(".addFolder").on("click",function(){
        addFolder($(this));
     });
-    
+
     $("#fileLinkCopy").on("click",function(){
         var clipboard = new Clipboard("#fileLinkCopy");
         clipboard.on('success',function(e)
         {
-            quickNotice('Copied to clipboard','is-info',1750);  
+            quickNotice('Copied to clipboard','is-info',1750);
         });
     });
-    
+
     //the "selectFile" button only exists when the media manager is loaded via an iframe
     //clicking it returns a data object for the given file back to the parent window
     //the parent must have a function named handleMediaManagerSelect() that does something with the file data
@@ -64,14 +81,14 @@ $(document).ready(function(){
             function(){ return false; }
         );
     });
-    
+
     $("#files button.deletefolder").on("click",function(){
         confirmation('<strong>You are about to <span class="has-text-danger">PERMANENTLY DELETE</span> this ENTIRE FOLDER</strong><br><p>ALL of the files in this folder will be removed. This may have an adverse effect on any pages that include these files.</p>',
             function(){ deleteFolder() },
             function(){ return false; }
         );
     });
-    
+
 });
 
 //recursive helper function to draw UL list from JSON data
@@ -79,34 +96,34 @@ function generateMenu(data,parent)
 {
     var ul = $('<ul>'),
         children = 0;
-        
+
         $(data[parent]).each(function (i, folderData) {
             var li = $('<li><a data-id="'+ folderData.id +'">' + folderData.name + '</a></li>');
             ul.append(li);
-            
+
             var thisParent = folderData.id;
             children++;
             li.append(generateMenu(data,thisParent)); // call this function again to list any children folders of this folder
         });
-        
+
         return (children > 0) ? ul : false;
 }
 
 function loadFolders(openFirstFolder){
-    
+
     $.getJSON(XHR_PATH +'listMediaFolders',function(response)
     {
         $("#folders").html(generateMenu(response,0));
-        
+
         $("#folders ul").addClass('menu-list').not(':first').addClass('is-closed');
         $(".is-closed").siblings('a').addClass('menu-has-children has-closed');
-		
+
 		$("a.menu-has-children").on('click', function(){
 			var firstUL = $(this).siblings('ul');
 			if(firstUL.hasClass('is-closed'))
 			{
 				$(this).removeClass('has-closed');
-				firstUL.removeClass('is-closed');	
+				firstUL.removeClass('is-closed');
 			}
 			else
 			{
@@ -114,28 +131,28 @@ function loadFolders(openFirstFolder){
 				firstUL.addClass('is-closed');
 			}
 		});
-		
+
 		$("#folders a").on("click",function(){
             $("#folders a").removeClass('is-active');
             $(this).addClass('is-active');
-            
+
             $("#folder_name")
                 .addClass('editable-text')
                 .data('fieldID',$(this).data('id'))
                 .html( $(this).html());
-            
-            $(".folderFooter").removeClass('is-invisible');    
-                
+
+            $(".folderFooter").removeClass('is-invisible');
+
             $("#folder_id").val($(this).data('id'));
-            $("#files .level .level-right.is-invisible").removeClass('is-invisible'); 
-                
+            $("#files .level .level-right.is-invisible").removeClass('is-invisible');
+
             loadFiles($(this).data('id'));
         });
-        
+
         //open the first folder in the tree
         if(openFirstFolder)
         {
-            $("#folders ul li a").first().click();            
+            $("#folders ul li a").first().click();
         }
 
     });
@@ -143,10 +160,10 @@ function loadFolders(openFirstFolder){
 
 var folderCache = [];
 function loadFiles(folder,updateCache)
-{  
+{
     var folderKey = "folder_"+folder;
     var cacheData = eval(folderCache[folderKey]);
-    
+
     //check folder cache
     if(cacheData == undefined || updateCache)
     {
@@ -174,7 +191,7 @@ function loadFiles(folder,updateCache)
 function drawFilesTable(cacheData)
 {
     $("#fileProperties").addClass('is-invisible'); // stop showing the #fileProperties card until another file is selected
-    
+
     //draw files here:
     var tableData = (cacheData.length == 0 ) ? '<tr><td colspan="3">Folder is empty</td></tr>' : '';
     $.each(cacheData,function(index,row)
@@ -183,12 +200,12 @@ function drawFilesTable(cacheData)
         tableData+='<td>'+row.name+'</td>';
         tableData+='<td>'+row.type+'</td>';
         tableData+='<td>'+dateFormat("m/d/Y",row.upload_date)+'</td>';
-        tableData+='</tr>';        
+        tableData+='</tr>';
     });
 
     $("#files table tbody").html(tableData);
     $("#files table").removeClass('is-invisible');
-    
+
     $("#files td").on("click",function(){
 
         var tr = $(this).parent();
@@ -201,7 +218,7 @@ function drawFilesTable(cacheData)
 function loadFileData(folder,id)
 {
     var fileData = eval(folderCache['folder_'+folder][id]);
-    
+
     $("#file .card-image").css({'display':'none'});
 
     if(fileData.type.match("^image"))
@@ -220,8 +237,33 @@ function loadFileData(folder,id)
     $("#uploaddate").html(dateFormat("F d, Y h:ia",fileData.upload_date));
     $("#fileLink").attr('href',fileData.url);
     $("#fileLinkCopy").attr('data-clipboard-text',fileData.url);
+    var encrption_state = (fileData.encrypted == 1) ? true : false;
+    $("#encrypt").prop("checked",encrption_state);
+
+    var show = (encrption_state || fileData.required_role != 0) ? true : false;
+    show_hide_encryption_option(show,false); //show or hide the "encrypt" field, but don't animate it
 
     $("#fileProperties.is-invisible").removeClass('is-invisible');
+}
+
+function show_hide_encryption_option(show,animate)
+{
+    if(animate == undefined || animate)
+    {
+        if(show != undefined && show)
+        {
+            $("#encrypt_field").fadeIn('fast');
+        }
+        else
+        {
+            $("#encrypt_field").fadeOut('fast');
+        }
+    }
+    else
+    {
+        var display = (show) ? "block" : "none";
+        $("#encrypt_field").css("display",display);
+    }
 }
 
 function deleteFile()
@@ -258,7 +300,7 @@ function deleteFolder()
         else
         {
             quickNotice('Could not delete folder','is-danger');
-        }    
+        }
     });
 }
 
@@ -278,19 +320,19 @@ $(document).on("click", ".editable-text", function() {
     var original_text = $(this).text();
     var field_id = $(this).data('fieldID');
     var dom_id = $(this).attr('id');
-    
+
     var new_input = $("<input class=\"input\"/>");
     new_input.val(original_text);
-    
+
     $(this).replaceWith(new_input);
     new_input.focus();
-    
+
     new_input.on("blur", function() {
       var newValue = new_input.val();
       var updated_text = $('<p class="is-size-5 editable-text">');
           updated_text.data('fieldID',field_id);
           updated_text.attr('id',dom_id);
-          
+
       if(newValue == original_text)
       {
         //no change was made, just put the text back
@@ -298,7 +340,7 @@ $(document).on("click", ".editable-text", function() {
       }
       else
       {
-        
+
         $.post(XHR_PATH +'updateMediaName',{type:dom_id,record:field_id,value:new_input.val()},function(response){
           if(response.success)
           {
@@ -315,40 +357,41 @@ $(document).on("click", ".editable-text", function() {
                 objectLable = "File";
                 //update table listing
                 $('#files tr[data-file="'+field_id+'"] td').first().html(new_input.val());
-                //update cache row for this file 
+                //update cache row for this file
                 var folderKey = "folder_"+ $("#folder_id").val();
                 folderCache[folderKey][field_id]['name'] = new_input.val();
             }
-            
+
             quickNotice(objectLable+" name updated!");
-            
+
           }
           else
           {
-            alert("Error: changes could not be saved at this time"); 
+            alert("Error: changes could not be saved at this time");
             updated_text.text(original_text);
           }
-        });  
+        });
       }
-      
+
       $(this).replaceWith(updated_text);
       new_input.remove();
-      
+
     }); // end onBlur check of text_editor class input
-    
+
 }); // end onClick of editable-text string
+
 
 /** file uploader **/
 // https://css-tricks.com/drag-and-drop-file-uploading/
 var drapAndDropMessage = "Drag &amp; Drop";
 
 $(document).ready(function(){
-    
+
     var isAdvancedUpload = function() {
       var div = document.createElement('div');
       return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 'FormData' in window && 'FileReader' in window;
     }();
-    
+
     var dropZone = $(".dropZone");
 
     if(!isAdvancedUpload)
@@ -372,7 +415,7 @@ $(document).ready(function(){
             uploaderSubmit(droppedFiles);
         });
     }
-    
+
     $("#uploaderModal input[type='file']").on('change', function(e) { //when manually selecting files
         uploaderSubmit(false);
     });
@@ -381,7 +424,7 @@ $(document).ready(function(){
 
 function uploaderSubmit(droppedFiles) {
     var dropZone = $(".dropZone");
-    
+
     if (dropZone.hasClass('is-uploading')){
         return false;
     }
@@ -389,10 +432,10 @@ function uploaderSubmit(droppedFiles) {
     dropZone.addClass('is-uploading')
         .removeClass('is-error')
         .html('<span class="icon"><i class="fas fa-spinner fa-pulse"></i></span>&nbsp;<span id="processingMessage">Uploading…</span>');
-    
+
     var form = $("#uploaderForm");
     var ajaxData = new FormData(form[0]);
-    
+
     if(droppedFiles)
     {
         var inputFieldTypeFile = $('#uploaderForm input[type="file"]').attr('name');
@@ -413,12 +456,12 @@ function uploaderSubmit(droppedFiles) {
         complete: function() {
           $('.dropZone').removeClass('is-uploading');
           $('.dropZone span#processingMessage').html('Processing…')
-          
+
         },
         success: function(data) {
             $('.dropZone').html(drapAndDropMessage);
             resetFormElement($("#uploaderFiles")); // remove the just-uploaded file(s) from the list of files to upload next time
-            
+
             if(data.success == true && data.errors.length == 0)
             {
                 quickNotice('Upload Complete','is-success');

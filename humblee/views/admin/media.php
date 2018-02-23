@@ -14,11 +14,11 @@
         }
         ?>
     </div>
-    
+
     <div class="column" id="files">
         <div class="level">
             <div class="level-left">
-                <p class="is-size-5" id="folder_name">Select a folder to view it's contents</p>    
+                <p class="is-size-5" id="folder_name">Select a folder to view it's contents</p>
             </div>
             <div class="level-right is-invisible">
             <?php
@@ -36,7 +36,7 @@
             ?>
             </div>
         </div>
-        
+
         <table class="table is-invisible is-fullwidth is-striped is-hoverable">
             <thead>
                 <th>Filename</th>
@@ -44,24 +44,24 @@
                 <th>Date</th>
             </thead>
             <tbody>
-                
+
             </tbody>
         </table>
-        
+
         <div class="folderFooter is-invisible">
         <?php
         if($hasMediaRole)
         {
         ?>
             <hr>
-            <button class="button deletefolder is-small has-text-grey-light tooltip is-tooltip-right" data-tooltip="Delete this folder and its contents"><span class="icon"><i class="fas fa-trash"></i></span><span class="is-pulled-right">Delete Folder</span></button>             
+            <button class="button deletefolder is-small has-text-grey-light tooltip is-tooltip-right" data-tooltip="Delete this folder and its contents"><span class="icon"><i class="fas fa-trash"></i></span><span class="is-pulled-right">Delete Folder</span></button>
         <?php
         }
         ?>
         </div>
-        
+
     </div>
-    
+
     <div class="column is-one-quarter" id="file">
         <aside id="fileProperties" class="is-invisible">
             <p class="is-size-5">File Properties</p>
@@ -87,7 +87,7 @@
                         <label class="label tooltip" for="required_role" data-tooltip="Require user to be logged in to view this file">
                             Access Role:
                             <span class="icon"><i class="fas fa-lock"></i></span>
-                        </label> 
+                        </label>
                         <div class="control">
                             <div class="select">
                                 <select  id="required_role" name="required_role" <?php echo (!$hasMediaRole) ? 'disabled' : '' ?>>
@@ -99,6 +99,13 @@
                             </div>
                         </div>
                     </div>
+                    <div class="field" id="encrypt_field">
+                        <label class="checkbox tooltip has-tooltip-left" data-tooltip="Encrypt stored file at rest">
+                            <input type="checkbox" id="encrypt" <?php echo (!$hasMediaRole) ? 'disabled' : '' ?>>
+                            Encrypted
+                        </label>
+                    </div>
+
                 </div>
                 <div class="card-image">
                     <figure id="file_image" class="image is-4x3">
@@ -110,13 +117,13 @@
                         <a id="fileLink" class="button is-link is-small tooltip" href="" data-tooltip="Open file in browser tab" target="_blank">
                             <span class="is-pulled-left">Open</span>
                             <span class="icon"><i class="fas fa-external-link-alt"></i></span>
-                        </a>                        
+                        </a>
                     </p>
                     <p class="card-footer-item">
                         <button id="fileLinkCopy" class="button is-info is-small tooltip" data-tooltip="Copy link to clipboard">
                             <span class="is-pulled-left">Copy Link</span>
                             <span class="icon"><i class="fas fa-copy"></i></span>
-                        </button>                        
+                        </button>
                     </p>
                     <p class="card-footer-item">
                     <?php
@@ -129,8 +136,8 @@
                     ?>
                     </p>
                 </footer>
-                
-            </div>    
+
+            </div>
         </aside>
     </div>
 
@@ -165,7 +172,7 @@ if($hasMediaRole)
                                 Choose files…
                                 </span>
                             </span>
-                        </label>       
+                        </label>
                     </div>
                     <div class="column is-half">
                     <?php
@@ -175,7 +182,7 @@ if($hasMediaRole)
                         <label class="checkbox is-pulled-right tooltip is-tooltip-left" data-tooltip="Apply TinyPNG smart compression to reduce file size">
                             Optimize Images
                             <input name="useCompression" value="1" type="checkbox" CHECKED>
-                        </label>   
+                        </label>
                     <?php
                     }
                     ?>
@@ -183,9 +190,9 @@ if($hasMediaRole)
                 </div>
             </form>
         </section>
-        
-        
-        
+
+
+
     </div>
 </div>
 <?php
@@ -199,6 +206,6 @@ if($is_in_iframe){
     /* global setEscEvent */
     setEscEvent('mediaManager',function () { parent.closeMediamanager(); parent.unsetEscEvent('mediaManager'); });
 </script>
-<?php 
+<?php
 }
 ?>

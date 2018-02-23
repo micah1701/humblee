@@ -90,6 +90,7 @@ function quickNotice(message,cssClass,timeOnScreen)
 {
     cssClass = (cssClass) ? cssClass : 'is-success';
     timeOnScreen = (timeOnScreen) ? timeOnScreen : 3000;
+    $("#quickNotice").remove(); // remove any notice that's still showing before creating a new one.
 
     var html = '<div id="quickNotice" style="position: absolute; z-index: 100; width: 100%" class="notification has-text-centered has-text-weight-semibold '+cssClass+'">';
         html+= message;
