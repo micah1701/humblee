@@ -1,4 +1,4 @@
-# Humblee
+# Humblee - <https://humblee.io>
 
 A humble PHP framework and CMS
 
@@ -82,6 +82,9 @@ return (!isset($_path_info[0]) || $_path_info[0] == "") ? "" : ltrim($_path_info
 Depending on how you installed the application, you may encounter folder permission issues when the application is attempting to save a file to the server.  There are two areas where you may need to use `chown` or `chmod` to update folders necessary for the proper functionality of the system.
 1. During installation, in step 5 above, the site attempts to make a new directory in `~/humbleee/configuration/` and add a file with the site's encryption key.  If the installation file throws an error, you may need to temporarily change that folder's permissions.  You can (and should) change it back to at least `755` after the installation has created the file.
 2. The site's media manager tool in the CMS saves all files to the `~/storage` folder in the root of the application. This folder must be writable by the website.
+
+## Documentation
+Full documentation can be found at <https://humblee.io>
 
 ## Author
 
