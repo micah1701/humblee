@@ -1,0 +1,20 @@
+.cms_block:hover {
+  outline: 1px dotted rgba(0, 0, 255, 0.6); }
+
+.launch-editor {
+  position: absolute;
+  z-index: 1000;
+  top: 2px;
+  right: 4px; }
+
+#humbleeEditor .modal-card {
+  width: 96% !important;
+  height: 98vh; }
+  #humbleeEditor .modal-card .modal-card-body {
+    padding: 0;
+    overflow: hidden; }
+#humbleeEditor iframe {
+  width: 100%;
+  height: calc(100vh - 105px); }
+
+/*# sourceMappingURL=toolbar.css.map */

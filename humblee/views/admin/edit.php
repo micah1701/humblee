@@ -5,20 +5,20 @@
             <a class="button is-light tooltip is-tooltip-right" id="previewButton" href="<?php echo _app_path . ltrim($page_data->url,"/") .'?preview='.$content->id ?>" data-tooltip="Preview how this revision will appear live on the site" target="_blank">
                 <span class="icon is-pulled-left"><i class="fas fa-eye"></i></span>
                 <span class="is-pulled-right">Preview</span>
-            </a> 
-        </h1>        
+            </a>
+        </h1>
     </div>
-    
+
     <div class="column">
         <span class="tooltip" data-tooltip="Select another block of content associated with this page to edit">
             <div class="select">
-                <select id="select_content_type">
-                    <?php 
+                <select id="select_content_type" <?php echo ($is_in_iframe) ? "disabled" : "" ?>>
+                    <?php
                     foreach ($allContentTypes as $allContentType)
                     {
                         $selected = ($content_type->id == $allContentType->id) ? " SELECTED" : "";
                         echo '<option value="'.$allContentType->id().'"'.$selected.'>'.$allContentType->name.'</option>';
-                    }    
+                    }
                     ?>
                 </select>
             </div>
@@ -29,13 +29,13 @@
 <?php
 $old_version = false;
 if(count($revisions) > 1 && $content->revision_date != $revisions[0]->revision_date)
-{	
-   	 $old_version = true; 
+{
+   	 $old_version = true;
 ?>
     <div class="notification is-warning">
 	    <span class="icon"><i class="fa fa-info-circle"></i></span>A more recently saved revision of this content exists.</p>
     </div>
-<?php 
+<?php
 }
 ?>
 
@@ -45,16 +45,16 @@ if(count($revisions) > 1 && $content->revision_date != $revisions[0]->revision_d
         <span class="icon has-text-info tooltip" data-tooltip="<?php echo $content_type->description ?>"><i class="far fa-question-circle"></i></span>
         <br>
         For the page: <a href="<?php echo $page_data->url ?>" target="_blank"><?php echo $page_data->label ?></a>
-        <?php 
+        <?php
         if ($page_data->active == 0)
         {
         ?>
             <span class="tooltip is-tooltip-right has-text-danger" data-tooltip="The page this content is located on is currently inactive.">(inactive)</span>
         <?php
-        } 
+        }
         ?>
     </div>
-    
+
     <div class="column">
         <?php
         if($content->updated_by != 0)
@@ -63,56 +63,56 @@ if(count($revisions) > 1 && $content->revision_date != $revisions[0]->revision_d
 	    ?>
         <strong>Saved: </strong><?php echo date("F j, Y h:ia",strtotime($content->revision_date)) ?> &nbsp; <strong>By:</strong> <?php echo $updated_by_user->name; ?>
         <br>
-            <?php  
+            <?php
             if($content->publish_date == "0000-00-00 00:00:00")
-            { 
+            {
             ?>
         		<span class="has-text-info">Unpublished Draft.</span> This content has not yet been published.
-            <?php 
+            <?php
             }
             elseif ($content->live == 1)
-            { 
+            {
             ?>
            		<span title="This version was published on <?php echo date("M d, Y @ h:ia",strtotime($content->publish_date)) ?> "><span class="has-text-success">Live Version.</span> This content is currently being shown on the website.</span>
-            <?php 
+            <?php
             }
             else
-            { 
+            {
             ?>
            		<span title="This version was published on <?php echo date("M d, Y @ h:ia",strtotime($content->publish_date)) ?> "><span class="has-text-danger">Previously published.</span>  This revision was previously live on the website.</span>
-            <?php 
-            }  
+            <?php
+            }
         }
-        ?> 
+        ?>
         <?php
         if(!$old_version)
-        { 
+        {
         ?>
         <p>
             <button class="button tooltip" data-tooltip="Show revision history" onclick="$(this).css({display:'none'}); $('#revision_list').fadeIn('fast'); return false"><span class="is-pulled-left">History</span><span class="icon is-pulled-right"><i class="fas fa-history"></i></span></button>
         </p>
         <?php
-        } 
+        }
         ?>
         <div id="revision_list"<?php if(!$old_version) { echo ' style="display: none;"'; } ?>>
         	<div class="select">
-        	    <select name="revisionList" id="revisionList" onchange="window.location = '<?php echo _app_path ."admin/edit/" ?>'+this.options[this.selectedIndex].value;">
+        	    <select name="revisionList" id="revisionList" onchange="window.location = '<?php echo _app_path ."admin/edit/" ?>'+this.options[this.selectedIndex].value<?php echo ($is_in_iframe) ? "+'?iframe'" : "" ?>;">
                 <?php foreach($revisions as $revision)
-                { 
+                {
                 ?>
             	     <option value="<?php echo $revision->id ?>"<?php if($content->id == $revision->id){ echo " SELECTED"; } ?>>
-            	    <?php 
-            	        echo date("M d, Y g:ia",strtotime($revision->revision_date)); 	    
+            	    <?php
+            	        echo date("M d, Y g:ia",strtotime($revision->revision_date));
                         if($revision->live == 1){ echo " - LIVE";  }
                         elseif($revision->publish_date != "0000-00-00 00:00:00"){ echo " - Previously published"; }
                         else{ echo " - Draft (never published)"; } ?>
                     </option>
-                <?php 
-                } 
+                <?php
+                }
                 ?>
             	</select>
             </div>
-        </div>    
+        </div>
     </div>
 </div>
 
@@ -129,12 +129,12 @@ if(count($revisions) > 1 && $content->revision_date != $revisions[0]->revision_d
 <?php
 if( $content_type->input_type == "multifield")
 {
-	$content_array = json_decode( $content->content, true ); //convert to Array 
+	$content_array = json_decode( $content->content, true ); //convert to Array
 	$input = json_decode( $content_type->input_parameters, true ); // convert to Array
 	foreach ($input as $row)
 	{
 		$key_index = key($row);
-	
+
 		if( count($content_array) > 0 )
 		{
 			$input = preg_replace('@{content}@',$content_array[$key_index],$row[$key_index]['input']);
@@ -144,7 +144,7 @@ if( $content_type->input_type == "multifield")
 ?>
     <div class="one-third column label"><?php echo $row[$key_index]['label'] ?></div>
     <div class="two-thirds column"><?php echo $input ?></div>
-<?php	
+<?php
 	}
 ?>
 	<input type="hidden" id="content" name="content" value="" />
@@ -156,18 +156,18 @@ elseif( $content_type->input_type == "customform")
 	include_once _app_server_path.'humblee/views/'. ltrim($content_type->input_parameters,"/");
 ?>
 	<input type="hidden" id="content" name="content" value="" />
-<?php	
+<?php
 }
 
 // if it's a WYSIWYG editor, load as a textarea and generate neccessary js/css to implement the WYSIWYG editor
 elseif ($content_type->input_type == "wysiwyg")
-{ 
+{
 	echo  preg_replace('@{content}@',$content->content,$content_type->input_parameters);
 ?>
     <script src="https://cdn.quilljs.com/1.3.5/quill.js"></script>
     <script src="<?php echo _app_path ?>humblee/js/tools/quill.js"></script>
-    
-<?php    
+
+<?php
 }
 
 // for all other types of single input content block, show a basic label and the field
@@ -204,7 +204,7 @@ else
         <header class="modal-card-head">
             Edit Image Properties
         </header>
-        <section class="modal-card-body">    
+        <section class="modal-card-body">
             <label class="label" for="imageWidth">Width</label>
             <input class="input" id="imageWidth">
             <p class="help">Responsive images should have a 100% width</p>
