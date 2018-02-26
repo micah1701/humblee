@@ -11,25 +11,6 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-<?php if(Core::auth('admin'))
-{ 
-?>
-<script type="text/javascript">
-$(document).ready(function(){
-   // add Humblee CMS toolbar for logged in users
-   $.getJSON("core-request/toolbar",function(toolbarData){
-       if(toolbarData !== false)
-       {
-           window.toolbarData = toolbarData;
-           $.getScript(toolbarData.js_load);
-       }
-    });
-});
-</script>
-<?php 
-} 
-?>
-
 </head>
 <body>
 
@@ -37,22 +18,23 @@ $(document).ready(function(){
         <div class="container">
             <p class="title">Your Name Here</p>
             <nav class="navbar">
-            <?php	
+            <?php
                 $pageObj = new Core_Model_Pages;
                 $menu = $pageObj->getPages(array('generations'=>1));
                 $li_format = '<a href=\"$newSlug\">$item->label</a>'; // raw php code to be eval'd in function
                 echo $pageObj->drawMenu_UL($menu,array('li_format'=>$li_format));
             ?>
             </nav>
-            
+
         </div><!-- end container -->
     </header><!-- end "header" -->
-    
+
     <section id="pageBody" class="section">
         <div class="content container">
-            <?php echo (isset($template_view)) ? $template_view : '' ?>        
+            <?php echo (isset($template_view)) ? $template_view : '' ?>
         </div><!-- end "pageBody" -->
     </section>
 
+<?php if(Core::auth('admin')){ include_once _app_server_path.'/humblee/views/admin/toolbar.php'; } ?>
 </body>
 </html>

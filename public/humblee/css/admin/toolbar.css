@@ -1,0 +1,27 @@
+.cms_block:hover {
+  outline: 1px dotted #55acee; }
+
+.launch-editor {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #fff;
+  border: 1px solid #00d1b2;
+  border-radius: 5px;
+  color: #00d1b2;
+  padding: 8px 10px; }
+  .launch-editor:hover {
+    background-color: #00d1b2;
+    color: #fff; }
+
+#humbleeEditor .modal-card {
+  width: 96% !important;
+  height: 98vh; }
+  #humbleeEditor .modal-card .modal-card-body {
+    padding: 0;
+    overflow: hidden; }
+#humbleeEditor iframe {
+  width: 100%;
+  height: calc(100vh - 105px); }
+
+/*# sourceMappingURL=toolbar.css.map */
