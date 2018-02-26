@@ -44,6 +44,10 @@ class Core_Controller_Template {
 
 		//get any LIVE content entries related to this page
 		$getContent = ORM::for_table( _table_content )
+						  ->select(_table_content.'.*')
+						  ->select(_table_content.'.id', 'content_id')
+						  ->select(_table_content_types.'.*')
+						  ->select(_table_content_types.'.id', 'block_id')
 						  ->join( _table_content_types, array( _table_content.".type_id","=", _table_content_types.".id") )
 						  ->where('page_id',$this->page->id)
 						  ->where('live',1)

@@ -10,6 +10,10 @@
     </div>
 
     <div class="column">
+        <?php
+        if(!$is_in_iframe)
+        {
+        ?>
         <span class="tooltip" data-tooltip="Select another block of content associated with this page to edit">
             <div class="select">
                 <select id="select_content_type" <?php echo ($is_in_iframe) ? "disabled" : "" ?>>
@@ -23,6 +27,10 @@
                 </select>
             </div>
         </span>
+        <?php
+        }
+        ?>
+
     </div>
 </div>
 
@@ -44,8 +52,18 @@ if(count($revisions) > 1 && $content->revision_date != $revisions[0]->revision_d
         You are editing the <strong><?php echo $content_type->name ?></strong>
         <span class="icon has-text-info tooltip" data-tooltip="<?php echo $content_type->description ?>"><i class="far fa-question-circle"></i></span>
         <br>
-        For the page: <a href="<?php echo $page_data->url ?>" target="_blank"><?php echo $page_data->label ?></a>
+        For the page:
         <?php
+        if($is_in_iframe)
+        {
+            echo $page_data->label;
+        }
+        else
+        {
+        ?>
+            <a href="<?php echo $page_data->url ?>" target="_blank"><?php echo $page_data->label ?></a>
+        <?php
+        }
         if ($page_data->active == 0)
         {
         ?>

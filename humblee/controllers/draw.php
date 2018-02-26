@@ -46,9 +46,9 @@ class Draw {
 
         if($contentArray[$objectKey]->output_type == "content" && (!isset($block_key['plaintext']) || !$block_key['plaintext'])) // wrap visible content in a div.
         {
-            if(Core::auth('admin') && Core::auth('content') || Core::auth('developer'))
+            if(Core::auth(array('admin','content','publish','developer')))
             {
-                echo '<div class="cms_block" data-block-key="'.$objectKey.'" data-block-id="'. $contentArray[$objectKey]->id .'" data-block-name="'. $contentArray[$objectKey]->name .'" data-block-description="'. $contentArray[$objectKey]->description .'" data-cmstype="'. $contentArray[$objectKey]->input_type .'">';
+                echo '<div class="cms_block" data-block-key="'.$objectKey.'" data-block-id="'. $contentArray[$objectKey]->block_id .'" data-content-id="'. $contentArray[$objectKey]->content_id .'" data-block-name="'.$contentArray[$objectKey]->name .'" data-block-description="'. $contentArray[$objectKey]->description .'" data-cmstype="'. $contentArray[$objectKey]->input_type .'">';
                 echo $content;
                 echo '</div><!-- end cms block '.$objectKey .' -->';
             }
