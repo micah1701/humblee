@@ -43,26 +43,8 @@ class Core_Controller_Template {
 		}
 
 		//get any LIVE content entries related to this page
-		$getContent = ORM::for_table( _table_content )
-						  ->select(_table_content.'.*')
-						  ->select(_table_content.'.id', 'content_id')
-						  ->select(_table_content_types.'.*')
-						  ->select(_table_content_types.'.id', 'block_id')
-						  ->join( _table_content_types, array( _table_content.".type_id","=", _table_content_types.".id") )
-						  ->where('page_id',$this->page->id)
-						  ->where('live',1)
-						  ->find_many();
-		//create associative array of content objects.  key is the content_type "name"
-		foreach($getContent as $content)
-		{
-			$contents[$content->objectkey] = $content;
-
-			if($content->input_type == "markdown")
-			{
-				$Parsedown = new Parsedown();
-				$contents[$content->objectkey]['content'] = $Parsedown->instance()->text($contents[$content->objectkey]['content']);
-			}
-		}
+		$contentObj = new Core_Model_Content;
+		$contents = $contentObj->findContent($this->page->id);
 
 		//check for "preview mode" content override
 		if(	isset($_GET['preview'])
