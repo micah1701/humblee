@@ -798,4 +798,14 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		}
 		$this->json(array("success"=>true));
 	}
+
+
+	public function toolbarLoader(){
+		$this->require_role('admin');
+		$user = ORM::for_table(_table_users)->select('name')->find_one($_SESSION[session_key]['user_id']);
+		$this->json(array(	"_app_path"=>_app_path,
+							"js_load"=> _app_path."humblee/js/admin/toolbar.js?time=".time(),
+							"name" => $user->name
+		));
+	}
 }
