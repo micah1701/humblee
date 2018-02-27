@@ -136,39 +136,22 @@ class Core_Model_Content {
 	public function findContent($page_id)
 	{
 
-		//by default, just get version 0 (default- no personalization)
-		$p13n_versions = array(0);
-
 		// if using personalization, find applicable versions of the content
 		if($_ENV['config']['use_p13n'])
 		{
-			//get all the possible p13n version - in decending order by priority so if there are multiple matching versions
-			//the last one that matches, with the highest priority (lowest number), will overrite any previous matched versions
-			$p13n = ORM::for_table( _table_content_p13n)->order_by_desc('priority')->find_many();
-
-			//test each on and add to array of usable version
-			foreach($p13n as $version)
-			{
-				switch($version->criteria_type) {
-					case 'has_role' :
-						if(Core::auth($version->criteria))
-						{
-							$p13n_versions[] = $version->id;
-						}
-					break;
-
-					case 'i18n' :
-						$url_parts = Core::getURIparts();
-						if($url_parts[0] == $version->criteria)
-						{
-							$p13n_versions[] = $version->id;
-						}
-					break;
-
-				}
-
-			}
+			$p13nObj = new Core_Model_P13n();
+			//get all the possible p13n version ID's - in decending order by priority so if there are multiple matching versions
+			//then the last one that matches, with the highest priority (lowest number), will overwrite any previous matched versions
+			$p13n_versions = $p13nObj->getAll(true,true);
 		}
+		else
+		{
+			//just use default p13n version
+			$p13n_versions = array(0);
+		}
+
+		print_r($p13n_versions);
+		exit();
 
 		$getContent = ORM::for_table( _table_content )
 					  ->select(_table_content.'.*')
