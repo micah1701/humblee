@@ -173,6 +173,7 @@ if(count($revisions) > 1 && $content->revision_date != $revisions[0]->revision_d
     <input type="hidden" name="p13n_id" id="p13n_id" value="<?php echo $content->p13n_id ?>">
     <input type="hidden" name="content_type_id" id="content_type_id" value="<?php echo $content_type->id ?>">
     <input type="hidden" name="content_type" id="content_type" value="<?php echo $content_type->input_type ?>">
+    <input type="hidden" id="is_in_iframe" value="<?php echo ($is_in_iframe) ? "true" : "false"; ?>">
     <textarea style="display:none" id="original_content"><?php echo $content->content ?></textarea>
 
 <?php

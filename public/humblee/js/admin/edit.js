@@ -1,12 +1,14 @@
 /* global $, dateFormat, confirmation, setEscEvent, unsetEscEvent, XHR_PATH, APP_PATH */
 $(document).ready(function(){
 
+    var frameStatus = ($("#is_in_iframe").val() == "true") ? "&iframe" : "";
+
     $("#select_content_type").change(function(){
-        window.location = APP_PATH+'admin/edit/?page_id='+$("#page_id").val()+'&content_type='+$(this).find("option:selected").val()+'&p13n_id='+$("#p13n_id").val();
+        window.location = APP_PATH+'admin/edit/?page_id='+$("#page_id").val()+'&content_type='+$(this).find("option:selected").val()+'&p13n_id='+$("#p13n_id").val() +frameStatus;
     });
 
     $("#select_p13n_version").change(function(){
-        window.location = APP_PATH+'admin/edit/?page_id='+$("#page_id").val()+'&content_type='+ $("#content_type_id").val() +'&p13n_id='+$(this).find("option:selected").val();
+        window.location = APP_PATH+'admin/edit/?page_id='+$("#page_id").val()+'&content_type='+ $("#content_type_id").val() +'&p13n_id='+$(this).find("option:selected").val() +frameStatus;
     });
 
     $("#save").on("click",function(){

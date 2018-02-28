@@ -130,7 +130,8 @@ class Core_Controller_Admin {
                 $content->updated_by = $_SESSION[session_key]['user_id'];
                 $content->save();
             }
-            Core::forward('admin/edit/'.$content->id);
+            $frameStatus = (isset($_GET['iframe'])) ? "?iframe" : "";
+            Core::forward('admin/edit/'.$content->id .$frameStatus);
         }
 
         if(!is_numeric($this->_uri_parts[2]))
