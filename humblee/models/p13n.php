@@ -28,7 +28,6 @@ class Core_Model_P13n {
 		    return $p13n_versions;
 		}
 
-
 		foreach($p13n as $criteria)
 		{
 		    if($test_results)

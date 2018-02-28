@@ -433,7 +433,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
     		$this->json(array("error"=>"Missing required parameters"));
     	}
     	$contentObj = new Core_Model_Content;
-    	$content = $contentObj->listRevisions($_POST['page_id'],$_POST['content_type'],1);
+    	$content = $contentObj->listRevisions($_POST['page_id'],$_POST['content_type'],$_POST['p13n_id'],1);
 
 		if(!$content)
 		{

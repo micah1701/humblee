@@ -104,9 +104,11 @@ class Core_Controller_Admin {
         if(!is_numeric($this->_uri_parts[2]) && isset($_GET['page_id']) && is_numeric($_GET['page_id']))
         {
             $content_type = (isset($_GET['content_type']) && is_numeric($_GET['content_type'])) ? $_GET['content_type'] : 1;
+            $p13n_id = (isset($_GET['p13n_id']) && is_numeric($_GET['p13n_id'])) ? $_GET['p13n_id'] : 0;
             $content = ORM::for_table(_table_content)
                         ->where('page_id',$_GET['page_id'])
                         ->where('type_id',$content_type)
+                        ->where('p13n_id',$p13n_id)
                         ->order_by_desc('revision_date')
                         ->find_one();
             if(!$content)
@@ -114,6 +116,7 @@ class Core_Controller_Admin {
                 $content = ORM::for_table(_table_content)->create();
                 $content->page_id = $_GET['page_id'];
                 $content->type_id = $content_type;
+                $content->p13n_id = $p13n_id;
                 $content->revision_date = date("Y-m-d H:i:s");
                 $content->updated_by = $_SESSION[session_key]['user_id'];
                 $content->save();
@@ -135,13 +138,20 @@ class Core_Controller_Admin {
 		$pageObj = new Core_Model_Pages;
 		$contentObj = new Core_Model_Content;
 
-		$this->revisions = $contentObj->listRevisions($this->content->page_id,$this->content->type_id);
+		$this->revisions = $contentObj->listRevisions($this->content->page_id,$this->content->type_id,$this->content->p13n_id);
 		$this->content_type = ORM::for_table( _table_content_types )->find_one($this->content->type_id);
 		$this->page_data = ORM::for_table( _table_pages )->find_one( $this->content->page_id);
 		$this->page_data->url = $pageObj->buildLink($this->content->page_id); // append object with additional variable
         $this->template_data = ORM::for_table( _table_templates)->find_one($this->page_data->template_id);
         $this->allContentTypes = ORM::for_table(_table_content_types)->where_in('id',explode(',',$this->template_data->blocks))->order_by_asc('name')->find_many();
         $this->is_in_iframe = (isset($_GET['iframe'])) ? true : false;
+
+        if($_ENV['config']['use_p13n'])
+        {
+            $p13nObj = new Core_Model_P13n;
+            $this->allP13nVersions = $p13nObj->getAll();
+            array_unshift($this->allP13nVersions,(object)array('id'=>0,'name'=>'Default (No Personalization)'));
+        }
 
 		$this->template_view = Core::view( _app_server_path .'humblee/views/admin/edit.php',get_object_vars($this) );
 

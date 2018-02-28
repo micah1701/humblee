@@ -31,6 +31,27 @@
         }
         ?>
 
+        <?php
+        if($_ENV['config']['use_p13n'])
+        {
+        ?>
+        <span class="tooltip" data-tooltip="Select another personalization version of this content">
+            <div class="select">
+                <select id="select_p13n_version">
+                    <?php
+                    foreach ($allP13nVersions as $allP13nVersion)
+                    {
+                        $selected = ($content->p13n_id == $allP13nVersion->id) ? " SELECTED" : "";
+                        echo '<option value="'.$allP13nVersion->id.'"'.$selected.'>'.$allP13nVersion->name.'</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+        </span>
+        <?php
+        }
+        ?>
+
     </div>
 </div>
 
@@ -68,6 +89,15 @@ if(count($revisions) > 1 && $content->revision_date != $revisions[0]->revision_d
         {
         ?>
             <span class="tooltip is-tooltip-right has-text-danger" data-tooltip="The page this content is located on is currently inactive.">(inactive)</span>
+        <?php
+        }
+
+        if($_ENV['config']['use_p13n'] && $content->p13n_id != 0)
+        {
+        ?>
+            <br>
+            This content is specific to the <strong><?php echo $allP13nVersions[$content->p13n_id]->name ?></strong> persona.
+            <span class="icon has-text-warning tooltip" data-tooltip="<?php echo $allP13nVersions[$content->p13n_id]->description ?>"><i class="fas fa-user"></i></span>
         <?php
         }
         ?>
@@ -140,6 +170,7 @@ if(count($revisions) > 1 && $content->revision_date != $revisions[0]->revision_d
     <input type="hidden" id="edit_time" value="<?php echo date("Y-m-d H:i:s") ?>">
     <input type="hidden" name="content_id" id="content_id" value="<?php echo $content->id ?>">
     <input type="hidden" name="page_id" id="page_id" value="<?php echo $content->page_id ?>">
+    <input type="hidden" name="p13n_id" id="p13n_id" value="<?php echo $content->p13n_id ?>">
     <input type="hidden" name="content_type_id" id="content_type_id" value="<?php echo $content_type->id ?>">
     <input type="hidden" name="content_type" id="content_type" value="<?php echo $content_type->input_type ?>">
     <textarea style="display:none" id="original_content"><?php echo $content->content ?></textarea>

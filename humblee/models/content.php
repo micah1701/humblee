@@ -18,7 +18,7 @@ class Core_Model_Content {
      * $content_type	integer	REQUIRED
      * $limit			integer	Maximum number of recent revision to display. 0 or false returns all(up to 9999).
      */
-	public function listRevisions($page_id,$content_type,$max=10){
+	public function listRevisions($page_id,$content_type,$p13n_id=0,$max=10){
 		$this->requireContentRoles();
 
         if(!is_numeric($content_type) || !is_numeric($page_id) ){ return false; }
@@ -30,13 +30,14 @@ class Core_Model_Content {
 					->join( _table_users, array( _table_content.'.updated_by', '=', _table_users.'.id'))
 					->where('page_id',$page_id)
 					->where('type_id',$content_type)
+					->where('p13n_id',$p13n_id)
 					->order_by_desc('revision_date')
 					->limit($max)
 					->find_many();
 	}
 
     /**
-     * Save Content for a given page and content block
+     * Save Content for a given page, content block and p13n version
      *
      * $post	ARRAY required values are:
      *					content_id (last known content id being replaced)
@@ -54,6 +55,9 @@ class Core_Model_Content {
 		$this->requireContentRoles();
 
 		if(!is_numeric($post['content_type_id']) || !is_numeric($post['page_id']) ){ return false; }
+		if(!isset($post['p13n_id'])) {
+			$post['p13n_id'] = 0;
+		}
 
 		// if there was a bunch of fields, turn them into a JSON array and overwrite the "content" field with the array
 		if(isset($post['serialize_fields']))
@@ -70,9 +74,13 @@ class Core_Model_Content {
 
 		$current_content = ORM::for_table( _table_content)->find_one($post['content_id']); //what the content looked like before it was just edited
 
-		$previous_revisions = ORM::for_table ( _table_content)->where('page_id',$post['page_id'])->where('type_id',$post['content_type_id'])->count();
+		$previous_revisions = ORM::for_table ( _table_content)
+								->where('page_id',$post['page_id'])
+								->where('type_id',$post['content_type_id'])
+								->where('p13n_id',$post['p13n_id'])
+								->count();
 
-		$content = str_replace('$','&#36;',$post['content']); // dollar signs are messy, convert to html equiv
+		$content = $post['content'];
 
 		// new content
 		if($current_content->content != $content)
@@ -82,6 +90,7 @@ class Core_Model_Content {
 
 			$new_content->type_id = $post['content_type_id'];
 			$new_content->page_id = $post['page_id'];
+			$new_content->p13n_id = $post['p13n_id'];
 			$new_content->content = $content;
 			$new_content->revision_date = date("Y-m-d H:i:s");
 			$new_content->updated_by = $_SESSION[session_key]['user_id'];
@@ -98,6 +107,7 @@ class Core_Model_Content {
 			$old_live = ORM::for_table( _table_content )
 				->where('page_id',$post['page_id'])
 				->where('type_id',$post['content_type_id'])
+				->where('p13n_id',$post['p13n_id'])
 				->where('live',1)
 				->find_one();
 			if($old_live)
@@ -140,14 +150,12 @@ class Core_Model_Content {
 		if($_ENV['config']['use_p13n'])
 		{
 			$p13nObj = new Core_Model_P13n();
-			//get all the possible p13n version ID's - in decending order by priority so if there are multiple matching versions
-			//then the last one that matches, with the highest priority (lowest number), will overwrite any previous matched versions
 			$p13n_versions = $p13nObj->getAll(true,true);
-			$p13n_versions[] = 0; // add default p13n version at the end incase none of the returned have content
+			$p13n_versions[] = 0; // add default non-p13n version at the end in case none of the returned IDs have content
 		}
 		else
 		{
-			//just use default p13n version
+			//just use default non-p13n version
 			$p13n_versions = array(0);
 		}
 
@@ -179,6 +187,5 @@ class Core_Model_Content {
 
 		return $contents;
 	}
-
 
 }
