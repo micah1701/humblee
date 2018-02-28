@@ -143,15 +143,13 @@ class Core_Model_Content {
 			//get all the possible p13n version ID's - in decending order by priority so if there are multiple matching versions
 			//then the last one that matches, with the highest priority (lowest number), will overwrite any previous matched versions
 			$p13n_versions = $p13nObj->getAll(true,true);
+			$p13n_versions[] = 0; // add default p13n version at the end incase none of the returned have content
 		}
 		else
 		{
 			//just use default p13n version
 			$p13n_versions = array(0);
 		}
-
-		print_r($p13n_versions);
-		exit();
 
 		$getContent = ORM::for_table( _table_content )
 					  ->select(_table_content.'.*')

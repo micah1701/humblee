@@ -3,56 +3,126 @@
 class Core_Model_P13n {
 
     /**
-     * returns an arry of p13n database tabel
-     * also includes
-     * $reverseOrder (optional) BOOL if set to true, it reverses the order
+     * returns an array of p13n database table rows
+     *
+     * $test_results (optional) BOOL if TRUE, test the criteria against the current user and only return matching p13n rows
+     * $id_only (optional)      BOOL if TRUE, returned array is just list of p13n row IDs
      *
      */
-    public function getAll($reverseOrder=false,$id_only=false){
+    public function getAll($test_results=false,$id_only=false){
 
-        $default_row = (object)array("name"=>"Default","description"=>"No personalization","criteria_role"=>false,"criteria"=>false);
+        $p13n_versions = array();
 
-		if($reverseOrder)
+		if($test_results)
 		{
-    		$p13n_versions = ($id_only) ? array(0) : array(0 => $default_row);
+    	    //if testing results, reverse lookup so highest priority (lowest number) is last
     		$p13n = ORM::for_table( _table_content_p13n)->order_by_desc('priority')->find_many();
 		}
 		else
 		{
 	        $p13n = ORM::for_table( _table_content_p13n)->order_by_asc('priority')->find_many();
-	        $p13n_versions = array();
 		}
 
-		//test each on and add to array of usable version
-		foreach($p13n as $version)
+		if(!$p13n)
 		{
-			switch($version->criteria_type) {
-				case 'has_role' :
-					if(Core::auth($version->criteria))
-					{
-						$p13n_versions[] = ($id_only) ? $version->id : $version;
-					}
-				break;
-
-				case 'i18n' :
-					$url_parts = Core::getURIparts();
-					if($url_parts[0] == $version->criteria)
-					{
-						$p13n_versions[] = ($id_only) ? $version->id : $version;
-					}
-				break;
-
-			}
-
+		    return $p13n_versions;
 		}
 
-		if(!$reverseOrder)
+
+		foreach($p13n as $criteria)
 		{
-    		$p13n_versions[] = ($id_only) ? 0 : $default_row;
+		    if($test_results)
+		    {
+		        if($this->testCriteria($criteria->criteria))
+		        {
+    		        $p13n_versions[] = ($id_only) ? $criteria->id : $criteria;
+		        }
+		    }
+		    else
+		    {
+		        $p13n_versions[] = ($id_only) ? $criteria->id : $criteria;
+		    }
 		}
 
 		return $p13n_versions;
     }
 
+    /**
+     * Test a given criteria against the current user session
+     *
+     * criteria structure:
+     *
+     * first level are "OR" operators:  $p13n[0] OR $p13n[1] can be true to pass
+     * second level are "AND" operators within the given "OR":  ($p13n[0][0] AND $p13n[0][1]) both have to be true to pass, OR $p13n[1][0]
+     *
+     * example:
+        $p13n = array(
+                    0 => array(
+                            array('type'=>'required_role', 'operator'=>'==', 'value'=>'login'),
+                            array('type'=>'i18n','operator'=>'==','value'=>'es')
+                        ),
+                    1 => array(
+                            array('type'=>'required_role', 'operator'=>'==', 'value'=>'develop')
+                        )
+                );
+     */
+    public function testCriteria($criteria)
+    {
+        $criteria = (is_array($criteria)) ? $criteria : json_decode($criteria);
+
+        foreach($criteria as $criterium_OR => $criterium_AND)
+        {
+            $pass_AND = 0;
+            foreach($criterium_AND as $criterium)
+            {
+                switch ($criterium->type) {
+
+                    case 'required_role' :
+                        if($criterium->operator == "=" && Core::auth($criterium->value))
+                        {
+                            $pass_AND++;
+                        }
+                        elseif ($criterium->operator == "!=" && !Core::auth($criterium->value))
+                        {
+                            $pass_AND++;
+                        }
+                    break;
+
+                    case 'i18n' :
+                        $uri_parts = Core::getURIparts();
+                        if($criterium->operator == "=" && strtolower($uri_parts[0]) == strtolower($criterium->value) )
+                        {
+                            $pass_AND++;
+                        }
+                        elseif ($criterium->operator == "!=" && strtolower($uri_parts[0]) != strtolower($criterium->value))
+                        {
+                            $pass_AND++;
+                        }
+                    break;
+
+                    case 'time_of_day' :
+                        if($criterium->operator == "<" && strtotime(date("H:i")) < strtotime($criterium->value))
+                        {
+                            $pass_AND++;
+                        }
+                        elseif($criterium->operator == ">" && strtotime(date("H:i")) > strtotime($criterium->value))
+                        {
+                            $pass_AND++;
+                        }
+                    break;
+
+                }
+
+            }
+
+            if($pass_AND == count($criterium_AND))
+            {
+                return true;
+            }
+        }
+
+        return false;
+
+    }
 
 }
