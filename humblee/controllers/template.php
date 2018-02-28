@@ -79,6 +79,21 @@ class Core_Controller_Template {
 			$this->content = $contents;
 		}
 
+		//don't cache personalized content
+		$personalizedContent = false;
+		foreach($this->content as $contentBlock)
+		{
+			if($contentBlock->p13n_id != "" && $contentBlock->p13n_id != 0)
+			{
+				$personalizedContent = true;
+				break;
+			}
+		}
+		if($personalizedContent)
+		{
+			header("Cache-Control: private");
+		}
+
         //get data about the template being used
         $this->template = ORM::for_table( _table_templates)->find_one($this->page->template_id);
 
