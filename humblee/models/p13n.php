@@ -32,6 +32,11 @@ class Core_Model_P13n {
 		{
 		    if($test_results)
 		    {
+		        if($criteria->active == 0)
+		        {
+		            continue; // if persona is turned off, no need to test
+		        }
+
 		        if($this->testCriteria($criteria->criteria))
 		        {
     		        $p13n_versions[] = ($id_only) ? $criteria->id : $criteria;

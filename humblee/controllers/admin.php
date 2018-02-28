@@ -61,6 +61,15 @@ class Core_Controller_Admin {
             $this->contentTypes[$getType->id] = $getType->name;
         }
 
+        if($_ENV['config']['use_p13n'])
+        {
+            $getP13nVersions = ORM::for_table(_table_content_p13n)->find_many();
+            foreach($getP13nVersions as $p13nVersion)
+            {
+                $this->p13nVersions[$p13nVersion->id] = $p13nVersion->name;
+            }
+        }
+
 	    $this->extra_head_code = '<script type="text/javascript" src="'._app_path.'humblee/js/admin/index.js"></script>';
 
 		$this->template_view = Core::view( _app_server_path .'humblee/views/admin/index.php',get_object_vars($this) );
