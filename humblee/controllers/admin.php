@@ -273,4 +273,23 @@ class Core_Controller_Admin {
                         );
         $this->tools->CRUD($params,$this );
     }
+
+    public function personalization(){
+        $this->require_role('designer');
+        $params = array("id"=> (isset($this->_uri_parts[2])) ? $this->_uri_parts[2] : false,
+                        "table"=> _table_content_p13n,
+                        "view" => _app_server_path .'humblee/views/admin/personalization.php',
+                        "post" => (isset($_POST) && count($_POST) > 0) ? $_POST : false,
+                        "allow_html" =>true,
+                        "validation" => array('name'=>array('if'=>'$val == ""','error_message'=>'Name field cannot be blank'),
+                                              'objectkey'=>array('if'=>'$val == ""','error_message'=>'objectKey field cannot be blank')
+                                        ),
+                        "post_ignore" => array("submit"),
+                        "crud_all_order_by" => "name"
+                        );
+
+        //$this->extra_head_code = '<script type="text/javascript" src="'._app_path.'humblee/js/admin/personalization.js"></script>';
+        $this->tools->CRUD($params,$this);
+    }
+
 }
