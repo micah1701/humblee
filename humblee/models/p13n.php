@@ -89,7 +89,7 @@ class Core_Model_P13n {
                     break;
 
                     case 'i18n' :
-                        $uri_parts = Core::getURIparts();
+                        $uri_parts = Core::getURIparts(true);
                         if($criterium->operator == "=" && strtolower($uri_parts[0]) == strtolower($criterium->value) )
                         {
                             $pass_AND++;

@@ -15,10 +15,8 @@ class Core_Controller_Template {
 	function __construct()
 	{
 		//get information about what this link does
-		$uri = Core::getURI();
-
 		$pageObj = new Core_Model_Pages;
-		$this->page = $pageObj->getPagefromURL($uri);
+		$this->page = $pageObj->getPagefromURL(Core::getURIparts());
 
 		if(!$this->page){  // if page doesn't exist, set some dummy values
 			$this->page = new stdClass();
