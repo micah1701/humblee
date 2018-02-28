@@ -8,6 +8,7 @@ SET time_zone = "+00:00";
 CREATE TABLE IF NOT EXISTS `humblee_content` (
   `id` int(11) NOT NULL,
   `type_id` int(11) NOT NULL,
+  `p13n_id` int(11) NOT NULL,
   `page_id` int(11) NOT NULL,
   `content` text NOT NULL,
   `revision_date` datetime NOT NULL,
@@ -17,9 +18,23 @@ CREATE TABLE IF NOT EXISTS `humblee_content` (
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
-INSERT INTO `humblee_content` (`id`,`type_id`,`page_id`,`content`,`updated_by`,`live`) VALUES
-(1,1,1,'<h1>Welcome to your Humblee powered website</h1>',1,1),
-(2,2,1,'{"page_title":"Welcome to Humblee!","meta_description":"","og_title":"","og_description":"","og_image":""}',1,1);
+INSERT INTO `humblee_content` (`id`,`type_id`,`p13n_id`,`page_id`,`content`,`updated_by`,`live`) VALUES
+(1,1,0,1,'<h1>Welcome to your Humblee powered website</h1>',1,1),
+(2,2,0,1,'{"page_title":"Welcome to Humblee!","meta_description":"","og_title":"","og_description":"","og_image":""}',1,1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `humblee_content_p13n`
+--
+
+CREATE TABLE `humblee_content_p13n` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `criteria` text NOT NULL,
+  `priority` tinyint(4) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -245,6 +260,13 @@ ALTER TABLE `humblee_content_types`
   ADD PRIMARY KEY (`id`), ADD KEY `name` (`name`);
 
 --
+-- Indexes for table `humblee_content_p13n`
+--
+ALTER TABLE `humblee_content_p13n`
+  ADD PRIMARY KEY (`id`);
+
+
+--
 -- Indexes for table `humblee_pages`
 --
 ALTER TABLE `humblee_pages`
@@ -303,6 +325,11 @@ ALTER TABLE `humblee_content`
 --
 ALTER TABLE `humblee_content_types`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
+--
+-- AUTO_INCREMENT for table `humblee_content_p13n`
+--
+ALTER TABLE `humblee_content_p13n`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 --
 -- AUTO_INCREMENT for table `humblee_pages`
 --
