@@ -286,6 +286,12 @@ class Core_Controller_Admin {
 
     public function personalization(){
         $this->require_role('designer');
+
+        if(isset($_POST) && count($_POST) > 0)
+        {
+        	$_POST['active'] = (isset($_POST['active'])) ? $_POST['active'] : 0;
+        }
+
         $params = array("id"=> (isset($this->_uri_parts[2])) ? $this->_uri_parts[2] : false,
                         "table"=> _table_content_p13n,
                         "view" => _app_server_path .'humblee/views/admin/personalization.php',
