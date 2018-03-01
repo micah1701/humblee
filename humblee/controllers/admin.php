@@ -298,7 +298,15 @@ class Core_Controller_Admin {
                         "crud_all_order_by" => "name"
                         );
 
-        //$this->extra_head_code = '<script type="text/javascript" src="'._app_path.'humblee/js/admin/personalization.js"></script>';
+        //jquery ui library & nestedSortable extension
+	    $this->extra_head_code = '<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>';
+	    $this->extra_head_code.= '<link rel="stylesheet" href="https://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">';
+
+	    $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'humblee/js/admin/personalization.js"></script>';
+
+        $p13nObj = new Core_Model_P13n;
+        $this->allP13nVersions = $p13nObj->getAll();
+
         $this->tools->CRUD($params,$this);
     }
 
