@@ -113,6 +113,8 @@ function value($field,$crud_selected,$htmlentities=false)
             }
             ?>
             </ul>
+
+            <p class="panel-block"><span style="margin-left: 25px">Default Content (No Persona)</span></p>
         </div>
 
     </div>
