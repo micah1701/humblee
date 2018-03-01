@@ -20,8 +20,9 @@ function value($field,$crud_selected,$htmlentities=false)
                  <option value="">Select a content persona to edit...</option>
                  <?php
                   foreach($crud_all as $crud_row){
+                      $active = ($crud_row->active == 0) ? " (inactive)" : "";
                 	  $selected = (is_object($crud_selected) && $crud_row->id == $crud_selected->id) ? " SELECTED" : "";
-                	  echo "  <option value=\"".$crud_row->id."\"".$selected.">".$crud_row->name."</option>\n";
+                	  echo "  <option value=\"".$crud_row->id."\"".$selected.">". $crud_row->name . $active."</option>\n";
                    }
                 ?>
             </select>
@@ -103,9 +104,10 @@ function value($field,$crud_selected,$htmlentities=false)
             ?>
                 <li id="personaID_<?php echo $p13n->id ?>">
                     <div>
-                        <a class="panel-block has-icons-left">
+                        <a class="panel-block">
                             <span class="panel-icon"><i class="fas fa-arrows-alt-v"></i></span>
-                            <span><?php echo $p13n->name ?></span>
+                            <?php echo $p13n->name ?>
+                            <?php echo ($p13n->active == 0) ? '<span class="has-text-danger"> &nbsp;(inactive)</span>' : ''; ?>
                         </a>
                     </div>
                 </li>
