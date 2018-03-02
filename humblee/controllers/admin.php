@@ -309,6 +309,7 @@ class Core_Controller_Admin {
 	    $this->extra_head_code.= '<link rel="stylesheet" href="https://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">';
 
 	    $this->extra_head_code.= '<script type="text/javascript" src="'._app_path.'humblee/js/admin/personalization.js"></script>';
+	    $this->extra_head_code.= '<link rel="stylesheet" type="text/css" href="'._app_path.'humblee/css/admin/personalization.css">';
 
         $p13nObj = new Core_Model_P13n;
         $this->allP13nVersions = $p13nObj->getAll();
