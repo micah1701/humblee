@@ -98,7 +98,7 @@ function value($field,$crud_selected,$htmlentities=false)
     <div class="column">
 
         <div class="panel">
-            <h2 class="panel-heading is-size-4">Set Priorities</h2>
+            <h2 class="panel-heading is-size-4">Set Persona Priorities</h2>
 
             <div class="panel-block">
                 <p>
@@ -146,9 +146,9 @@ function value($field,$crud_selected,$htmlentities=false)
 
 <!-- select a persona -->
 <div id="criteria_select_persona">
-    <div class="select_persona column" data-fieldID="">
+    <div class="column" data-fieldID="">
         <div class="select">
-            <select class="select" data-fieldID="">
+            <select class="setPersona select" data-fieldID="">
                 <option value="i18n" SELECTED>URL i18n Segment</option>
                 <option value="session_key">Session Variable</option>
                 <option value="required_role">User Role</option>

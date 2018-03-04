@@ -44,16 +44,15 @@ $(document).ready(function(){
 //passing "setFieldID" looks for the data-fieldID attribuite in the HTML and updates it to that ID
 function getBlock(blockID,setFieldID)
 {
-	return $("#"+blockID).html(function(index,html){
-		return html.replace(/fieldID=\"\"/gi,"fieldID=\""+setFieldID+"\"");
-	}).html();
+	var html = $("#"+blockID).html();
+	return html.replace(/fieldID=\"\"/gi,"fieldID=\""+setFieldID+"\"");
 }
 
 function makeCriteriaBuilder(){
 	var criteria = JSON.parse($("#criteria").val());
 
 	$.each(criteria, function(or_index,or_blocks){
-
+		console.log(or_index);
 		// draw the outer "or" block and add to DOM
 		$("#cirteria_builder").append(getBlock('criteria_or_block',or_index));
 
@@ -103,20 +102,13 @@ function makeCriteriaBuilder(){
 			or_block.append(html);
 
 			//once the row has been output to the DOM, update fields as needed:
-
-			//set the "select personal" dropdown to the predefined type
-			$(".criteria_or[data-fieldid="+or_index+"] .select_persona select[data-fieldid="+and_blockID+"]").val(and_blocks.type);
-
-			$(".criteria_or[data-fieldid="+or_index+"] .setValue[data-fieldid="+and_blockID+"]").val(and_blocks.value);
-			$(".criteria_or[data-fieldid="+or_index+"] .setOperator[data-fieldid="+and_blockID+"]").val(and_blocks.operator);
-
+			$(".criteria_OR[data-fieldid="+or_index+"] .setPersona[data-fieldid="+and_blockID+"]").val(and_blocks.type);
+			$(".criteria_OR[data-fieldid="+or_index+"] .setValue[data-fieldid="+and_blockID+"]").val(and_blocks.value);
+			$(".criteria_OR[data-fieldid="+or_index+"] .setOperator[data-fieldid="+and_blockID+"]").val(and_blocks.operator);
 
 		}); // end loop throuugh "and" criteria
 
 
 	}); // end loop trhough "or" blocks
-
-	var or_block = getBlock('criteria_or_block',0);
-
 
 }
