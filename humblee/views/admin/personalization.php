@@ -75,126 +75,18 @@ function value($field,$crud_selected,$htmlentities=false)
                 <label>
             </div>
 
+            <div id="cirteria_builder"></div>
 
-            <div class="field criteria_OR">
-                <div class="columns criteria_AND">
-                    <div class="column">
-                        <div class="select">
-                            <select class="select">
-                                <option SELECTED>URL i18n Segment</option>
-                                <option>Session Variable</option>
-                                <option>User Role</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="column">
-                        <div class="select">
-                            <select class="select">
-                                <option>IS</option>
-                                <option>IS NOT</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="column">
-                        <div class="select">
-                            <select class="select">
-                                <?php
-                                foreach ($_ENV['config']['i18n_segments'] as $segment)
-                                {
-                                ?>
-                                <option value="<?php echo $segment ?>">/<?php echo strtoupper($segment) ?></option>
-                                <?php
-                                }
-                                ?>
-                                <option value="">Not Set</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="column column-slim has-text-right">
-                        <span class="criteria_remove_and icon"><span class="fas fa-trash"></span></span>
-                    </div>
-
-                </div>
-
-                <div class="criteria_seperator has-text-centered">AND</div>
-
-                <div class="columns criteria_AND">
-                    <div class="column">
-                        <div class="select">
-                            <select class="select">
-                                <option>URL i18n Segment</option>
-                                <option SELECTED>Session Variable</option>
-                                <option>User Role</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="column">
-                        <input class="input" type="text" placeholder="Session_Key">
-                    </div>
-                    <div class="column">
-                        <div class="select">
-                            <select class="select">
-                                <option>IS TRUE</option>
-                                <option>IS FALSE</option>
-                                <option>IS SET</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="column column-slim has-text-right">
-                        <span class="criteria_remove_and icon"><span class="fas fa-trash"></span></span>
-                    </div>
-                </div>
-
-                <div class="criteria_seperator has-text-centered">AND</div>
-
-                <div class="columns criteria_AND">
-                    <div class="column">
-                        <div class="select">
-                            <select class="select">
-                                <option>URL i18n Segment</option>
-                                <option>Session Variable</option>
-                                <option SELECTED>User Role</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="column">
-                        <div class="select">
-                            <select class="select">
-                                <option>HAS ROLE</option>
-                                <option>IS NOT</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="column">
-                        <div class="select">
-                            <select class="select">
-                                <?php
-                                $roles = ORM::for_table( _table_roles)->where('role_type','access')->find_many();
-                                foreach ($roles as $role)
-                                {
-                                ?>
-                                <option value="<?php echo $role->name ?>"><?php echo ucfirst($role->name) ?></option>
-                                <?php
-                                }
-                                ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="column column-slim has-text-right">
-                        <span class="criteria_remove_and icon"><span class="fas fa-trash"></span></span>
-                    </div>
-
-                </div>
-                <span class="criteria_add_and icon"><span class="fas fa-plus"></span></span>Add Criteria
-            </div>
-
+            <hr>
 
             <div class="field">
-
+                <label class="label" for="criteria">Generated Criteria</label>
                 <div class="control">
                     <textarea class="textarea" id="criteria" name="criteria"><?php echo value('criteria',$crud_selected,true) ?></textarea>
                 </div>
             </div>
+
+            <hr>
 
             <div class="field">
                 <input class="button is-primary" name="submit" type="submit" value="Save Persona">
@@ -239,3 +131,115 @@ function value($field,$crud_selected,$htmlentities=false)
 
     </div>
 </div>
+
+
+<!-- HTML elements for criteria builder -->
+<div style="display: none">
+
+<!-- criteria "OR" block -->
+<div id="criteria_or_block">
+    <div class="field criteria_OR" data-fieldID="">
+        <span class="criteria_add_and icon" data-fieldID=""><span class="fas fa-plus"></span></span>Add Criteria
+    </div>
+</div>
+
+
+<!-- select a persona -->
+<div id="criteria_select_persona">
+    <div class="select_persona column" data-fieldID="">
+        <div class="select">
+            <select class="select" data-fieldID="">
+                <option value="i18n" SELECTED>URL i18n Segment</option>
+                <option value="session_key">Session Variable</option>
+                <option value="required_role">User Role</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- remove a persona -->
+<div id="criteria_remove_and">
+    <div class="column column-slim has-text-right" data-fieldID="">
+        <span class="criteria_remove_and icon" data-fieldID=""><span class="fas fa-trash"></span></span>
+    </div>
+</div>
+
+
+<!-- criteria sperator -->
+<div id="criteria_seperator">
+    <div class="criteria_seperator has-text-centered" data-fieldID="">AND</div>
+</div>
+
+
+<!-- criteria to select url i18n segment -->
+<div id="criteria_url_i18n_segment">
+    <div class="column" data-fieldID="">
+        <div class="select">
+            <select class="select setOperator" data-fieldID="">
+                <option value="=">IS</option>
+                <option value="!=">IS NOT</option>
+            </select>
+        </div>
+    </div>
+    <div class="column" data-fieldID="">
+        <div class="select">
+            <select class="select setValue" data-fieldID="">
+                <?php
+                foreach ($_ENV['config']['i18n_segments'] as $segment)
+                {
+                ?>
+                <option value="<?php echo strtolower($segment) ?>">~/<?php echo strtoupper($segment) ?></option>
+                <?php
+                }
+                ?>
+                <option value="">Not Set</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- criteria to check session -->
+<div id="criteria_session_key">
+    <div class="column" data-fieldID="">
+        <input class="input setValue" data-fieldID="" type="text" placeholder="Session_Key">
+    </div>
+    <div class="column" data-fieldID="">
+        <div class="select">
+            <select class="select setOperator" data-fieldID="">
+                <option value="true">IS TRUE</option>
+                <option value="false">IS FALSE</option>
+                <option value="isset">IS SET</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- criteria to check user role -->
+<div id="criteria_user_role">
+    <div class="column" data-fieldID="">
+        <div class="select">
+            <select class="select setOperator" data-fieldID="">
+                <option value="=">HAS ROLE</option>
+                <option value="!=">IS NOT</option>
+            </select>
+        </div>
+    </div>
+    <div class="column" data-fieldID="">
+        <div class="select">
+            <select class="select setValue" data-fieldID="">
+                <?php
+                $roles = ORM::for_table( _table_roles)->where('role_type','access')->find_many();
+                foreach ($roles as $role)
+                {
+                ?>
+                <option value="<?php echo strtolower($role->name) ?>"><?php echo ucfirst($role->name) ?></option>
+                <?php
+                }
+                ?>
+            </select>
+        </div>
+    </div>
+</div>
+
+
+</div><!-- end wrapper around hidden criteria builder html elements -->

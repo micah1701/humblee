@@ -2,7 +2,11 @@
 
 $(document).ready(function(){
 
-   $('ul.sortable').sortable({
+	//generate the initial criteria builder
+	makeCriteriaBuilder();
+
+	//make list of perona's sortable
+	$('ul.sortable').sortable({
 			listType: 'ul',
 			handle: 'a',
 			items: 'li',
@@ -36,3 +40,83 @@ $(document).ready(function(){
 		.disableSelection();
 });
 
+//return the HTML of a given div by id.
+//passing "setFieldID" looks for the data-fieldID attribuite in the HTML and updates it to that ID
+function getBlock(blockID,setFieldID)
+{
+	return $("#"+blockID).html(function(index,html){
+		return html.replace(/fieldID=\"\"/gi,"fieldID=\""+setFieldID+"\"");
+	}).html();
+}
+
+function makeCriteriaBuilder(){
+	var criteria = JSON.parse($("#criteria").val());
+
+	$.each(criteria, function(or_index,or_blocks){
+
+		// draw the outer "or" block and add to DOM
+		$("#cirteria_builder").append(getBlock('criteria_or_block',or_index));
+
+		// heres an object of the block that was just added
+		var or_block = $(".criteria_OR[data-fieldID="+or_index+"]");
+
+		$.each(or_blocks,function(and_index, and_blocks){
+
+			var and_blockID = and_index,
+				criteria_id = '',
+				html = '';
+
+			// draw the "AND" seperator between "and" criteria
+			if(and_index > 0)
+			{
+				html+= getBlock('criteria_seperator',and_blockID); // "and" text between criteria
+			}
+
+			//wrap this "row" of criteria fields
+			html+= '<div class="columns" data-fieldID="'+and_blockID+'">\n';
+
+			// draw the "select persona type" <select> dropdown
+			html+= getBlock('criteria_select_persona', and_blockID);
+
+			// determine which which criteria operator and value fields to show
+			switch(and_blocks.type) {
+
+				case 'i18n' :
+					criteria_id = 'criteria_url_i18n_segment';
+				break;
+
+				case 'session_key' :
+					criteria_id = 'criteria_session_key';
+				break;
+
+				case 'required_role' :
+					criteria_id = 'criteria_user_role';
+			}
+
+			// draw the "operator" and "value" fields for this "and" criteria
+			html+= getBlock(criteria_id,and_blockID);
+
+			// close the wrapper around this "row"
+			html+= "\n</div>";
+
+			//add this 'and' criteria row to the outer 'or' block
+			or_block.append(html);
+
+			//once the row has been output to the DOM, update fields as needed:
+
+			//set the "select personal" dropdown to the predefined type
+			$(".criteria_or[data-fieldid="+or_index+"] .select_persona select[data-fieldid="+and_blockID+"]").val(and_blocks.type);
+
+			$(".criteria_or[data-fieldid="+or_index+"] .setValue[data-fieldid="+and_blockID+"]").val(and_blocks.value);
+			$(".criteria_or[data-fieldid="+or_index+"] .setOperator[data-fieldid="+and_blockID+"]").val(and_blocks.operator);
+
+
+		}); // end loop throuugh "and" criteria
+
+
+	}); // end loop trhough "or" blocks
+
+	var or_block = getBlock('criteria_or_block',0);
+
+
+}
