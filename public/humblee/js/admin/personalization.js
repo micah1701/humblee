@@ -113,7 +113,6 @@ function makeCriteriaBuilder(){
 
 		}); // end loop throuugh "and" criteria
 
-
 	}); // end loop trhough "or" blocks
 
 }
@@ -144,8 +143,23 @@ function updateCriteria()
 		or_criteria_json += "],"; // end of "or" block
 	});
 
+	//add the "or" block, without the last "," at the end
 	json += or_criteria_json.slice(0,-1);
 	json += "]";
 
 	$("#criteria").val(json);
+
+
+	if( $("#reset_params").hasClass('is-invisible'))
+    {
+        $("#reset_params").removeClass('is-invisible');
+    }
+
+	$("#reset_params").click(function(element){
+        element.preventDefault()
+        $("#criteria").val( $("#criteria_original").val() );
+        $("#criteria_builder").html('');
+        makeCriteriaBuilder();
+        $(this).addClass('is-invisible');
+	});
 }

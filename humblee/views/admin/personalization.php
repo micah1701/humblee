@@ -72,6 +72,9 @@ function value($field,$crud_selected,$htmlentities=false)
             <div class="field">
                 <label class="label" for="criteria">
                     Criteria
+                    <span id="reset_params" class="inline is-size-7 has-text-info tooltip is-tooltip-right is-invisible" data-tooltip="Reset criteria to previous state" id="reset_criteria_link">
+                        <span class="icon is-small"><i class="fas fa-undo"></i></span>
+                    </span>
                 <label>
             </div>
 
@@ -83,6 +86,7 @@ function value($field,$crud_selected,$htmlentities=false)
                 <label class="label" for="criteria">Generated Criteria</label>
                 <div class="control">
                     <textarea class="textarea" id="criteria" name="criteria"><?php echo value('criteria',$crud_selected,true) ?></textarea>
+                    <input type="hidden" id="criteria_original" value="<?php echo value('criteria',$crud_selected,true) ?>">
                 </div>
             </div>
 
