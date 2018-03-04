@@ -38,6 +38,11 @@ $(document).ready(function(){
 			}
 		})
 		.disableSelection();
+
+		//listen for changes in the criteria builder and update criteria json
+		$("#criteria_builder").on("change", "select,input", function(){
+			updateCriteria();
+		});
 });
 
 //return the HTML of a given div by id.
@@ -52,9 +57,9 @@ function makeCriteriaBuilder(){
 	var criteria = JSON.parse($("#criteria").val());
 
 	$.each(criteria, function(or_index,or_blocks){
-		console.log(or_index);
+
 		// draw the outer "or" block and add to DOM
-		$("#cirteria_builder").append(getBlock('criteria_or_block',or_index));
+		$("#criteria_builder").append(getBlock('criteria_or_block',or_index));
 
 		// heres an object of the block that was just added
 		var or_block = $(".criteria_OR[data-fieldID="+or_index+"]");
@@ -111,4 +116,36 @@ function makeCriteriaBuilder(){
 
 	}); // end loop trhough "or" blocks
 
+}
+
+
+//find criteria fields in DOM and gererate JSON object
+function updateCriteria()
+{
+	var json = "[";
+	var or_criteria_json = "";
+
+	$("#criteria_builder .criteria_OR").each(function(or_index,or_elements)
+	{
+		or_criteria_json += "[";
+
+		var and_criteria_json = "";
+		$(".criteria_OR[data-fieldid="+or_index+"] .columns").each(function(and_blockID,and_elements)
+		{
+			and_criteria_json += '{';
+			and_criteria_json += '"type":"'+ $(".criteria_OR[data-fieldid="+or_index+"] .setPersona[data-fieldid="+and_blockID+"]").val() +'",';
+			and_criteria_json += '"operator":"'+ $(".criteria_OR[data-fieldid="+or_index+"] .setOperator[data-fieldid="+and_blockID+"]").val() +'",';
+			and_criteria_json += '"value":"'+ $(".criteria_OR[data-fieldid="+or_index+"] .setValue[data-fieldid="+and_blockID+"]").val() +'"';
+			and_criteria_json += '},';
+		}); //end of individual "and" block
+
+		//add the "and" criteria, without the last "," at the end
+		or_criteria_json += and_criteria_json.slice(0,-1);
+		or_criteria_json += "],"; // end of "or" block
+	});
+
+	json += or_criteria_json.slice(0,-1);
+	json += "]";
+
+	$("#criteria").val(json);
 }

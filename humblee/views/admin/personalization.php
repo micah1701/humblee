@@ -75,7 +75,7 @@ function value($field,$crud_selected,$htmlentities=false)
                 <label>
             </div>
 
-            <div id="cirteria_builder"></div>
+            <div id="criteria_builder"></div>
 
             <hr>
 
