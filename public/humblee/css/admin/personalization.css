@@ -10,7 +10,8 @@
 .criteria_seperator {
   margin: -20px auto 5px 0; }
 
-.criteria_add_and {
+.criteria_add_and,
+.criteria_remove_or {
   cursor: pointer; }
 
 /*# sourceMappingURL=personalization.css.map */

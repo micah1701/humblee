@@ -74,6 +74,22 @@ $(document).ready(function(){
 				html+= '</div>\n';
 
 			or_block.append(html);
+		})
+		.on("click", ".criteria_remove_or", function(){
+			var or_id = $(this).data('fieldid');
+			$(this).closest('.criteria_OR').remove();
+
+			$("#criteria_builder .criteria_OR").each(function(){
+				var or_block = $(this);
+				var current_or_id = or_block.data('fieldid');
+				if(current_or_id > or_id)
+				{
+					or_block.attr('data-fieldid',current_or_id - 1);
+				}
+			});
+
+			updateCriteria();
+
 		});
 
 });

@@ -142,8 +142,11 @@ function value($field,$crud_selected,$htmlentities=false)
 
 <!-- criteria "OR" block -->
 <div id="criteria_or_block">
-    <div class="field criteria_OR" data-fieldID="">
-        <span class="criteria_add_and" data-fieldID=""><span class="icon"><i class="fas fa-plus"></i></span>Add Criteria</span>
+    <div class="criteria_OR" data-fieldID="">
+        <div class="level">
+            <span class="criteria_add_and level-left" data-fieldID=""><span class="icon"><i class="fas fa-plus"></i></span>Add "And" Criteria</span>
+            <span class="criteria_remove_or level-right tooltip is-tooltip-left" data-tooltip="Remove this 'OR' block" data-fieldID="">Remove<span class="icon"><i class="fas fa-trash"></i></span></span>
+        </div>
     </div>
 </div>
 
