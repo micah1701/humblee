@@ -20,6 +20,7 @@ define("session_key","humblee"); // example usage: echo $_SESSION[session_key]['
 // tables used in this application
 define("_table_pages","humblee_pages");
 define("_table_content","humblee_content");
+define("_table_content_p13n","humblee_content_p13n");
 define("_table_content_types","humblee_content_types");
 define("_table_templates","humblee_templates");
 define("_table_users","humblee_users");
