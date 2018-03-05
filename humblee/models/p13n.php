@@ -74,6 +74,11 @@ class Core_Model_P13n {
     {
         $criteria = (is_array($criteria)) ? $criteria : json_decode($criteria);
 
+        if(!is_array($criteria))
+        {
+            return false;
+        }
+
         foreach($criteria as $criterium_OR => $criterium_AND)
         {
             $pass_AND = 0;
