@@ -176,7 +176,7 @@ function value($field,$crud_selected,$htmlentities=false)
 
 
 <!-- criteria to select url i18n segment -->
-<div id="criteria_url_i18n_segment">
+<div id="criteria_i18n">
     <div class="column" data-fieldID="">
         <div class="select">
             <select class="select setOperator" data-fieldID="">
@@ -219,7 +219,7 @@ function value($field,$crud_selected,$htmlentities=false)
 </div>
 
 <!-- criteria to check user role -->
-<div id="criteria_user_role">
+<div id="criteria_required_role">
     <div class="column" data-fieldID="">
         <div class="select">
             <select class="select setOperator" data-fieldID="">

@@ -40,9 +40,30 @@ $(document).ready(function(){
 		.disableSelection();
 
 		//listen for changes in the criteria builder and update criteria json
-		$("#criteria_builder").on("change", "select,input", function(){
-			updateCriteria();
+		$("#criteria_builder")
+		.on("change", "select,input", function(){
+				if(!$(this).hasClass('setPersona'))
+				{
+					updateCriteria();
+				}
+		})
+		.on("change","select.setPersona", function(){
+			var setPersona = $(this),
+				orID = setPersona.closest('.criteria_OR').data('fieldid'),
+				andID = setPersona.data('fieldid'),
+				persona_type = setPersona.val();
+
+				//remove the old operator and value columns
+				$(".criteria_OR[data-fieldid="+orID+"] .setValue[data-fieldid="+andID+"]").closest('.column').remove();
+				$(".criteria_OR[data-fieldid="+orID+"] .setOperator[data-fieldid="+andID+"]").closest('.column').remove();
+
+				//add new operator and value columns
+				setPersona.closest('.column').after(getBlock('criteria_'+persona_type, andID));
+
+				updateCriteria();
+
 		});
+
 });
 
 //return the HTML of a given div by id.
@@ -82,23 +103,8 @@ function makeCriteriaBuilder(){
 			// draw the "select persona type" <select> dropdown
 			html+= getBlock('criteria_select_persona', and_blockID);
 
-			// determine which which criteria operator and value fields to show
-			switch(and_blocks.type) {
-
-				case 'i18n' :
-					criteria_id = 'criteria_url_i18n_segment';
-				break;
-
-				case 'session_key' :
-					criteria_id = 'criteria_session_key';
-				break;
-
-				case 'required_role' :
-					criteria_id = 'criteria_user_role';
-			}
-
 			// draw the "operator" and "value" fields for this "and" criteria
-			html+= getBlock(criteria_id,and_blockID);
+			html+= getBlock('criteria_'+and_blocks.type, and_blockID);
 
 			// close the wrapper around this "row"
 			html+= "\n</div>";
