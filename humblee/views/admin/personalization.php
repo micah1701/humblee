@@ -143,7 +143,7 @@ function value($field,$crud_selected,$htmlentities=false)
 <!-- criteria "OR" block -->
 <div id="criteria_or_block">
     <div class="field criteria_OR" data-fieldID="">
-        <span class="criteria_add_and icon" data-fieldID=""><span class="fas fa-plus"></span></span>Add Criteria
+        <span class="criteria_add_and" data-fieldID=""><span class="icon"><i class="fas fa-plus"></i></span>Add Criteria</span>
     </div>
 </div>
 

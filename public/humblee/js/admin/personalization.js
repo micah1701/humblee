@@ -62,6 +62,18 @@ $(document).ready(function(){
 
 				updateCriteria();
 
+		})
+		.on("click",".criteria_add_and", function(){
+			var or_block = $(this).closest('.criteria_OR'),
+				newCriteriaID = $('.columns', or_block).length,
+
+				html = getBlock('criteria_seperator',newCriteriaID);
+
+				html+= '<div class="columns" data-fieldID="'+newCriteriaID+'">\n';
+				html+= getBlock('criteria_select_persona',newCriteriaID);
+				html+= '</div>\n';
+
+			or_block.append(html);
 		});
 
 });
