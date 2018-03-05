@@ -5,6 +5,11 @@ $(document).ready(function(){
 	//generate the initial criteria builder
 	makeCriteriaBuilder();
 
+	$("#criteria").on("change",function(){
+		$("#criteria_builder").html('');
+		makeCriteriaBuilder();
+	})
+
 	//make list of perona's sortable
 	$('ul.sortable').sortable({
 			listType: 'ul',

@@ -219,7 +219,8 @@ function value($field,$crud_selected,$htmlentities=false)
             <select class="select setOperator" data-fieldID="">
                 <option value="true">IS TRUE</option>
                 <option value="false">IS FALSE</option>
-                <option value="isset">IS SET</option>
+                <option value="isset">Is Set (any value)</option>
+                <option value="notset">Not Set</option>
             </select>
         </div>
     </div>
