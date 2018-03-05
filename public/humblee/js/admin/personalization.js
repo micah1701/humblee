@@ -79,6 +79,9 @@ $(document).ready(function(){
 			var or_id = $(this).data('fieldid');
 			$(this).closest('.criteria_OR').remove();
 
+			var seperator_id = (or_id == 0) ? 1 : or_id; // if this is the first "or" block, remove the " --OR-- " seperator for the following block
+			$(".or_seperator[data-fieldid='"+seperator_id+"']").remove();
+
 			$("#criteria_builder .criteria_OR").each(function(){
 				var or_block = $(this);
 				var current_or_id = or_block.data('fieldid');
@@ -89,7 +92,6 @@ $(document).ready(function(){
 			});
 
 			updateCriteria();
-
 		});
 
 });
@@ -108,6 +110,11 @@ function makeCriteriaBuilder(){
 	$.each(criteria, function(or_index,or_blocks){
 
 		// draw the outer "or" block and add to DOM
+		if(or_index > 0)
+		{
+			$("#criteria_builder").append(getBlock('or_seperator',or_index));
+		}
+
 		$("#criteria_builder").append(getBlock('criteria_or_block',or_index));
 
 		// heres an object of the block that was just added

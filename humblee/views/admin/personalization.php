@@ -172,11 +172,15 @@ function value($field,$crud_selected,$htmlentities=false)
 </div>
 
 
-<!-- criteria sperator -->
+<!-- criteria seperator -->
 <div id="criteria_seperator">
     <div class="criteria_seperator has-text-centered" data-fieldID="">AND</div>
 </div>
 
+<!-- or block seperator -->
+<div id="or_seperator">
+    <div class="or_seperator has-text-centered" data-fieldID="">&mdash; OR &mdash;</div>
+</div>
 
 <!-- criteria to select url i18n segment -->
 <div id="criteria_i18n">
