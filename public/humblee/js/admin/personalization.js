@@ -3,7 +3,10 @@
 $(document).ready(function(){
 
 	//generate the initial criteria builder
-	makeCriteriaBuilder();
+	if($("#criteria").val() != "")
+	{
+		makeCriteriaBuilder();
+	}
 
 	$("#criteria").on("change",function(){
 		$("#criteria_builder").html('');
@@ -44,60 +47,81 @@ $(document).ready(function(){
 		})
 		.disableSelection();
 
-		//listen for changes in the criteria builder and update criteria json
-		$("#criteria_builder")
-		.on("change", "select,input", function(){
-				if(!$(this).hasClass('setPersona'))
-				{
-					updateCriteria();
-				}
-		})
-		.on("change","select.setPersona", function(){
-			var setPersona = $(this),
-				orID = setPersona.closest('.criteria_OR').data('fieldid'),
-				andID = setPersona.data('fieldid'),
-				persona_type = setPersona.val();
-
-				//remove the old operator and value columns
-				$(".criteria_OR[data-fieldid="+orID+"] .setValue[data-fieldid="+andID+"]").closest('.column').remove();
-				$(".criteria_OR[data-fieldid="+orID+"] .setOperator[data-fieldid="+andID+"]").closest('.column').remove();
-
-				//add new operator and value columns
-				setPersona.closest('.column').after(getBlock('criteria_'+persona_type, andID));
-
+	//listen for changes in the criteria builder and update criteria json
+	$("#criteria_builder")
+	.on("change", "select,input", function(){
+			if(!$(this).hasClass('setPersona'))
+			{
 				updateCriteria();
+			}
+	})
+	.on("change","select.setPersona", function(){
+		var setPersona = $(this),
+			orID = setPersona.closest('.criteria_OR').data('fieldid'),
+			andID = setPersona.data('fieldid'),
+			persona_type = setPersona.val();
 
-		})
-		.on("click",".criteria_add_and", function(){
-			var or_block = $(this).closest('.criteria_OR'),
-				newCriteriaID = $('.columns', or_block).length,
+			//remove the old operator and value columns
+			$(".criteria_OR[data-fieldid="+orID+"] .setValue[data-fieldid="+andID+"]").closest('.column').remove();
+			$(".criteria_OR[data-fieldid="+orID+"] .setOperator[data-fieldid="+andID+"]").closest('.column').remove();
 
-				html = getBlock('criteria_seperator',newCriteriaID);
-
-				html+= '<div class="columns" data-fieldID="'+newCriteriaID+'">\n';
-				html+= getBlock('criteria_select_persona',newCriteriaID);
-				html+= '</div>\n';
-
-			or_block.append(html);
-		})
-		.on("click", ".criteria_remove_or", function(){
-			var or_id = $(this).data('fieldid');
-			$(this).closest('.criteria_OR').remove();
-
-			var seperator_id = (or_id == 0) ? 1 : or_id; // if this is the first "or" block, remove the " --OR-- " seperator for the following block
-			$(".or_seperator[data-fieldid='"+seperator_id+"']").remove();
-
-			$("#criteria_builder .criteria_OR").each(function(){
-				var or_block = $(this);
-				var current_or_id = or_block.data('fieldid');
-				if(current_or_id > or_id)
-				{
-					or_block.attr('data-fieldid',current_or_id - 1);
-				}
-			});
+			//add new operator and value columns
+			setPersona.closest('.column').after(getBlock('criteria_'+persona_type, andID));
 
 			updateCriteria();
+
+	})
+	.on("click",".criteria_add_and", function(){
+		var or_block = $(this).closest('.criteria_OR'),
+			newCriteriaID = $('.columns', or_block).length,
+			html = "";
+
+			if(newCriteriaID > 0)
+			{
+				html = getBlock('criteria_seperator',newCriteriaID);
+			}
+
+			html+= '<div class="columns" data-fieldID="'+newCriteriaID+'">\n';
+			html+= getBlock('criteria_select_persona',newCriteriaID);
+			html+= '</div>\n';
+
+		or_block.append(html);
+	})
+	.on("click", ".criteria_remove_or", function(){
+		var or_id = $(this).data('fieldid');
+		$(this).closest('.criteria_OR').remove();
+
+		var seperator_id = (or_id == 0) ? 1 : or_id; // if this is the first "or" block, remove the " --OR-- " seperator for the following block
+		$(".or_seperator[data-fieldid='"+seperator_id+"']").remove();
+
+		$("#criteria_builder .criteria_OR").each(function(){
+			var or_block = $(this);
+			var current_or_id = or_block.data('fieldid');
+			if(current_or_id > or_id)
+			{
+				or_block.attr('data-fieldid',current_or_id - 1);
+			}
 		});
+
+		updateCriteria();
+	});
+
+	$("#add_or_criteria").on("click",function(event){
+		event.preventDefault();
+		var or_blocks = $("#criteria_builder .criteria_OR").length;
+		if(or_blocks <= 0)
+		{
+			var json = "[[]]";
+		}
+		else
+		{
+			var criteria = $("#criteria").val();
+			json = criteria.slice(0,-1);
+			json+= ",[]]";
+		}
+
+		$("#criteria").val(json).change();
+	});
 
 });
 
@@ -202,7 +226,7 @@ function updateCriteria()
     }
 
 	$("#reset_params").click(function(element){
-        element.preventDefault()
+        element.preventDefault();
         $("#criteria").val( $("#criteria_original").val() );
         $("#criteria_builder").html('');
         makeCriteriaBuilder();

@@ -80,6 +80,11 @@ function value($field,$crud_selected,$htmlentities=false)
 
             <div id="criteria_builder"></div>
 
+            <div class="button" id="add_or_criteria">
+                <span class="icon is-pulled-left"><span class="far fa-clone"></span></span>
+                <span class="is-pulled-right">Add New "Or" Criteria Block</span>
+            </div>
+
             <hr>
 
             <div class="field">
@@ -119,7 +124,7 @@ function value($field,$crud_selected,$htmlentities=false)
                 <li id="personaID_<?php echo $p13n->id ?>">
                     <div>
                         <a class="panel-block">
-                            <span class="panel-icon"><i class="fas fa-arrows-alt-v"></i></span>
+                            <span class="panel-icon"><i class="fas fa-sort"></i></span>
                             <?php echo $p13n->name ?>
                             <?php echo ($p13n->active == 0) ? '<span class="has-text-danger"> &nbsp;(inactive)</span>' : ''; ?>
                         </a>

@@ -14,7 +14,11 @@
   margin: 10px auto; }
 
 .criteria_add_and,
-.criteria_remove_or {
+.criteria_remove_or,
+#add_or_criteria {
   cursor: pointer; }
+
+#add_or_criteria {
+  margin-top: 10px; }
 
 /*# sourceMappingURL=personalization.css.map */
