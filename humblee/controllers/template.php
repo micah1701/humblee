@@ -15,10 +15,8 @@ class Core_Controller_Template {
 	function __construct()
 	{
 		//get information about what this link does
-		$uri = Core::getURI();
-
 		$pageObj = new Core_Model_Pages;
-		$this->page = $pageObj->getPagefromURL($uri);
+		$this->page = $pageObj->getPagefromURL(Core::getURIparts());
 
 		if(!$this->page){  // if page doesn't exist, set some dummy values
 			$this->page = new stdClass();
@@ -43,26 +41,8 @@ class Core_Controller_Template {
 		}
 
 		//get any LIVE content entries related to this page
-		$getContent = ORM::for_table( _table_content )
-						  ->select(_table_content.'.*')
-						  ->select(_table_content.'.id', 'content_id')
-						  ->select(_table_content_types.'.*')
-						  ->select(_table_content_types.'.id', 'block_id')
-						  ->join( _table_content_types, array( _table_content.".type_id","=", _table_content_types.".id") )
-						  ->where('page_id',$this->page->id)
-						  ->where('live',1)
-						  ->find_many();
-		//create associative array of content objects.  key is the content_type "name"
-		foreach($getContent as $content)
-		{
-			$contents[$content->objectkey] = $content;
-
-			if($content->input_type == "markdown")
-			{
-				$Parsedown = new Parsedown();
-				$contents[$content->objectkey]['content'] = $Parsedown->instance()->text($contents[$content->objectkey]['content']);
-			}
-		}
+		$contentObj = new Core_Model_Content;
+		$contents = $contentObj->findContent($this->page->id);
 
 		//check for "preview mode" content override
 		if(	isset($_GET['preview'])
@@ -97,6 +77,21 @@ class Core_Controller_Template {
 		else
 		{
 			$this->content = $contents;
+		}
+
+		//don't cache personalized content
+		$personalizedContent = false;
+		foreach($this->content as $contentBlock)
+		{
+			if($contentBlock->p13n_id != "" && $contentBlock->p13n_id != 0)
+			{
+				$personalizedContent = true;
+				break;
+			}
+		}
+		if($personalizedContent)
+		{
+			header("Cache-Control: private");
 		}
 
         //get data about the template being used

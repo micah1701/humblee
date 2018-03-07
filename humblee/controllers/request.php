@@ -419,6 +419,25 @@ class Core_Controller_Request extends Core_Controller_Xhr {
 		$this->json(array("success"=>true));
     }
 
+    public function p13n_order_priorities()
+    {
+    	$this->require_role('designer');
+    	if(!isset($_POST['list_order']) || !is_array($_POST['list_order'])) { $this->json(array("success"=>false,"error"=>"malformed request")); }
+    	foreach ($_POST['list_order'] as $priority => $persona_domID){
+    		$domID_parts = explode('_',$persona_domID);
+    		$persona_id = end($domID_parts);
+    		$p13n = ORM::for_table(_table_content_p13n)->find_one($persona_id);
+
+    		//this shouldn't happen, unless maybe a persona was deleted from the database after the user loaded the page but before they sent this request
+    		if(!$p13n){ $this->json(array("success"=>false,"error"=>"critical error: one or more persona's were not updated"));	}
+
+    		$p13n->priority = $priority;
+    		$p13n->save();
+    	}
+
+    	$this->json(array("success"=>true));
+    }
+
     /**
      * Content Management
      */
@@ -433,7 +452,7 @@ class Core_Controller_Request extends Core_Controller_Xhr {
     		$this->json(array("error"=>"Missing required parameters"));
     	}
     	$contentObj = new Core_Model_Content;
-    	$content = $contentObj->listRevisions($_POST['page_id'],$_POST['content_type'],1);
+    	$content = $contentObj->listRevisions($_POST['page_id'],$_POST['content_type'],$_POST['p13n_id'],1);
 
 		if(!$content)
 		{

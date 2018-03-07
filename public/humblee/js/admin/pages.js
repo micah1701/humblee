@@ -12,13 +12,13 @@ function loadPages()
 		$("#pages ul:first").addClass('sortable');
 		$("#pages ul").addClass('menu-list').not(':first').addClass('is-closed');
 		$("#pages ul li a").not(':first').addClass('has-closed');
-		
+
 		$("a.menu_hasChildren").on('click', function(){
 			var firstUL = $(this).parent().next('ul');
 			if(firstUL.hasClass('is-closed'))
 			{
 				$(this).removeClass('has-closed');
-				firstUL.removeClass('is-closed');	
+				firstUL.removeClass('is-closed');
 			}
 			else
 			{
@@ -26,9 +26,9 @@ function loadPages()
 				firstUL.addClass('is-closed');
 			}
 		});
-		
+
 		initiateToolBar();
-		
+
 		$('ul.sortable').nestedSortable({
 			listType: 'ul',
 			handle: '.order',
@@ -44,7 +44,7 @@ function loadPages()
 			update: function(){
 				if(confirm("Are you sure you want to reorder this page in the sitemap?"))
 				{
-					var order = $('#pages ul.sortable').nestedSortable('serialize'); 
+					var order = $('#pages ul.sortable').nestedSortable('serialize');
 					$.post(XHR_PATH +'order_pages',{ list_order:order }, function(response){
 						if(!response.success)
 						{
@@ -60,17 +60,14 @@ function loadPages()
 			}
 		})
 		.disableSelection();
-		
-		var serialized = $('ul.sortable').nestedSortable('serialize');
-		console.log(serialized);
-		
+
 	});
 }
 
 function openPagePropertiesModal(page_id)
 {
     $("#page_id").val(page_id);
-    
+
     $.post(XHR_PATH + 'getPageProperties', {page_id:page_id}, function(response){
         if(response.success)
         {
@@ -81,15 +78,15 @@ function openPagePropertiesModal(page_id)
             $("#active").attr('checked',response.active);
             $("#display_in_sitemap").attr('checked',response.display_in_sitemap);
             $("#required_role").val(response.required_role);
-            
+
             $("#saveButton").on('click',function(e){
             	e.preventDefault();
             	savePageProperties();
 			});
-            
+
             //open the modal
             $("#editPageDialog").addClass('is-active');
-    
+
             //register ESC key and other ways to close the modal
             setEscEvent('pageProperties',function () { closePagePropertiesModal() });
             $("#editPageDialog .delete, #editPageDialog button.cancel").on("click",function(){
@@ -120,20 +117,20 @@ function initiateToolBar()
 {
 	$(".pages_menu_item")
 	.off( "mouseenter mouseleave" ) // remove any previous hover states bound to the pages menu
-	.hover(function(){		
+	.hover(function(){
 		var item_id = $(this).attr('data');
 		var page_name = $("a",this).html();
-		
+
 		$("a", this).append( $("#page_toolbar") );
 			//bind "Edit Project" pop-up box
 			$(".page_toolbar_button.edit").on('click', function(e){ e.stopPropagation(); openPagePropertiesModal(item_id) });
-						
+
 			//bind "Add Supbage" function
 			$(".page_toolbar_button.newpage").on('click', function(e){ e.stopPropagation(); addPage(item_id) });
-			
+
 			//bind "Remove Project" delete action
 			$(".page_toolbar_button.trash").on('click', function(e){ e.stopPropagation(); deletePage(item_id,page_name); });
-				
+
 		$("#page_toolbar").fadeIn(0);
 	}, function(){
 		$(".page_toolbar_button.edit, .page_toolbar_button.order, .page_toolbar_button.newpage, .page_toolbar_button.trash").off('click');
@@ -152,14 +149,14 @@ function scrubURL(val){
 				.replace(/\son\b/gi,  '-') // strip "on"
 				.replace(/\s+/gi, '-') // collapse whitespace and replace by -
 				.replace(/-+/gi, '-')  // collapse dashes if more then one in a row
-				.substring(1).slice(0,-1) // strip dashes at start and finish from initial padding	
+				.substring(1).slice(0,-1) // strip dashes at start and finish from initial padding
 				.toLowerCase();
 }
 
 function updateSlug(page_name){
     var scrubed = scrubURL(page_name);
-	$('#slug').val(scrubed);	
-	
+	$('#slug').val(scrubed);
+
 	if(scrubed != $('#original_slug').val() && $('#original_slug').val() != "")
 	{
 		$("#reset_slug_link")
@@ -176,7 +173,7 @@ function updateSlug(page_name){
 		$("#reset_slug_link")
 		 .off("click")
 		 .fadeOut('fast');
-	}	
+	}
 }
 
 function savePageProperties()
@@ -189,15 +186,15 @@ function savePageProperties()
                     template_id : $("#template_id").val(),
                     active: ( $("#active").is(':checked')) ? 1 : 0,
                     display_in_sitemap: ( $("#display_in_sitemap").is(':checked')) ? 1 : 0,
-                    required_role: $("#required_role").val() 
+                    required_role: $("#required_role").val()
     };
     $.post(XHR_PATH + 'setPageProperties', postData, function(response){
-       
+
         if(response.success)
         {
             var page_id = $("#page_id").val();
             $(".pages_menu_item[data='"+ page_id +"'] a").html($("#label").val()).attr('title',$("#slug").val() );
-            
+
             //then close the modal
             closePagePropertiesModal();
         }
@@ -209,7 +206,7 @@ function savePageProperties()
         {
             alert(response);
         }
-       
+
     });
 }
 
@@ -229,7 +226,7 @@ function addPage(parent_id)
 			var newPageItem = '<li id="pageID_'+response.page_id+'"><div class="pages_menu_item" data="'+ response.page_id +'"><a>New Page</a></div></li>';
 			if(parent_id == 0)
 			{
-				$("#pages ul li").first().after(newPageItem);	
+				$("#pages ul li").first().after(newPageItem);
 			}
 			else
 			{
@@ -241,9 +238,9 @@ function addPage(parent_id)
 				else
 				{
 					parentPageItem.addClass('menu_hasChildren').after('<ul class="menu-list">'+newPageItem+'</ul>');
-				}	
+				}
 			}
-			
+
 			initiateToolBar();
 		}
 		else if(response.error)
@@ -262,7 +259,7 @@ function deletePage(page_id,page_name)
 	$("#confirm_delete_pagename").html('&ldquo;<em>'+page_name+'</em>&rdquo;');
 
     saveToolbar();
-    
+
     //open the modal
     $("#deletePageConfirmation").addClass('is-active');
 
@@ -272,10 +269,10 @@ function deletePage(page_id,page_name)
         closeDeletePageConfirmation();
         unsetEscEvent('deletePageConfirmation');
     });
-    
+
     $("#deleteButton").on('click',function(){
     	$(this).attr('disabled',true);
-    	
+
     	$.post(XHR_PATH +'delete_page',{page_id:page_id},function(response){
     		$("#deleteButton").attr('disabled',false);
 			if(response.success)
