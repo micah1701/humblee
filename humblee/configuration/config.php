@@ -4,7 +4,7 @@ define('include_only','scripts checking for this definition should die() if not 
 /**
  * Set which configuration file to use
  *
- * this could be done progromatically like:
+ * this could be also done progromatically, like:
  * $environment = ($_SERVER['HTTP_HOST'] == "my-domain.com") ? 'env_production.php' : 'env_dev.php';
  *
  */
