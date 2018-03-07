@@ -48,7 +48,7 @@ class Draw {
         {
             if(Core::auth(array('admin','content','publish','developer')))
             {
-                echo '<div class="cms_block" data-block-key="'.$objectKey.'" data-block-id="'. $contentArray[$objectKey]->block_id .'" data-content-id="'. $contentArray[$objectKey]->content_id .'" data-block-name="'.$contentArray[$objectKey]->name .'" data-block-description="'. $contentArray[$objectKey]->description .'" data-cmstype="'. $contentArray[$objectKey]->input_type .'">';
+                echo '<div class="cms_block" data-block-key="'.$objectKey.'" data-block-id="'. $contentArray[$objectKey]->block_id .'" data-content-id="'. $contentArray[$objectKey]->content_id .'" data-p13-id="'. $contentArray[$objectKey]->p13n_id .'" data-block-name="'.$contentArray[$objectKey]->name .'" data-block-description="'. $contentArray[$objectKey]->description .'" data-cmstype="'. $contentArray[$objectKey]->input_type .'">';
                 echo $content;
                 echo '</div><!-- end cms block '.$objectKey .' -->';
             }

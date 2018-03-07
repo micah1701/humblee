@@ -70,6 +70,14 @@
                         <div class="navbar-dropdown">
                             <a class="navbar-item" href="<?php echo  _app_path ?>admin/blocks">Manage Content Blocks</a>
                             <a class="navbar-item" href="<?php echo  _app_path ?>admin/templates">Manage Templates</a>
+                        <?php
+                            if($_ENV['config']['use_p13n'])
+                            {
+                        ?>
+                            <a class="navbar-item" href="<?php echo  _app_path ?>admin/personalization">Personalization Personas</a>
+                        <?php
+                            }
+                        ?>
                         </div>
                     </div>
                     <?php

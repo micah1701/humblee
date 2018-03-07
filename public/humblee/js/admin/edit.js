@@ -1,25 +1,31 @@
 /* global $, dateFormat, confirmation, setEscEvent, unsetEscEvent, XHR_PATH, APP_PATH */
 $(document).ready(function(){
 
+    var frameStatus = ($("#is_in_iframe").val() == "true") ? "&iframe" : "";
+
     $("#select_content_type").change(function(){
-        window.location = APP_PATH+'admin/edit/?page_id='+$("#page_id").val()+'&content_type='+$(this).find("option:selected").val(); 
-    });    
-    
+        window.location = APP_PATH+'admin/edit/?page_id='+$("#page_id").val()+'&content_type='+$(this).find("option:selected").val()+'&p13n_id='+$("#p13n_id").val() +frameStatus;
+    });
+
+    $("#select_p13n_version").change(function(){
+        window.location = APP_PATH+'admin/edit/?page_id='+$("#page_id").val()+'&content_type='+ $("#content_type_id").val() +'&p13n_id='+$(this).find("option:selected").val() +frameStatus;
+    });
+
     $("#save").on("click",function(){
-        validateForm(false); 
+        validateForm(false);
     });
     $("#publish").on("click",function(){
-        validateForm(true); 
+        validateForm(true);
     });
-    
+
 });
 
 function mediamanager()
 {
     var iframe = '<iframe src="'+APP_PATH+'admin/media?iframe=true" border="0">';
-    $("#mediamanager").addClass('is-active');    
+    $("#mediamanager").addClass('is-active');
     $("#mediamanager .modal-card-body").html(iframe);
-    
+
     setEscEvent('mediaManager',function () { closeMediamanager() });
     $("#mediamanager button.delete").on("click",function(){
         closeMediamanager();
@@ -28,14 +34,14 @@ function mediamanager()
 }
 function closeMediamanager()
 {
-    $("#mediamanager").removeClass('is-active');  
+    $("#mediamanager").removeClass('is-active');
 }
 
 function validateForm(publish)
 {
     //check if a new version of this content has been saved since user began working
-    $.post(XHR_PATH+'latestRevisionDate',{page_id: $("#page_id").val(), content_type: $("#content_type_id").val() }, function(response){
-		
+    $.post(XHR_PATH+'latestRevisionDate',{page_id: $("#page_id").val(), content_type: $("#content_type_id").val(), p13n_id: $("#p13n_id").val() }, function(response){
+
         if(response.error)
         {
 			alert(response.error);
@@ -50,7 +56,7 @@ function validateForm(publish)
 		{
             var pageLoadDate = new Date($("#edit_time").val() ),
             latestRevisionDate = new Date( response.content.revision_date);
-		    
+
             if( latestRevisionDate > pageLoadDate)
             {
                 var msg = (response.content.live == 1) ? "revision was published live to the site " : "draft was saved ";
@@ -58,7 +64,7 @@ function validateForm(publish)
                 var confirmMessage = "While you were editing this content, a more recent "+msg
                                     +"by <strong>"+ response.content.name +'</strong> ('+ dateFormat('M j, Y g:ia',response.content.revision_date) +")<br><br>"
                                     +"Do you still want to "+msg2+" your changes?";
-                confirmation(confirmMessage,function(){ submitForm(publish) }, function() { return false; });                    
+                confirmation(confirmMessage,function(){ submitForm(publish) }, function() { return false; });
             }
             else
             {
@@ -79,14 +85,14 @@ function submitForm(publish)
     {
         $("#live").val(1);
     }
-    
+
     // content multipart fields into a json array for stoarage
-    if( $("#content_type").val() == "multifield" || $("#content_type").val() == "customform") 
- 	{  
+    if( $("#content_type").val() == "multifield" || $("#content_type").val() == "customform")
+ 	{
 		var encoded_content = '{';
 		$("#savecontent input:not(:hidden), #savecontent select").each( function(){
 			if( $(this).attr('name') != "undefined" && $(this).attr('name') != "")
-				
+
 			{
 				var value = $(this).val(), type = $(this).attr('type');
 				if(type == "radio" || type == "checkbox")
@@ -99,7 +105,7 @@ function submitForm(publish)
 		encoded_content = encoded_content.substr(0, encoded_content.length - 1) + '}';  // remove trailing "," from string then add ending bracket
 		$("#content").val(encoded_content);
 	}
-	
+
 	$(window).unbind("beforeunload");
 	document.forms["savecontent"].submit();
 }
