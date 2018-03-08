@@ -1,41 +1,35 @@
 <?php
 
 class Core_Model_Users {
-	
+
 	/**
 	* Converted a string of text into a standard salted hash
 	*
 	* $string	STRING	value to be hased
 	* $salt	MIXED	string or INT, for unique salt use the user's ID
-	* 
+	*
 	* attempts to use libsodium via the paragonie/sodium_compact polyfil library
 	* if not installed, use a simple md5();
 	*/
 	public function stringToSaltedHash($string,$salt)
 	{
 		$salted_string = $string.'-'.$salt;
-		if(class_exists('ParagonIE_Sodium_Compat'))
-		{
-			return \Sodium\crypto_generichash($salted_string);
-		}
-		else
-		{
-			return md5($salted_string);	    	
-		}
+		$crypto = new Core_Model_Crypto;
+		return $crypto->genericHash($salted_string);
 	}
-	 
+
 	/**
 	* Log in as given user
-	*	
+	*
 	*/
 	public function logInSession($user_id){
 		$_SESSION[session_key] = array();
-		$_SESSION[session_key]['user_id'] = $user_id; 
+		$_SESSION[session_key]['user_id'] = $user_id;
 	}
-	 
+
 	/**
-	 * Update the access log 
-	 * 
+	 * Update the access log
+	 *
 	 */
 	public function accesslog($status='')
 	{
@@ -60,31 +54,31 @@ class Core_Model_Users {
 			$log->save(); // yes, this is a second DB call on the same row, but this way we know the first one saved and if the API fails, its no biggie
 		}
 	 }
-	 
+
 	/**
 	 * Check credentials and log in
 	 *
 	 */
 	public function logIn($username,$password,$sms_login=false)
-	{	
+	{
 		//check if given "username" is an e-mail address or a username
 		$username_column = (filter_var($username, FILTER_VALIDATE_EMAIL)) ? 'email' : 'username';
-		
+
 		//check for username first
 		$user = ORM::for_table( _table_users)
 			->where($username_column,$username)
 			->where('active',1)
 			->find_one();
-		
-		if(!$user) { 
+
+		if(!$user) {
 			$this->accesslog('Failed: invalid credentials');
 			return array("access_granted"=> false, "error"=>"Invalid Username");
 		}
-		
+
 		//check credentials
 		if($sms_login)
 		{
-			if(	!isset($_SESSION[session_key]['login_token']) || 
+			if(	!isset($_SESSION[session_key]['login_token']) ||
 				(isset($_SESSION[session_key]['login_token']) && strtoupper($password) !== $_SESSION[session_key]['login_token'])
 			){
 				$this->accesslog('Failed: invalid SMS token');
@@ -101,29 +95,29 @@ class Core_Model_Users {
 			if($this->stringToSaltedHash($password,$user->id) != ($user->password))
 			{
 				$this->accesslog('Failed: Invalid Password');
-				return array("access_granted"=> false, "error"=>"Invalid Password");	
+				return array("access_granted"=> false, "error"=>"Invalid Password");
 			}
-			
+
 			if($_ENV['config']['TWILIO_Enabled'] && $user->use_twofactor_auth == 1)
 			{
 				$this->accesslog('Valid password. SMS requested');
 				return array("access_granted"=> false, "error"=>"use_twofactor_auth", "cellphone"=>$user->cellphone, "name"=>$user->name, "email"=>$user->email);
 			}
 		}
-		
+
 		//set session values to recognize user as being logged in
-		$this->logInSession($user->id);	
-		
+		$this->logInSession($user->id);
+
 		//update user's record to record this login
 		$user->logins = $user->logins +1;
-		$user->last_login = date("Y-m-d H:i:s");		
+		$user->last_login = date("Y-m-d H:i:s");
 		$user->save();
-		
+
 		$log_msg = ($sms_login) ? "Accepted SMS" : "Accepted Password";
 		$this->accesslog($log_msg);
-		return array("access_granted"=> true);	
+		return array("access_granted"=> true);
 	}
-	
+
 	/**
 	* Log current user out
 	*/
@@ -132,7 +126,7 @@ class Core_Model_Users {
 		session_destroy();
 		return true;
 	}
-    
+
 	/**
 	* Get user's profile
 	*
@@ -141,7 +135,7 @@ class Core_Model_Users {
 	public function profile($user_id=NULL)
 	{
 		$user_id = (is_numeric($user_id)) ? $user_id : $_SESSION[session_key]['user_id'];
-		return ORM::for_table( _table_users)->find_one($user_id); 
+		return ORM::for_table( _table_users)->find_one($user_id);
 	}
 
 	/**
@@ -156,9 +150,9 @@ class Core_Model_Users {
 			->where('user_id',$user_id)
 			->order_by_desc('timestamp')
 			->limit($limit)
-			->find_many(); 
+			->find_many();
 	}
-	 
+
 	/**
 	 * Generate a random PLAIN TEXT password string
 	 *
@@ -171,8 +165,8 @@ class Core_Model_Users {
 			$pw.= $chars[$random];
 		}
 		return $pw;
-	}	 
-	
+	}
+
 	/**
 	 * Create a new user
 	 *
@@ -184,14 +178,14 @@ class Core_Model_Users {
 		$user->email = $email;
 		$user->password = 'random-temp-password-'.time();
 		$user->save();
-		
+
 		$user->password = $this->stringToSaltedHash($password,$user->id);
 		$user->active = 1;
 		$user->save();
-		
+
 		return $user->id;
 	}
-	
+
 	/**
 	 * remove all roles for a given user
 	 */
@@ -211,7 +205,7 @@ class Core_Model_Users {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * add a role for a given user
 	 */
@@ -222,24 +216,24 @@ class Core_Model_Users {
 		$role->save();
 		return true;
 	}
-	 
+
     /**
      * Delete a user
      *
-     * $complete_removal	BOOL	(optional) 
+     * $complete_removal	BOOL	(optional)
      *						True 	physcially deletes the row.
      *						False 	updates record to remove access
      *
      */
     public function deleteUser($user_id,$complete_removal=false){
-		if(!is_numeric($user_id)){ return false; } 
+		if(!is_numeric($user_id)){ return false; }
 		$user = ORM::for_table(_table_users)->find_one($user_id);
 		if(!$user){ return false; }
-		
-		
+
+
 		//delete this user's associated  roles
 		$this->stripRoles($user_id);
-	
+
 		//delete user
 		if($complete_removal){
 			return $user->delete();
@@ -253,7 +247,7 @@ class Core_Model_Users {
 		$user->save();
 		return true;
     }
-	
+
 	/**
 	* Reset a user's password and notify them by e-mail
 	*
@@ -265,7 +259,7 @@ class Core_Model_Users {
 		if(!$user){ return false; }
 		$user->password = $this->stringToSaltedHash($new_password,$user_id);
 		$user->save();
-		
+
 		if($sendEmail)
 		{
 			$from = $_ENV['config']['default_email'];
@@ -274,18 +268,18 @@ class Core_Model_Users {
 			$body.= "This message is to notify that the password associated with your account has been reset.\n\n";
 			$body.= "If you did not initiate this change, you can recover your account at <a href=\"http://". $_ENV['config']['domain'] . _app_path ."user/forgotPassword .\">". $_ENV['config']['domain'] . _app_path ."user/forgotPassword</a> \n\n";
 			$body.=" Thanks!";
-			
+
 			$tools = new Core_Model_Tools;
 			$message = $tools->emailTemplate($subject,nl2br($body), _app_server_path . 'humblee/views/email/notification.php');
-			return $tools->sendEmail($user->email,$from,$subject,$message);			
+			return $tools->sendEmail($user->email,$from,$subject,$message);
 		}
 		else
 		{
 			return true;
 		}
-		
+
 	}
-	
+
 	/**
 	* Send a registration confirmation e-mail to user
 	*
@@ -299,15 +293,15 @@ class Core_Model_Users {
 		$body.= "Username: {$email} \n\n";
 		$body.=" To change your password, sign in to ". $_ENV['config']['domain'] ." and update your user profile.\n\n";
 		$body.=" Thanks!";
-		
+
 		$tools = new Core_Model_Tools;
 		$message = $tools->emailTemplate($subject,nl2br($body), _app_server_path . 'humblee/views/email/notification.php');
-		return $tools->sendEmail($email,$from,$subject,$message);		
+		return $tools->sendEmail($email,$from,$subject,$message);
 	}
-	
+
 	/**
 	 * Send an account verification e-mail for reseting forgotten password
-	 * 
+	 *
 	 */
 	public function forgotPasswordVerifyEmail($email,$name,$token)
 	{
@@ -318,9 +312,9 @@ class Core_Model_Users {
 		$body.= "The one-time temporary access code to complete this request is:<strong> {$token} </strong>\n\n";
 		$body.=" If you did not request this, you can ignore and delete this message.\n\n";
 		$body.=" Thanks!";
-		
+
 		$tools = new Core_Model_Tools;
 		$message = $tools->emailTemplate($subject,nl2br($body), _app_server_path . 'humblee/views/email/notification.php');
-		return $tools->sendEmail($email,$from,$subject,$message);		
+		return $tools->sendEmail($email,$from,$subject,$message);
 	}
 }
