@@ -22,6 +22,25 @@ class Core_Model_Crypto {
         }
     }
 
+	/**
+	 * Generate a Generic Hash
+	 */
+	public function genericHash($string)
+	{
+		if($this->sodium_library == "native")
+		{
+		    return sodium_crypto_generichash($string);
+		}
+		elseif($this->sodium_library != false)
+		{
+	        return \Sodium\crypto_generichash($string);
+		}
+		else
+		{
+			return md5($string);
+		}
+	}
+
     /**
 	 * Return a token unique to the current session
 	 * Can be included as hidden form field and checked upon POST to make sure request is coming from known user
@@ -66,18 +85,7 @@ class Core_Model_Crypto {
     private function generateCsrfToken()
     {
 		$token = uniqid(rand(), true). time() . session_id();
-		if($this->sodium_library == "native")
-		{
-		    return sodium_crypto_generichash($token);
-		}
-		elseif($this->sodium_library != false)
-		{
-	        return \Sodium\crypto_generichash($token);
-		}
-		else
-		{
-		    return md5($token);
-		}
+		return $this->genericHash($token);
     }
 
     private function getCryptoKey()
