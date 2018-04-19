@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
  * Functions used throughout the site
@@ -9,7 +9,7 @@ class Core_Model_Tools {
     /**
 	 * CRUD tool for standard Create, Replace, Update & Delete functionality
      * load given view populated with data.
-     * 
+     *
      * $params  Array   Required parameters:
      *      table       STRING REQUIRED name of table
      *      view        STRING REQUIRED path of view template
@@ -20,14 +20,14 @@ class Core_Model_Tools {
      *      post_ignore ARRAY optional  posted form fields that should not be processed
      *      delete_value STRING if $_POST['delete'] has given value, delete entry.  (USE WITH CAUTION)
      *      crud_all_order_by STRING    optional name of column to order list of all values by
-	 *  
-     * $thisObj Object REQUIRED $this from calling controller   
-     *      
+	 *
+     * $thisObj Object REQUIRED $this from calling controller
+     *
 	 */
 	public function CRUD($params,$thisObj )
 	{
 		$id = ( array_key_exists('id',$params) && is_numeric($params['id']) ) ? $params['id']: false;
-		
+
         if($id === false)
         {
             $crud_selected = ORM::for_table($params['table'])->create();
@@ -36,18 +36,18 @@ class Core_Model_Tools {
         {
             $crud_selected = ORM::for_table($params['table'])->find_one($id);
         }
-        
-        if( is_numeric($id) && 
-            array_key_exists('delete_value',$params) && 
-            isset($params['post']['delete']) && 
+
+        if( is_numeric($id) &&
+            array_key_exists('delete_value',$params) &&
+            isset($params['post']['delete']) &&
             $params['post']['delete'] != "" &&
             $params['delete_value'] == $params['post']['delete'])
         {
                 $crud_selected->delete();
                 $fwd_uri = (array_key_exists('fwd_after_delete',$params) ) ? $params['fwd_after_delete'] : '/';
                 Core::forward($fwd_uri);
-        } 
-        
+        }
+
 		if(is_array($params['post']))
 		{
             $errors = array();
@@ -58,7 +58,7 @@ class Core_Model_Tools {
                 {
                     $post[$key] = htmlspecialchars($val);
                 }
-                
+
                 if(array_key_exists('validate',$params) && is_array($params['validate'][$key]))
                 {
                     $check=(eval($params['validate'][$key]['if'])) ? true : false;
@@ -66,42 +66,42 @@ class Core_Model_Tools {
                     {
                         $errors[] = $params['validate'][$key]['error_message'];
                     }
-                }	
+                }
 			}
-	
-			if(count($errors == 0))
+
+			if(count($errors) == 0)
 			{
 				foreach($post as $key => $val)
-				{		
+				{
 					if(array_key_exists('post_ignore',$params) && in_array($key,$params['post_ignore']) )
 					{
-						continue; 
+						continue;
 					}
-		
+
 					$crud_selected->$key = $val;
 				}
 				$crud_selected->save();
-				
+
 				//if we new the id to begin with it's already in the URL. If not, add it to the URL we're forwarding to
 				$fwdID = ($id === false) ? "/". $crud_selected->id : "";
-				
-                Core::forward(rtrim(Core::getURI(),"/") . $fwdID);			
+
+                Core::forward(rtrim(Core::getURI(),"/") . $fwdID);
 			}
             else
             {
-				$thisObj->errors = $errors; 
+				$thisObj->errors = $errors;
 				$crud_selected = (object)$post;  // pass the post data back to the view so the user can see their mistakes :)
-				$crud_selected->id = $id;		 // re-assign the ID though			
-            }		
+				$crud_selected->id = $id;		 // re-assign the ID though
+            }
 		}// end check for post
-		
+
 		// these are set so the view can show a list of ALL rows in the table
-        $crud_all_order_by = ( array_key_exists('crud_all_order_by',$params) ) ? $params['crud_all_order_by'] : 'id';	
+        $crud_all_order_by = ( array_key_exists('crud_all_order_by',$params) ) ? $params['crud_all_order_by'] : 'id';
 		$thisObj->crud_all = ORM::for_table($params['table'])->order_by_desc($crud_all_order_by)->find_many();
 		$thisObj->crud_selected = (isset($crud_selected->id)) ? $crud_selected : false;
-        
+
 		// spit out the view
-        $thisObj->template_view = Core::view( $params['view'],get_object_vars($thisObj) ); 
+        $thisObj->template_view = Core::view( $params['view'],get_object_vars($thisObj) );
         echo Core::view( _app_server_path .'humblee/views/admin/templates/template.php',get_object_vars($thisObj) );
 	}
 
@@ -126,7 +126,7 @@ class Core_Model_Tools {
 	 * $from	string
 	 * $subject	string
 	 * $message	string	OPTIONAL	text message to display before form fields
-	 * $fields	array	OPTIONAL	friendly/custom labels for each post field "field label" => post_key. 
+	 * $fields	array	OPTIONAL	friendly/custom labels for each post field "field label" => post_key.
 	 *								(leaving this blank but sending $_POST data will email ALL posted fields
 	 * $post	array	original $_POST data
 	 *
@@ -143,10 +143,10 @@ class Core_Model_Tools {
 
 			return false;
 		}
-		
+
 		$mail_newline = "\n";
 		$html_linebreak = "<br />\n";
-						
+
 		if($post){
 			$message .= $html_linebreak;
 			$message .= "<br />------------------------------------------------------------ ".$html_linebreak;
@@ -160,7 +160,7 @@ class Core_Model_Tools {
 				}
 			}
 		}
-		
+
 		if($_ENV['config']['MAILGUN_Enabled'])
 		{
 			$mail_array = array('from' => $from,
@@ -180,7 +180,7 @@ class Core_Model_Tools {
 			{
 				$mail_array['to'] = $to;
 			}
-			
+
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 			curl_setopt($ch, CURLOPT_USERPWD, 'api:'.$_ENV['config']['MAILGUN_API_Key']);
@@ -188,15 +188,15 @@ class Core_Model_Tools {
 			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
 			curl_setopt($ch, CURLOPT_URL, rtrim($_ENV['config']['MAILGUN_Base_Url'],"/").'/messages');
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $mail_array);
-			
+
 			$result = json_decode(curl_exec($ch));
-			
+
 			if(curl_getinfo($ch, CURLINFO_HTTP_CODE) != "200")
 			{
 				curl_close($ch);
 				return false;
 			}
-			
+
 			curl_close($ch);
 			return (array_key_exists('id',$result)) ? true : false;
 		}
@@ -209,13 +209,13 @@ class Core_Model_Tools {
 				$to = $to['to'];
 			}
 			$headers  = 'MIME-Version: 1.0' . $mail_newline;
-			$headers .= 'Content-type: text/html; charset=iso-8859-1' . $mail_newline;		
+			$headers .= 'Content-type: text/html; charset=iso-8859-1' . $mail_newline;
 			$headers .= 'From:'.$from.'' . $mail_newline;
 			$headers .= $otherHeaders;
 			return mail($to, $subject, $message, $headers);
 		}
-	}	
-	
+	}
+
 	public function time_ago($pastTime)
 	{
 		$datetime1 = new DateTime("now");
@@ -243,32 +243,32 @@ class Core_Model_Tools {
 		else if($diff->s >= 0){
 			$timemsg = 'Just now';
 		}
-	    
+
 		return $timemsg;
 	}
-	
+
 	/**
 	 * Send SMS Text Message with Twilio
-	 * 
+	 *
 	 */
 	public function sendSMS($to,$message,$from=false)
 	{
 		if(!$_ENV['config']['TWILIO_Enabled'])
-		{ 
+		{
             return false;
 		}
-		
+
 		if(!$from)
 		{
             $from = $_ENV['config']['TWILIO_SMS_Number'];
 		}
-		
+
 		$to = $this->cleanNumber($to);
 		$from = $this->cleanNumber($from);
 		if(!$to || !$from) { return false; }
-		
+
 		$client = new Twilio\Rest\Client($_ENV['config']['TWILIO_AccountSid'],$_ENV['config']['TWILIO_AuthToken']);
-		
+
 		$sms = $client->messages->create("+1".$to, array('from'=>"+1".$from, 'body'=>$message));
 
 		if ($sms->status == "queued")
@@ -280,13 +280,13 @@ class Core_Model_Tools {
 			return array("success"=>false);
 		}
 	}
-	
+
 	//parse a 10-digit phone number and return without any spaces, dashes or other characters
 	public function cleanNumber($number)
 	{
 		$cleanNumber = substr(preg_replace("/[^0-9]/","",$number),-10);
-		if(strlen($cleanNumber) != 10){ 
-			return false; 
+		if(strlen($cleanNumber) != 10){
+			return false;
 		}
 		else
 		{
