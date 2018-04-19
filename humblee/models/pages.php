@@ -50,7 +50,7 @@ class Core_Model_Pages {
 			}
 			$subpages = ORM::for_table( _table_pages)->where('parent_id',$post['page_id'])->find_many();
 			if($subpages){
-				return ("Can not delete this page becomes it has ".count($subpages)." subpage(s).  Please move or delete child pages first.");
+				return ("Can not delete this page because it has ".count($subpages)." subpage(s).  Please move or delete child pages first.");
 			}
 			$page->delete();
 			return "success";
