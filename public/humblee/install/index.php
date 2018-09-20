@@ -59,6 +59,7 @@
             if(isset($_POST['email']) && trim($_POST['email']) != "" && trim($_POST['password']) != "" && trim($_POST['name']) != "" )
             {
                 require_once $_app_path.'models/users.php';
+                require_once $_app_path.'models/crypto.php';
                 require_once $_app_path.'vendor/j4mie/idiorm/idiorm.php'; // idiorm class for database management
 
                 ORM::configure('mysql:host='. $_ENV['config']['db_host'] .';dbname=' .$_ENV['config']['db_name']);
