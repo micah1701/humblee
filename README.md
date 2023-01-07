@@ -88,7 +88,7 @@ Full documentation can be found at <https://humblee.app>
 
 ## Author
 
-Humblee was created by **Micah Murray** and is a product offering of [Six Eight Interactive LLC](https://sixeightinteractive.com)
+Humblee was created by **Micah Murray** and is a product offering of [Six Eight Interactive](https://sixeightinteractive.com)
 
 ## Questions, comments, bugs or security concerns
 
