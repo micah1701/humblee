@@ -1,4 +1,4 @@
-# Humblee - <https://humblee.io>
+# Humblee - <https://humblee.app>
 
 A humble PHP framework and CMS
 
@@ -84,7 +84,7 @@ Depending on how you installed the application, you may encounter folder permiss
 2. The site's media manager tool in the CMS saves all files to the `~/storage` folder in the root of the application. This folder must be writable by the website.
 
 ## Documentation
-Full documentation can be found at <https://humblee.io>
+Full documentation can be found at <https://humblee.app>
 
 ## Author
 
