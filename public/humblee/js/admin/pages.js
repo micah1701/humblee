@@ -44,8 +44,14 @@ function loadPages()
 			update: function(){
 				if(confirm("Are you sure you want to reorder this page in the sitemap?"))
 				{
-					var order = $('#pages ul.sortable').nestedSortable('serialize');
-					$.post(XHR_PATH +'order_pages',{ list_order:order }, function(response){
+					var sortableArray = $('#pages ul.sortable').nestedSortable('toArray', {startDepthCount: 0});
+					var orderData = {};
+					$.each(sortableArray, function(i, item) {
+						if (item.item_id) {
+							orderData['pageID_' + item.item_id] = item.depth;
+						}
+					});
+					$.post(XHR_PATH +'order_pages',{ list_order: JSON.stringify(orderData) }, function(response){
 						if(!response.success)
 						{
 							alert(response);
