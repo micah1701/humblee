@@ -1,4 +1,10 @@
-<?php $is_dev = Core::auth('developer'); ?>
+<?php
+declare(strict_types=1);
+
+use Humblee\Foundation\Core;
+
+$is_dev = Core::auth('developer');
+?>
 <html class="has-navbar-fixed-top">
 <head>
 <meta charset="utf-8">

@@ -1,3 +1,8 @@
+<?php
+declare(strict_types=1);
+
+use Humblee\Foundation\Core;
+?>
 <h1 class="title">Welcome, <?php echo $user->name ?></h2>
 
     <?php

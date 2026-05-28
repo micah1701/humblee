@@ -1,3 +1,8 @@
+<?php
+declare(strict_types=1);
+
+use Humblee\Model\Crypto;
+?>
 <h1 class="title">Almost There</h1>
 <p class="subtitle">Your account requires two factor authentication to complete the sign in process.</p>
 
@@ -39,7 +44,7 @@
 </section>
 
 <?php 
-  $crypto = new Core_Model_Crypto;
+  $crypto = new Crypto;
   $hmac_pair = $crypto->get_hmac_pair(); 
 ?>
   <input type="hidden" id="hmac_token" value="<?php echo $hmac_pair['message'] ?>">

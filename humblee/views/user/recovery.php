@@ -1,3 +1,8 @@
+<?php
+declare(strict_types=1);
+
+use Humblee\Model\Crypto;
+?>
 <h1 class="title">Password Recovery</h1>
 <h2 class="subtitle">Enter your username or e-mail address</h2>
 
@@ -22,7 +27,7 @@
             </div>
           
             <?php 
-                $crypto = new Core_Model_Crypto;
+                $crypto = new Crypto;
                 $hmac_pair = $crypto->get_hmac_pair(); 
             ?>
             <input type="hidden" name="hmac_token" value="<?php echo $hmac_pair['message'] ?>">

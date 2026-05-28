@@ -1,3 +1,8 @@
+<?php
+declare(strict_types=1);
+
+use Humblee\Model\Crypto;
+?>
 <h1 class="title">Nice to see you again!</h1>
 <p class="subtitle">Now that you've verified your account, create a new password</p>
 
@@ -35,7 +40,7 @@
             </p>
         
         <?php 
-            $crypto = new Core_Model_Crypto;
+            $crypto = new Crypto;
             $hmac_pair = $crypto->get_hmac_pair(); 
         ?>
             <input type="hidden" name="hmac_token" value="<?php echo $hmac_pair['message'] ?>">

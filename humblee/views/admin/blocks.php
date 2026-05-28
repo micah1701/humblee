@@ -1,14 +1,12 @@
 <?php
-function value($field,$crud_selected,$htmlentities=false)
+declare(strict_types=1);
+
+function value(string $field, object|false $crud_selected, bool $htmlentities = false): string
 {
-	if($crud_selected && isset($crud_selected->$field))
-	{
-	    return ($htmlentities) ? htmlentities($crud_selected->$field) : $crud_selected->$field;
-	}
-	else
-	{
-		return '';
-	}
+    if ($crud_selected && isset($crud_selected->$field)) {
+        return $htmlentities ? htmlentities((string) $crud_selected->$field) : (string) $crud_selected->$field;
+    }
+    return '';
 }
 ?>
 <h2 class="title">Content Blocks</h2>

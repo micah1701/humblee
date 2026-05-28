@@ -1,3 +1,8 @@
+<?php
+declare(strict_types=1);
+
+use Humblee\Model\Crypto;
+?>
 <h1 class="title">Knock Knock</h1>
 <h2 class="subtitle">Log in using your username and password</h2>
 
@@ -31,7 +36,7 @@ if(isset($error))
   </div>
   
   <?php 
-    $crypto = new Core_Model_Crypto;
+    $crypto = new Crypto;
     $hmac_pair = $crypto->get_hmac_pair(); 
   ?>
   <input type="hidden" name="hmac_token" value="<?php echo $hmac_pair['message'] ?>">

@@ -1,3 +1,8 @@
+<?php
+declare(strict_types=1);
+
+use Humblee\Foundation\Core;
+?>
 <h2 class="title">Edit the pages of this site</h2>
 
 <button class="button tooltip is-tooltip-right is-info is-outlined" data-tooltip="Create a top level page" onclick="addPage(0); return false">

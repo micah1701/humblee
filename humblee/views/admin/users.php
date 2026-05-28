@@ -1,3 +1,8 @@
+<?php
+declare(strict_types=1);
+
+use Humblee\Foundation\Core;
+?>
 <h1 class="title">Manage Users</h1>
 
 <div class="columns">
