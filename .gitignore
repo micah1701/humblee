@@ -1,3 +1,7 @@
 humblee/vendor
 humblee/configuration/crypto
 public/node_modules
+
+#Ignore vscode AI rules
+.github
+.github/*
