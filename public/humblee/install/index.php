@@ -19,54 +19,90 @@
 
     <h1 class="title">Install Humblee Database</h1>
     <?php
-       // Contect to database
-        $connection = mysqli_connect($_ENV['config']['db_host'], $_ENV['config']['db_username'], $_ENV['config']['db_password']) or die('Error connecting to MySQL server: ' . mysqli_connect_error() .'<br><br>Make sure you have the correct settings configured in <code>/core/config.php</code>.</body></html>');
+        $_rdbms = $_ENV['config']['RDBMS'] ?? 'mysql';
 
-        // Select database
-        mysqli_select_db($connection, $_ENV['config']['db_name']) or die('Error selecting MySQL database: ' . mysqli_error($connection) .'<br><br>Make sure you have created a database and configured the settings in <code>/core/config.php</code>.</body></html>');
+        if ($_rdbms === 'pgsql') {
+            $pg_schema = (isset($_ENV['config']['db_schema']) && $_ENV['config']['db_schema'] !== '')
+                ? $_ENV['config']['db_schema']
+                : 'public';
+            $connection = pg_connect(
+                "host=" . $_ENV['config']['db_host']
+                . " dbname=" . $_ENV['config']['db_name']
+                . " user=" . $_ENV['config']['db_username']
+                . " password=" . $_ENV['config']['db_password']
+            ) or die('Error connecting to PostgreSQL server.<br><br>Make sure you have the correct settings configured in <code>/core/config.php</code>.</body></html>');
+            pg_query($connection, "SET search_path TO " . pg_escape_identifier($connection, $pg_schema))
+                or die('Error setting search_path: ' . pg_last_error($connection) . '</body></html>');
+        } else {
+            $connection = mysqli_connect($_ENV['config']['db_host'], $_ENV['config']['db_username'], $_ENV['config']['db_password'])
+                or die('Error connecting to MySQL server: ' . mysqli_connect_error() . '<br><br>Make sure you have the correct settings configured in <code>/core/config.php</code>.</body></html>');
+            mysqli_select_db($connection, $_ENV['config']['db_name'])
+                or die('Error selecting MySQL database: ' . mysqli_error($connection) . '<br><br>Make sure you have created a database and configured the settings in <code>/core/config.php</code>.</body></html>');
+        }
 
         // Check if a table already exists, if not, install the whole database
-        $result = mysqli_query($connection,'SHOW TABLES LIKE \''. _table_content_types.'\';') or die("error ". mysqli_error($connection));
-
-        if( mysqli_num_rows($result) !== 0)
-        {
-            $database_created = "Already Exists";
+        if ($_rdbms === 'pgsql') {
+            $result = pg_query_params(
+                $connection,
+                "SELECT 1 FROM information_schema.tables WHERE table_schema = $1 AND table_name = $2",
+                [$pg_schema, _table_content_types]
+            ) or die("error " . pg_last_error($connection));
+            $table_exists = (pg_num_rows($result) !== 0);
+        } else {
+            $result = mysqli_query($connection, "SHOW TABLES LIKE '" . _table_content_types . "';")
+                or die("error " . mysqli_error($connection));
+            $table_exists = (mysqli_num_rows($result) !== 0);
         }
-        else
-        {
-            $sql = file_get_contents('database.txt');
 
-			if (mysqli_multi_query($connection,$sql))
-			{
-				while (mysqli_next_result($connection)) // flush multi_queries
-				{
-					if (!mysqli_more_results($connection)){
-						break;
-					}
-				}
-			}
+        if ($table_exists) {
+            $database_created = "Already Exists";
+        } else {
+            if ($_rdbms === 'pgsql') {
+                $sql = file_get_contents('database_pgsql.sql');
+                pg_query($connection, $sql) or die("Error creating schema: " . pg_last_error($connection));
+            } else {
+                $sql = file_get_contents('database_mysql.sql');
+                if (mysqli_multi_query($connection, $sql)) {
+                    while (mysqli_next_result($connection)) {
+                        if (!mysqli_more_results($connection)) {
+                            break;
+                        }
+                    }
+                }
+            }
             $database_created = "Created";
         }
 
         // Check if a user exists, if not, add them
-        $result = mysqli_query($connection,"SELECT * FROM `" . _table_users . "` LIMIT 1") or die("Error ". mysqli_error($connection));
-        if( mysqli_num_rows($result) !==  0)
-        {
-            $user_created = "A user already exists";
+        if ($_rdbms === 'pgsql') {
+            $result = pg_query($connection, "SELECT id FROM " . _table_users . " LIMIT 1")
+                or die("Error " . pg_last_error($connection));
+            $user_exists = (pg_num_rows($result) !== 0);
+        } else {
+            $result = mysqli_query($connection, "SELECT * FROM `" . _table_users . "` LIMIT 1")
+                or die("Error " . mysqli_error($connection));
+            $user_exists = (mysqli_num_rows($result) !== 0);
         }
-        else
-        {
-            if(isset($_POST['email']) && trim($_POST['email']) != "" && trim($_POST['password']) != "" && trim($_POST['name']) != "" )
+
+        if ($user_exists) {
+            $user_created = "A user already exists";
+        } else {
+            if (isset($_POST['email']) && trim($_POST['email']) != "" && trim($_POST['password']) != "" && trim($_POST['name']) != "")
             {
-                require_once $_app_path.'models/users.php';
-                require_once $_app_path.'models/crypto.php';
                 require_once $_app_path.'vendor/j4mie/idiorm/idiorm.php'; // idiorm class for database management
 
-                ORM::configure('mysql:host='. $_ENV['config']['db_host'] .';dbname=' .$_ENV['config']['db_name']);
+                if ($_rdbms === 'pgsql') {
+                    $_pg_schema_dsn = (isset($_ENV['config']['db_schema']) && $_ENV['config']['db_schema'] !== '')
+                        ? ";options='--search_path=" . $_ENV['config']['db_schema'] . "'"
+                        : '';
+                    ORM::configure('pgsql:host=' . $_ENV['config']['db_host'] . ';dbname=' . $_ENV['config']['db_name'] . $_pg_schema_dsn);
+                } else {
+                    ORM::configure('mysql:host=' . $_ENV['config']['db_host'] . ';dbname=' . $_ENV['config']['db_name']);
+                }
                 ORM::configure('username', $_ENV['config']['db_username']);
                 ORM::configure('password', $_ENV['config']['db_password']);
 
-                $usersObj = new Core_Model_Users;
+                $usersObj = new \Humblee\Model\Users;
                 $user_id = $usersObj->createUser($_POST['name'],$_POST['email'],$_POST['email'],$_POST['password']);
 
                 if(!$user_id || !is_numeric($user_id))
@@ -182,9 +218,16 @@
 
     if(isset($_GET['go-nuke']))
     {
-       mysqli_query($connection,'TRUNCATE TABLE `'. _table_users.'`;') or die("error blowing away users: ". mysqli_error($connection));
-       mysqli_query($connection,'TRUNCATE TABLE  `'. _table_user_roles.'`;') or die("error removing roles: ". mysqli_error($connection));
-       echo "boom!";
+        if ($_rdbms === 'pgsql') {
+            pg_query($connection, 'TRUNCATE TABLE ' . _table_users . ' CASCADE')
+                or die("error blowing away users: " . pg_last_error($connection));
+            pg_query($connection, 'TRUNCATE TABLE ' . _table_user_roles . ' CASCADE')
+                or die("error removing roles: " . pg_last_error($connection));
+        } else {
+            mysqli_query($connection,'TRUNCATE TABLE `'. _table_users.'`;') or die("error blowing away users: ". mysqli_error($connection));
+            mysqli_query($connection,'TRUNCATE TABLE  `'. _table_user_roles.'`;') or die("error removing roles: ". mysqli_error($connection));
+        }
+        echo "boom!";
     }
 
     ?>

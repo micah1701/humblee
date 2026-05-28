@@ -14,7 +14,15 @@ use Humblee\Foundation\Core;
 date_default_timezone_set($_ENV['config']['timezone']);
 
 // Database connection (used by Idiorm ORM)
-ORM::configure('mysql:host='. $_ENV['config']['db_host'] .';dbname=' .$_ENV['config']['db_name']);
+$_rdbms = $_ENV['config']['RDBMS'] ?? 'mysql';
+if ($_rdbms === 'pgsql') {
+    $_dsn_schema = (isset($_ENV['config']['db_schema']) && $_ENV['config']['db_schema'] !== '')
+        ? ";options='--search_path=" . $_ENV['config']['db_schema'] . "'"
+        : '';
+    ORM::configure('pgsql:host=' . $_ENV['config']['db_host'] . ';dbname=' . $_ENV['config']['db_name'] . $_dsn_schema);
+} else {
+    ORM::configure('mysql:host=' . $_ENV['config']['db_host'] . ';dbname=' . $_ENV['config']['db_name']);
+}
 ORM::configure('username', $_ENV['config']['db_username']);
 ORM::configure('password', $_ENV['config']['db_password']);
 

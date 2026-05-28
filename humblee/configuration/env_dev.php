@@ -2,11 +2,13 @@
 
 return array(
 
-    // MySQL Connection Info
-    'db_host' => '',
-    'db_name' => '',
+    // Database Connection Info
+    'db_host'     => '',
+    'db_name'     => '',
     'db_username' => '',
     'db_password' => '',
+    'RDBMS'       => 'mysql',  // 'mysql' or 'pgsql'
+    'db_schema'   => '',       // PostgreSQL schema name; blank defaults to 'public'
 
     // Domain Info
     'domain' => 'change-me.com', // eg "my-domain.com"

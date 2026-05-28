@@ -60,7 +60,7 @@ class Request extends Xhr {
 			}
 
 			$validation = $previousValidation;
-			$validation->token_accepted = "0000-00-00 00:00:00";
+			$validation->token_accepted = '1970-01-01 00:00:00';
 		}
 
 		$tools = new Tools;

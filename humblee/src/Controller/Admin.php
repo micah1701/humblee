@@ -47,10 +47,13 @@ class Admin {
 	public function index(): void
 	{
 	    $this->user = $this->getUser();
+        $_zero_date = (($_ENV['config']['RDBMS'] ?? 'mysql') === 'pgsql')
+            ? '1970-01-01 00:00:00'
+            : '0000-00-00 00:00:00';
         $this->recent_contents = \ORM::for_table(_table_content)
                                     ->raw_query("SELECT *
                                                     FROM "._table_content." AS topTable
-                                                    WHERE revision_date != '0000-00-00 00:00:00'
+                                                    WHERE revision_date != '" . $_zero_date . "'
                                                     AND content != ''
                                                     AND revision_date = (SELECT revision_date
                                                                         FROM "._table_content."
