@@ -9,7 +9,7 @@ Humblee covers the boring stuff, like page routing, content managment tools, and
 ### Prerequisites
 
 * Apache with .htaccess and mod_rewrite
-* PHP 5.3+ w/ cURL and file_get_contents()
+* PHP 8.3+
 * MySQL Database
 * npm
 * composer
@@ -30,14 +30,13 @@ git clone https://github.com/micah1701/humblee
 $ cd ~/humblee
 $ composer install
 ```
-Composer will create a `vendor` folder containing the following libraries by default:
-* Idirom (required) - a simple object-relational mapper (ORM) class for communicating with the database. Learn more at <https://github.com/j4mie/idiorm>
-* Paragonie Sodium (recommended if PHP version < 7.2 ) - for encryption and more secure password hashing
-* Mailgun (optional) - for sending transactional e-mails, like password recovery. <https://documentation.mailgun.com>
+Composer will create a `vendor` folder containing the following libraries:
+* Idiorm (required) - a simple object-relational mapper (ORM) class for communicating with the database. Learn more at <https://github.com/j4mie/idiorm>
 * Twilio (optional) - for sending two-factor authentication (2FA) messages via SMS. <https://www.twilio.com/docs/api>
 * Tinify (optional) - Image compression API <http://tinypng.com/developers>
 * Parsedown (optional) - Convert markdown plain text to HTML
-End with an example of getting some data out of the system or using it for a little demo
+
+Note: PHP 8.3+ includes the sodium extension natively, so no separate encryption library is needed.
 
 4. **Run NPM** to install Javascript and CSS libraries
 ```
@@ -66,15 +65,11 @@ Humblee is configured out of the box to run on Apache's `mod_php` module.  If yo
 RewriteRule . /index.php [L]
 RewriteRule ^index.php/(.*)$ [L]
 ```
-2. Update `~/humblee/controllers/core.php`
-```
-/* comment out or remove these two lines: */
-// $uri = (!isset($_path_info) || $_path_info == "" || $_path_info == "public") ? "" : ltrim($_path_info,"/");
-// return $uri;
-
-// uncomment these two lines:
-$_path_info = preg_split("/\?|\&/",$_path_info); // check for ? or & in url
-return (!isset($_path_info[0]) || $_path_info[0] == "") ? "" : ltrim($_path_info[0],"/");
+2. Update `~/humblee/src/Foundation/Core.php` in the `getURI()` method — replace the final `$uri` assignment with:
+```php
+$_path_info = preg_split("/\?|\&/", $_path_info); // strip query string
+$uri = (!isset($_path_info[0]) || $_path_info[0] === "" || $_path_info[0] === "public") ? "" : ltrim($_path_info[0], "/");
+return $uri;
 ```
 
 **Folder permissions**
