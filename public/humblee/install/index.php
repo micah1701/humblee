@@ -111,7 +111,7 @@ error_reporting(E_ALL);
                     exit("EROR! could not create new user");
                 }
 
-                $newRoles = [1, 2, 9];
+                $newRoles = [1, 2, 9]; // assign master user to admin, content, and developer roles
                 $roles_created = "(roles: ";
                 foreach ($newRoles as $newRole) {
                     $role = ORM::for_table(_table_user_roles)->create();
