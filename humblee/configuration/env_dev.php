@@ -1,6 +1,6 @@
 <?php defined('include_only') or die('No direct script access.');
 
-return array(
+return [
 
     // Database Connection Info
     'db_host'     => '',
@@ -42,4 +42,4 @@ return array(
 
     // Path to encryption key
     'crypto_key' => 'humblee/configuration/crypto/key.php'
-);
+];

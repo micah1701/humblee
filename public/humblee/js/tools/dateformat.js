@@ -38,7 +38,7 @@ function dateFormat(format,date){
 				break;
 			
 			case 'l': // (lowercase 'L') A full textual representation of the day of the week
-				var days = Array("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday");
+				var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 				string+= days[dow];
 				break;
 				
@@ -47,7 +47,7 @@ function dateFormat(format,date){
 				break;
 				
 			case 'D': // A textual representation of a day, three letters
-				days = Array("Sun","Mon","Tue","Wed","Thr","Fri","Sat");
+				days = ["Sun","Mon","Tue","Wed","Thr","Fri","Sat"];
 				string+= days[dow];
 				break;	
 			
@@ -60,12 +60,12 @@ function dateFormat(format,date){
 				break;
 			
 			case 'F': // A full textual representation of a month, such as January or March 
-				var months = Array("January","February","March","April","May","June","July","August","September","October","November","December");
+				var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 				string+= months[mo];
 				break;
 				
 			case 'M': // A short textual representation of a month, three letters (Jan - Dec)
-				months = Array("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
+				months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 				string+= months[mo];
 				break;
 					
