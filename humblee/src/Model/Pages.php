@@ -78,7 +78,7 @@ class Pages
 	{
 		// Security: validate all slug characters before using in SQL
 		foreach ($uri_parts as $part) {
-			if ($part !== "/" && !preg_match('/^[\w\-\.]+$/', $part)) {
+			if ($part !== "/" && $part !== "" && !preg_match('/^[\w\-\.]+$/', $part)) {
 				return false;
 			}
 		}
@@ -86,7 +86,7 @@ class Pages
 		$route = implode("/", $uri_parts);
 
 		if ($route === "" || $route === trim(_app_path, "/")) {
-			$route = "";
+			$route = "/";
 			$uri_parts[0] = "/";
 			$uri_num_parts = 1;
 		} else {
