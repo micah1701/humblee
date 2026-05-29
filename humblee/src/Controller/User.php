@@ -116,7 +116,7 @@ class User
 	public function register(): void
 	{
 		if (Core::auth('login')) {
-			$fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user";
+			$fwd = (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user";
 			Core::forward($fwd);
 		}
 
@@ -249,7 +249,7 @@ class User
 				$this->user->use_twofactor_auth = (isset($_POST['use_twofactor_auth']) && $_POST['use_twofactor_auth'] == 1) ? 1 : 0;
 				$this->user->save();
 
-				if (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) {
+				if (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) {
 					Core::forward($_GET['fwd']);
 				} else {
 					$this->error[] = "Changes Saved!";
@@ -322,7 +322,7 @@ class User
 					$this->error = ["No account found with this username or e-mail address"];
 				} else {
 					$_SESSION[session_key]['recovery']['user_id'] = $user->id;
-					$fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? 'user/forgotPassword?fwd=' . $_GET['fwd'] : 'user/forgotPassword';
+					$fwd = (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) ? 'user/forgotPassword?fwd=' . $_GET['fwd'] : 'user/forgotPassword';
 					Core::forward($fwd);
 				}
 			}
@@ -354,7 +354,7 @@ class User
 				$userObj->logInSession((int)$_SESSION[session_key]['recovery']['user_id']);
 				unset($_SESSION[session_key]['recovery']);
 				$userObj->accesslog('Password Accepted - Recovery');
-				$fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user";
+				$fwd = (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user";
 				Core::forward($fwd);
 			}
 		}

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use Humblee\Model\Crypto;
@@ -6,42 +7,42 @@ use Humblee\Model\Crypto;
 <h1 class="title">Password Recovery</h1>
 <h2 class="subtitle">Enter your username or e-mail address</h2>
 
-<?php if(isset($error)){ ?>
+<?php if (isset($error)) { ?>
     <div class="field is-two-fifths">
-      <ul class="control">
-    	<?php foreach($error as $err){ ?>
-    	<li class="has-text-danger"><?php echo $err ?></li>
-    	<?php } ?>    
-      </ul>
+        <ul class="control">
+            <?php foreach ($error as $err) { ?>
+                <li class="has-text-danger"><?php echo $err ?></li>
+            <?php } ?>
+        </ul>
     </div>
 <?php } ?>
 
 <div class="columns is-8">
     <div class="column is-one-third">
-        <form action="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? "?fwd=".$_GET['fwd'] : '' ?>" method="post">
+        <form action="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) ? "?fwd=" . $_GET['fwd'] : '' ?>" method="post">
             <div class="field">
-                <label class="label" for="username">Username or E-Mail</label> 
+                <label class="label" for="username">Username or E-Mail</label>
                 <div class="control">
                     <input class="input" type="text" id="username" name="username">
                 </div>
             </div>
-          
-            <?php 
-                $crypto = new Crypto;
-                $hmac_pair = $crypto->get_hmac_pair(); 
+
+            <?php
+            $crypto = new Crypto;
+            $hmac_pair = $crypto->get_hmac_pair();
             ?>
             <input type="hidden" name="hmac_token" value="<?php echo $hmac_pair['message'] ?>">
             <input type="hidden" name="hmac_key" value="<?php echo $hmac_pair['hmac'] ?>">
-          
+
             <div class="field is-two-fifths">
                 <div class="control">
                     <input class="button is-primary" name="" type="submit" value="Next">
                 </div>
-            </div>  
-          
-        </form>        
+            </div>
+
+        </form>
     </div>
-    
+
     <div class="column is-one-fifth"></div>
 
     <div class="column is-pulled-right is-two-fifths">
@@ -56,7 +57,7 @@ use Humblee\Model\Crypto;
 
 
 <script type="text/javascript">
-$(document).ready(function(){
-   $("#username").focus(); 
-});
+    $(document).ready(function() {
+        $("#username").focus();
+    });
 </script>

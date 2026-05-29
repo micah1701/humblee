@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use Humblee\Model\Crypto;
@@ -19,68 +20,68 @@ use Humblee\Model\Crypto;
 <section class="section columns">
 
   <div class="column is-one-third">
-    
-    <form action="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? "?fwd=".$_GET['fwd'] : '' ?>" method="post">
-  
-    <?php if(isset($error)){ ?>
-    <div class="field is-two-fifths">
-      <ul class="control">
-      <?php foreach($error as $err){ ?>
-        <li class="has-text-danger"><?php echo $err ?></li>
-      <?php } ?>    
-      </ul>
-    </div>
-    <?php } ?>
-  
-    <div class="field is-two-fifths">
-      <label class="label" for="name">Full Name</label> 
-      <div class="control">
-        <input class="input" type="text" id="name" name="name">
+
+    <form action="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) ? "?fwd=" . $_GET['fwd'] : '' ?>" method="post">
+
+      <?php if (isset($error)) { ?>
+        <div class="field is-two-fifths">
+          <ul class="control">
+            <?php foreach ($error as $err) { ?>
+              <li class="has-text-danger"><?php echo $err ?></li>
+            <?php } ?>
+          </ul>
+        </div>
+      <?php } ?>
+
+      <div class="field is-two-fifths">
+        <label class="label" for="name">Full Name</label>
+        <div class="control">
+          <input class="input" type="text" id="name" name="name">
+        </div>
       </div>
-    </div>
-    
-    <div class="field is-two-fifths">
-      <label class="label" for="username">Username</label> 
-      <div class="control">
-        <input class="input" type="text" id="username" name="username">
+
+      <div class="field is-two-fifths">
+        <label class="label" for="username">Username</label>
+        <div class="control">
+          <input class="input" type="text" id="username" name="username">
+        </div>
       </div>
-    </div>
-    
-    <div class="field is-two-fifths">
-      <label class="label" for="email">E-mail Address:</label> 
-      <div class="control">
-        <input class="input" type="text" id="email" name="email">
+
+      <div class="field is-two-fifths">
+        <label class="label" for="email">E-mail Address:</label>
+        <div class="control">
+          <input class="input" type="text" id="email" name="email">
+        </div>
       </div>
-    </div>
-    
-    <div class="field is-two-fifths">
-      <label class="label" for="password">Create Password</label> 
-      <div class="control">
-        <input class="input" type="password" id="password" name="password">
+
+      <div class="field is-two-fifths">
+        <label class="label" for="password">Create Password</label>
+        <div class="control">
+          <input class="input" type="password" id="password" name="password">
+        </div>
       </div>
-    </div>
-    
-    <div class="field is-two-fifths">
-      <label class="label" for="password_check">Confirm Password</label> 
-      <div class="control">
-        <input class="input" type="password" id="password_check" name="password_check">
+
+      <div class="field is-two-fifths">
+        <label class="label" for="password_check">Confirm Password</label>
+        <div class="control">
+          <input class="input" type="password" id="password_check" name="password_check">
+        </div>
       </div>
-    </div>
-  
-    <?php 
+
+      <?php
       $crypto = new Crypto;
-      $hmac_pair = $crypto->get_hmac_pair(); 
-    ?>
-    <input type="hidden" name="hmac_token" value="<?php echo $hmac_pair['message'] ?>">
-    <input type="hidden" name="hmac_key" value="<?php echo $hmac_pair['hmac'] ?>">
-  
-    <div class="field is-two-fifths">
-      <div class="control">
-        <input class="button is-primary" name="" type="submit" value="Register">
+      $hmac_pair = $crypto->get_hmac_pair();
+      ?>
+      <input type="hidden" name="hmac_token" value="<?php echo $hmac_pair['message'] ?>">
+      <input type="hidden" name="hmac_key" value="<?php echo $hmac_pair['hmac'] ?>">
+
+      <div class="field is-two-fifths">
+        <div class="control">
+          <input class="button is-primary" name="" type="submit" value="Register">
+        </div>
       </div>
-    </div>
-  
-  </form>    
+
+    </form>
   </div>
 
 </section>
