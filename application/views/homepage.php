@@ -1,5 +1,9 @@
 <?php
-    Draw::content($content,'pagebody');
+declare(strict_types=1);
+
+use Humblee\Foundation\Draw;
+
+Draw::content($content, 'pagebody');
 ?>
 <br>
 <hr>
