@@ -2,6 +2,9 @@
 declare(strict_types=1);
 
 use Humblee\Foundation\Core;
+
+/** @var iterable $access_roles */
+$access_roles ??= [];
 ?>
 <h2 class="title">Edit the pages of this site</h2>
 

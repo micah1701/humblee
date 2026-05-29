@@ -8,6 +8,13 @@ function value(string $field, object|false $crud_selected, bool $htmlentities = 
     }
     return '';
 }
+
+/** @var iterable $crud_all */
+$crud_all ??= [];
+/** @var \ORM|false $crud_selected */
+$crud_selected ??= false;
+/** @var array<string, string> $errors */
+$errors ??= [];
 ?>
 <h2 class="title">Content Blocks</h2>
 <div class="field">

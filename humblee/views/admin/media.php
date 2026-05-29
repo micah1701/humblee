@@ -1,3 +1,12 @@
+<?php
+declare(strict_types=1);
+/** @var bool $hasMediaRole */
+$hasMediaRole ??= false;
+/** @var bool $is_in_iframe */
+$is_in_iframe ??= false;
+/** @var iterable $access_roles */
+$access_roles ??= [];
+?>
 <input type="hidden" id="mediaAccess" value="<?php echo ($hasMediaRole) ? 'media' : 'readonly' ?>">
 <div class="columns">
     <div class="column is-one-fifth">

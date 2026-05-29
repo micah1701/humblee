@@ -8,6 +8,15 @@ function value(string $field, object|false $crud_selected, bool $htmlentities = 
     }
     return '';
 }
+
+/** @var iterable $crud_all */
+$crud_all ??= [];
+/** @var \ORM|false $crud_selected */
+$crud_selected ??= false;
+/** @var array<string, string> $errors */
+$errors ??= [];
+/** @var array $allP13nVersions */
+$allP13nVersions ??= [];
 ?>
 <h2 class="title">Personalization and Internationalization</h2>
 <div class="field">

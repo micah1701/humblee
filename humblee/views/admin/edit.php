@@ -1,4 +1,20 @@
-<?php declare(strict_types=1); ?>
+<?php
+declare(strict_types=1);
+/** @var \ORM|object|false $page_data */
+$page_data ??= false;
+/** @var \ORM|object|false $content */
+$content ??= false;
+/** @var \ORM|object|false $content_type */
+$content_type ??= false;
+/** @var iterable $allContentTypes */
+$allContentTypes ??= [];
+/** @var array $allP13nVersions */
+$allP13nVersions ??= [];
+/** @var iterable $revisions */
+$revisions ??= [];
+/** @var bool $is_in_iframe */
+$is_in_iframe ??= false;
+?>
 <div class="columns">
     <div class="column">
         <h1 class="title">

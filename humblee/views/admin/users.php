@@ -3,6 +3,13 @@ declare(strict_types=1);
 
 use Humblee\Foundation\Core;
 use Humblee\Model\Tools;
+
+/** @var iterable $users */
+$users ??= [];
+/** @var array<int, string> $roles */
+$roles ??= [];
+/** @var string[] $hidden_users */
+$hidden_users ??= [];
 ?>
 <h1 class="title">Manage Users</h1>
 

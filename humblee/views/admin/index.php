@@ -3,6 +3,15 @@ declare(strict_types=1);
 
 use Humblee\Foundation\Core;
 use Humblee\Model\Tools;
+
+/** @var object|false $user */
+$user ??= false;
+/** @var iterable $recent_contents */
+$recent_contents ??= [];
+/** @var array<int, string> $contentTypes */
+$contentTypes ??= [];
+/** @var array<int, string> $p13nVersions */
+$p13nVersions ??= [];
 ?>
 <h1 class="title">Welcome, <?php echo $user->name ?></h1>
 
