@@ -45,6 +45,7 @@ class Users
 		$log->session_id = session_id();
 		$log->user_id = $_SESSION[session_key]['user_id'] ?? 0;
 		$log->ip_address = $_SERVER['REMOTE_ADDR'];
+		$log->ip_geolocation = '';
 		$log->user_agent = $_SERVER['HTTP_USER_AGENT'];
 		$log->timestamp = date("Y-m-d H:i:s");
 		$log->status = $status;
