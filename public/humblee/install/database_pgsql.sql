@@ -109,7 +109,7 @@ CREATE TABLE IF NOT EXISTS humblee_users (
   cellphone VARCHAR(20) NOT NULL,
   cellphone_validated SMALLINT NOT NULL DEFAULT 0,
   use_twofactor_auth SMALLINT NOT NULL DEFAULT 0,
-  password CHAR(128) NOT NULL,
+  password VARCHAR(128) NOT NULL,
   name VARCHAR(100) NOT NULL,
   username VARCHAR(127) NOT NULL,
   active SMALLINT NOT NULL DEFAULT 0,
