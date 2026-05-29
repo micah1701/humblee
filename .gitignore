@@ -1,5 +1,6 @@
 humblee/vendor
 humblee/configuration/crypto
+humblee/configuration/env_prod.php
 public/node_modules
 
 #Ignore vscode AI rules

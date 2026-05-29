@@ -4,11 +4,12 @@ return [
 
     // Database Connection Info
     'db_host'     => '',
+    'db_port'     => null, // null will use defaults (MySQL = 3306; PostgreSQL = 5432). If your database is running on a non-standard port, set this to the appropriate integer value.
     'db_name'     => '',
     'db_username' => '',
     'db_password' => '',
-    'RDBMS'       => 'mysql',  // 'mysql' or 'pgsql'
-    'db_schema'   => '',       // PostgreSQL schema name; blank defaults to 'public'
+    'RDBMS'       => 'mysql', // 'mysql' or 'pgsql'
+    'db_schema'   => null, // PostgreSQL schema name; null defaults to 'public' (not applicable to MySQL)
 
     // Domain Info
     'domain' => 'change-me.com', // eg "my-domain.com"

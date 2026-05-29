@@ -22,24 +22,32 @@ error_reporting(E_ALL);
         <h1 class="title">Install Humblee Database</h1>
         <?php
         $_rdbms = $_ENV['config']['RDBMS'] ?? 'mysql';
+        $_port = (is_int($_ENV['config']['db_port']) && $_ENV['config']['db_port'] > 0)
+            ? $_ENV['config']['db_port']
+            : ($_rdbms === 'pgsql' ? 5432 : 3306);
 
         if ($_rdbms === 'pgsql') {
-            $pg_schema = (isset($_ENV['config']['db_schema']) && $_ENV['config']['db_schema'] !== '')
+            $pg_schema = (isset($_ENV['config']['db_schema']) && $_ENV['config']['db_schema'] !== '' && !is_null($_ENV['config']['db_schema']))
                 ? $_ENV['config']['db_schema']
                 : 'public';
-            $connection = pg_connect(
-                "host=" . $_ENV['config']['db_host']
-                    . " dbname=" . $_ENV['config']['db_name']
-                    . " user=" . $_ENV['config']['db_username']
-                    . " password=" . $_ENV['config']['db_password']
-            ) or die('Error connecting to PostgreSQL server.<br><br>Make sure you have the correct settings configured in <code>/core/config.php</code>.</body></html>');
-            pg_query($connection, "SET search_path TO " . pg_escape_identifier($connection, $pg_schema))
-                or die('Error setting search_path: ' . pg_last_error($connection) . '</body></html>');
+
+            $connectionString = "host=" . $_ENV['config']['db_host']
+                . " dbname=" . $_ENV['config']['db_name']
+                . " port=" . $_port
+                . " user=" . $_ENV['config']['db_username']
+                . " password=" . $_ENV['config']['db_password'];
+            $connection = pg_connect($connectionString) or die('Error connecting to PostgreSQL server.<br><br>Make sure you have the correct settings configured in <code>/core/config.php</code>.</body></html>');
+
+            pg_query($connection, "SET search_path TO " . pg_escape_identifier($connection, $pg_schema)) or die('Error setting search_path: ' . pg_last_error($connection) . '</body></html>');
         } else {
-            $connection = mysqli_connect($_ENV['config']['db_host'], $_ENV['config']['db_username'], $_ENV['config']['db_password'])
-                or die('Error connecting to MySQL server: ' . mysqli_connect_error() . '<br><br>Make sure you have the correct settings configured in <code>/core/config.php</code>.</body></html>');
-            mysqli_select_db($connection, $_ENV['config']['db_name'])
-                or die('Error selecting MySQL database: ' . mysqli_error($connection) . '<br><br>Make sure you have created a database and configured the settings in <code>/core/config.php</code>.</body></html>');
+            $connection = mysqli_connect(
+                $_ENV['config']['db_host'],
+                $_ENV['config']['db_username'],
+                $_ENV['config']['db_password'],
+                $_ENV['config']['db_name'],
+                $_port
+            ) or die('Error connecting to MySQL server: ' . mysqli_connect_error() . '<br><br>Make sure you have the correct settings configured in <code>/core/config.php</code>.</body></html>');
+            mysqli_select_db($connection, $_ENV['config']['db_name']) or die('Error selecting MySQL database: ' . mysqli_error($connection) . '<br><br>Make sure you have created a database and configured the settings in <code>/core/config.php</code>.</body></html>');
         }
 
         // Check if a table already exists, if not, install the whole database
