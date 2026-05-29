@@ -9,7 +9,8 @@ use Humblee\Model\Users;
 use Humblee\Model\Tools;
 use Humblee\Model\Crypto;
 
-class User {
+class User
+{
 
 	private array $_uri_parts;
 	private Tools $tools;
@@ -33,11 +34,9 @@ class User {
 
 		$this->content = false;
 
-		if(!empty($_POST))
-		{
+		if (!empty($_POST)) {
 			$crypto = new Crypto;
-			if(!isset($_POST['hmac_token']) || !isset($_POST['hmac_key']) || !$crypto->check_hmac_pair($_POST['hmac_token'], $_POST['hmac_key']))
-			{
+			if (!isset($_POST['hmac_token']) || !isset($_POST['hmac_key']) || !$crypto->check_hmac_pair($_POST['hmac_token'], $_POST['hmac_key'])) {
 				exit("Invalid Machine Authentication Key");
 			}
 		}
@@ -45,139 +44,112 @@ class User {
 
 	public function index(): void
 	{
-		if(!Core::auth(1)){ Core::forward("/user/login"); }
+		if (!Core::auth(1)) {
+			Core::forward("/user/login");
+		}
 		Core::forward("/user/profile");
 	}
 
 	public function logout(): void
 	{
-		if($this->users->logOut())
-        {
-            Core::forward();
-        }
+		if ($this->users->logOut()) {
+			Core::forward();
+		}
 	}
 
 	public function login(): void
 	{
-        if(Core::auth('login'))
-        {
-            $this->pagebody = "<h1 class=\"text-has-danger\">You are already logged in</h1><p>If you were forwarded to this page unexpectedly, you most likely do not have permission to access the page you were trying to go to.</p><p>If you feel this is in error, please contact your system administrator.  For now, use your back button to return to wherever you came from.</p>";
-            echo Core::view(_app_server_path.'humblee/views/admin/templates/template.php', get_object_vars($this));
-            exit();
-	    }
+		if (Core::auth('login')) {
+			$this->pagebody = "<h1 class=\"text-has-danger\">You are already logged in</h1><p>If you were forwarded to this page unexpectedly, you most likely do not have permission to access the page you were trying to go to.</p><p>If you feel this is in error, please contact your system administrator.  For now, use your back button to return to wherever you came from.</p>";
+			echo Core::view(_app_server_path . 'humblee/views/admin/templates/template.php', get_object_vars($this));
+			exit();
+		}
 
-		if(isset($_POST['username']) || isset($_POST['smsusername']))
-		{
-			$fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user";
+		if (isset($_POST['username']) || isset($_POST['smsusername'])) {
+			$fwd = (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user";
 
 			$username = '';
 			$password = '';
 			$isSMS = false;
 
-			if(isset($_POST['cellphone_validate']) && trim($_POST['cellphone_validate']) !== "")
-			{
-				if(trim($_POST['smsusername']) === "" || trim($_POST['cellphone_validate']) === "")
-				{
+			if (isset($_POST['cellphone_validate']) && trim($_POST['cellphone_validate']) !== "") {
+				if (trim($_POST['smsusername']) === "" || trim($_POST['cellphone_validate']) === "") {
 					$this->error = "Missing Credentials";
-				}
-				else
-				{
+				} else {
 					$username = $_POST['smsusername'];
 					$password = trim($_POST['cellphone_validate']);
 					$isSMS = true;
 				}
-			}
-			else
-			{
-				if(trim($_POST['username']) === "" || trim($_POST['password']) === "")
-				{
+			} else {
+				if (trim($_POST['username']) === "" || trim($_POST['password']) === "") {
 					$this->error = "Missing Credentials";
-				}
-				else
-				{
+				} else {
 					$username = $_POST['username'];
 					$password = trim($_POST['password']);
 					$isSMS = false;
 				}
 			}
 
-			if(!isset($this->error) && $username !== '')
-			{
+			if (!isset($this->error) && $username !== '') {
 				$login = $this->users->logIn($username, $password, $isSMS);
 
-				if($login['access_granted'] === true)
-				{
+				if ($login['access_granted'] === true) {
 					Core::forward($fwd);
-				}
-				elseif($login['error'] === 'use_twofactor_auth')
-				{
+				} elseif ($login['error'] === 'use_twofactor_auth') {
 					$_SESSION[session_key]['sms_login_email'] = $login['email'];
 
 					$this->name = $login['name'];
 					$this->cellphone_lastfour = substr($login['cellphone'], -4);
-					$this->template_view = Core::view(_app_server_path.'humblee/views/user/login_sms.php', get_object_vars($this));
-					echo Core::view(_app_server_path.'application/views/templates/template.php', get_object_vars($this));
+					$this->template_view = Core::view(_app_server_path . 'humblee/views/user/login_sms.php', get_object_vars($this));
+					echo Core::view(_app_server_path . 'application/views/templates/template.php', get_object_vars($this));
 					return;
-				}
-				else
-				{
+				} else {
 					$this->error = $login['error'];
 				}
 			}
 		}
 
-		$this->template_view = Core::view(_app_server_path.'humblee/views/user/login.php', get_object_vars($this));
-		echo Core::view(_app_server_path.'application/views/templates/template.php', get_object_vars($this));
+		$this->template_view = Core::view(_app_server_path . 'humblee/views/user/login.php', get_object_vars($this));
+		echo Core::view(_app_server_path . 'application/views/templates/template.php', get_object_vars($this));
 	}
 
 	public function register(): void
 	{
-		if(Core::auth('login'))
-		{
-		    $fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user";
-		    Core::forward($fwd);
+		if (Core::auth('login')) {
+			$fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user";
+			Core::forward($fwd);
 		}
 
-		if(isset($_POST['email']) && isset($_POST['password']) && isset($_POST['password_check']))
-		{
-			if($_POST['password'] !== $_POST['password_check'])
-			{
+		if (isset($_POST['email']) && isset($_POST['password']) && isset($_POST['password_check'])) {
+			if ($_POST['password'] !== $_POST['password_check']) {
 				$this->error[] = "Passwords do not match";
 			}
-			if(strlen($_POST['password']) < 2)
-			{
+			if (strlen($_POST['password']) < 2) {
 				$this->error[] = "Password must be longer";
 			}
-			if(!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) || !preg_match('/@.+\./', $_POST['email']))
-			{
+			if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) || !preg_match('/@.+\./', $_POST['email'])) {
 				$this->error[] = "Invalid or malformed e-mail address";
 			}
-			if(trim($_POST['name']) === "")
-			{
+			if (trim($_POST['name']) === "") {
 				$this->error[] = "Please enter your full name";
 			}
-			if(isset($_POST['username']) && str_contains($_POST['username'], '@'))
-			{
+			if (isset($_POST['username']) && str_contains($_POST['username'], '@')) {
 				$this->error[] = "Username can not contain an '@' symbol";
 			}
 
-			if(isset($_POST['username']) && trim($_POST['username']) !== "")
-			{
+			if (isset($_POST['username']) && trim($_POST['username']) !== "") {
 				$usernamecheck = \ORM::for_table(_table_users)->where('username', $_POST['username'])->find_one();
-				if($usernamecheck)
-				{
+				if ($usernamecheck) {
 					$this->error[] = "A user with this Username already exists";
 				}
 			}
 
 			$emailcheck = \ORM::for_table(_table_users)->where('email', $_POST['email'])->find_one();
-			if($emailcheck)
-			{
+			if ($emailcheck) {
 				$this->error[] = "A user with this e-mail address already exists";
 			}
 
-			if(!isset($this->error))
-			{
+			if (!isset($this->error)) {
 				$newUserId = $this->users->createUser(
 					$_POST['name'],
 					$_POST['email'],
@@ -196,77 +168,63 @@ class User {
 			}
 		}
 
-		$this->template_view = Core::view(_app_server_path.'humblee/views/user/register.php', get_object_vars($this));
-		echo Core::view(_app_server_path.'application/views/templates/template.php', get_object_vars($this));
+		$this->template_view = Core::view(_app_server_path . 'humblee/views/user/register.php', get_object_vars($this));
+		echo Core::view(_app_server_path . 'application/views/templates/template.php', get_object_vars($this));
 	}
 
 	public function profile(): void
 	{
-		if(!Core::auth('login'))
-		{
+		if (!Core::auth('login')) {
 			Core::forward('user/login');
 		}
 
 		$this->user = $this->users->profile();
 
-		if(isset($_POST['email']) && isset($_POST['password']) && isset($_POST['password_check']))
-		{
-			if($_POST['password'] !== "" && $_POST['password'] !== $_POST['password_check'])
-			{
+		if (isset($_POST['email']) && isset($_POST['password']) && isset($_POST['password_check'])) {
+			if ($_POST['password'] !== "" && $_POST['password'] !== $_POST['password_check']) {
 				$this->error[] = "Passwords do not match";
 			}
-			if($_POST['password'] !== "" && strlen($_POST['password']) < 2)
-			{
+			if ($_POST['password'] !== "" && strlen($_POST['password']) < 2) {
 				$this->error[] = "Password must be longer";
 			}
-			if(!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) || !preg_match('/@.+\./', $_POST['email']))
-			{
+			if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) || !preg_match('/@.+\./', $_POST['email'])) {
 				$this->error[] = "Invalid or malformed e-mail address";
 			}
-			if(trim($_POST['name']) === "")
-			{
+			if (trim($_POST['name']) === "") {
 				$this->error[] = "Please enter your full name";
 			}
-			if(isset($_POST['username']))
-			{
-				if(str_contains($_POST['username'], '@'))
-				{
+			if (isset($_POST['username'])) {
+				if (str_contains($_POST['username'], '@')) {
 					$this->error[] = "Username can not contain an '@' symbol";
 				}
 
 				$check = \ORM::for_table(_table_users)->where('username', $_POST['username'])->find_one();
-				if($check && $check->id != $this->user->id)
-				{
+				if ($check && $check->id != $this->user->id) {
 					$this->error[] = "This username already exists";
 				}
 			}
 
 			$check = \ORM::for_table(_table_users)->where('email', $_POST['email'])->find_one();
-			if($check && $check->id != $this->user->id)
-			{
+			if ($check && $check->id != $this->user->id) {
 				$this->error[] = "A user with this e-mail address already exists";
 			}
 
-			if($_ENV['config']['TWILIO_Enabled'] &&
+			if (
+				$_ENV['config']['TWILIO_Enabled'] &&
 				$_POST['cellphone'] !== "" &&
 				$_POST['cellphone'] !== $this->user->cellphone &&
-				$_POST['cellphone_validate'] !== "")
-			{
+				$_POST['cellphone_validate'] !== ""
+			) {
 				$validation = \ORM::for_table(_table_validation)
-								->where('new_value', $_POST['cellphone'])
-								->where('user_id', $this->user->id)
-								->where('type', 'sms')
-								->find_one();
-				if(!$validation)
-				{
+					->where('new_value', $_POST['cellphone'])
+					->where('user_id', $this->user->id)
+					->where('type', 'sms')
+					->find_one();
+				if (!$validation) {
 					$this->error[] = "There is no SMS Verification Code associated with this phone number";
-				}
-				elseif($_POST['cellphone_validate'] !== $validation->token)
-				{
+				} elseif ($_POST['cellphone_validate'] !== $validation->token) {
 					$this->error[] = "SMS Verification Code does not match value sent to phone.";
-				}
-				else
-				{
+				} else {
 					$validation->token_accepted = date("Y-m-d H:i:s");
 					$validation->old_value = $this->user->cellphone;
 					$validation->save();
@@ -276,154 +234,131 @@ class User {
 				}
 			}
 
-			if(!isset($_POST['cellphone']) || $_POST['cellphone'] === "" || strlen($_POST['cellphone']) !== 10)
-			{
+			if (!isset($_POST['cellphone']) || $_POST['cellphone'] === "" || strlen($_POST['cellphone']) !== 10) {
 				$this->user->cellphone = "";
 				$this->user->cellphone_validated = 0;
 			}
 
-			if(!isset($this->error))
-			{
+			if (!isset($this->error)) {
 				$this->user->name = $_POST['name'];
 				$this->user->username = (isset($_POST['username']) && trim($_POST['username']) !== "") ? trim($_POST['username']) : $this->user->username;
 				$this->user->email = $_POST['email'];
-				if(trim($_POST['password']) !== "")
-				{
+				if (trim($_POST['password']) !== "") {
 					$this->user->password = $this->users->hashPassword($_POST['password'], (int)$this->user->id);
 				}
 				$this->user->use_twofactor_auth = (isset($_POST['use_twofactor_auth']) && $_POST['use_twofactor_auth'] == 1) ? 1 : 0;
 				$this->user->save();
 
-				if(isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd']))
-				{
-					 Core::forward($_GET['fwd']);
-				}
-				else
-				{
+				if (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) {
+					Core::forward($_GET['fwd']);
+				} else {
 					$this->error[] = "Changes Saved!";
 				}
 			}
 		}
 
 		$this->userAccessLog = $this->users->access_log(5);
-		$this->template_view = Core::view(_app_server_path.'humblee/views/user/profile.php', get_object_vars($this));
+		$this->template_view = Core::view(_app_server_path . 'humblee/views/user/profile.php', get_object_vars($this));
 		$themeTemplate = Core::auth('admin') ? 'humblee/views/admin/templates/template.php' : 'application/views/templates/template.php';
 
-		echo Core::view(_app_server_path.$themeTemplate, get_object_vars($this));
+		echo Core::view(_app_server_path . $themeTemplate, get_object_vars($this));
 	}
 
 	public function access(): void
 	{
 		$this->user = $this->users->profile();
 		$this->userAccessLog = $this->users->access_log();
-		$this->template_view = Core::view(_app_server_path.'humblee/views/user/access.php', get_object_vars($this));
+		$this->template_view = Core::view(_app_server_path . 'humblee/views/user/access.php', get_object_vars($this));
 		$themeTemplate = Core::auth('admin') ? 'humblee/views/admin/templates/template.php' : 'application/views/templates/template.php';
-		echo Core::view(_app_server_path.$themeTemplate, get_object_vars($this));
+		echo Core::view(_app_server_path . $themeTemplate, get_object_vars($this));
 	}
 
 	public function forgotPassword(): void
 	{
-        if(Core::auth('login'))
-        {
-            Core::forward('user/profile');
-	    }
+		if (Core::auth('login')) {
+			Core::forward('user/profile');
+		}
 
-	    if(isset($_SESSION[session_key]['recovery']['user_id']))
-	    {
+		if (isset($_SESSION[session_key]['recovery']['user_id'])) {
 			$this->user = \ORM::for_table(_table_users)->find_one($_SESSION[session_key]['recovery']['user_id']);
-			if(!$this->user) { Core::forward('user/login'); return; }
+			if (!$this->user) {
+				Core::forward('user/login');
+				return;
+			}
 			$email_parts = explode("@", $this->user->email);
-	    	$email_name = $email_parts[0][0]."****".substr($email_parts[0], -1);
-	    	$this->email_masked = $email_name."@".$email_parts[1];
-	    	$this->cellphone_lastfour = substr($this->user->cellphone, -4);
+			$email_name = $email_parts[0][0] . "****" . substr($email_parts[0], -1);
+			$this->email_masked = $email_name . "@" . $email_parts[1];
+			$this->cellphone_lastfour = substr($this->user->cellphone, -4);
 
-			if(!isset($_SESSION[session_key]['recovery']['message_sent']) || !$_SESSION[session_key]['recovery']['message_sent'])
-			{
+			if (!isset($_SESSION[session_key]['recovery']['message_sent']) || !$_SESSION[session_key]['recovery']['message_sent']) {
 				$start_point = rand(0, 10);
 				$token = strtoupper(substr(md5((string)rand(10000, 999999)), $start_point, 5));
 				$_SESSION[session_key]['recovery']['token'] = $token;
 
-				if($_ENV['config']['TWILIO_Enabled'] && $this->user->use_twofactor_auth == 1 && $this->user->cellphone_validated)
-				{
-			    	$_SESSION[session_key]['recovery']['message_sent'] = false;
-				}
-				else
-				{
+				if ($_ENV['config']['TWILIO_Enabled'] && $this->user->use_twofactor_auth == 1 && $this->user->cellphone_validated) {
+					$_SESSION[session_key]['recovery']['message_sent'] = false;
+				} else {
 					$userObj = new Users;
-					if($userObj->forgotPasswordVerifyEmail($this->user->email, $this->user->name, $token))
-					{
+					if ($userObj->forgotPasswordVerifyEmail($this->user->email, $this->user->name, $token)) {
 						$_SESSION[session_key]['recovery']['message_sent'] = true;
 						$_SESSION[session_key]['recovery']['method'] = "email";
-					}
-					else
-					{
+					} else {
 						$this->error = "There was a system problem generating your recovery e-mail";
 						$_SESSION[session_key]['recovery']['message_sent'] = false;
 					}
 				}
 			}
 
-			$this->template_view = Core::view(_app_server_path.'humblee/views/user/recovery_verify.php', get_object_vars($this));
-		}
-		else
-		{
-			if(isset($_POST['username']))
-			{
+			$this->template_view = Core::view(_app_server_path . 'humblee/views/user/recovery_verify.php', get_object_vars($this));
+		} else {
+			if (isset($_POST['username'])) {
 				$user = \ORM::for_table(_table_users)
-						->where_any_is([
-							['username' => $_POST['username']],
-							['email' => $_POST['username']]
-						], '=')
-						->find_one();
-				if(!$user)
-				{
+					->where_any_is([
+						['username' => $_POST['username']],
+						['email' => $_POST['username']]
+					], '=')
+					->find_one();
+				if (!$user) {
 					$this->error = ["No account found with this username or e-mail address"];
-				}
-				else
-				{
+				} else {
 					$_SESSION[session_key]['recovery']['user_id'] = $user->id;
-					$fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? 'user/forgotPassword?fwd='.$_GET['fwd'] : 'user/forgotPassword';
+					$fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? 'user/forgotPassword?fwd=' . $_GET['fwd'] : 'user/forgotPassword';
 					Core::forward($fwd);
 				}
 			}
-	    	$this->template_view = Core::view(_app_server_path.'humblee/views/user/recovery.php', get_object_vars($this));
-	    }
-	    echo Core::view(_app_server_path.'application/views/templates/template.php', get_object_vars($this));
+			$this->template_view = Core::view(_app_server_path . 'humblee/views/user/recovery.php', get_object_vars($this));
+		}
+		echo Core::view(_app_server_path . 'application/views/templates/template.php', get_object_vars($this));
 	}
 
 	public function resetPassword(): void
 	{
-        if(Core::auth('login'))
-        {
-            Core::forward('user/profile');
-	    }
+		if (Core::auth('login')) {
+			Core::forward('user/profile');
+		}
 
-	    if(!isset($_SESSION[session_key]['recovery']['user_id']) ||
-	       !isset($_SESSION[session_key]['recovery']['verified']) ||
-	       !$_SESSION[session_key]['recovery']['verified'])
-	    {
-	    	Core::forward('user/login');
-	    }
+		if (
+			!isset($_SESSION[session_key]['recovery']['user_id']) ||
+			!isset($_SESSION[session_key]['recovery']['verified']) ||
+			!$_SESSION[session_key]['recovery']['verified']
+		) {
+			Core::forward('user/login');
+		}
 
-	    if(isset($_POST['password']) && $_POST['password'] !== "" && isset($_POST['password_check']))
-	    {
-	    	if($_POST['password'] !== $_POST['password_check'])
-	    	{
-	    		$this->error = "Confirmation password did not match the password";
-	    	}
-	    	else
-	    	{
-	    		$userObj = new Users;
-	    		$userObj->resetPassword((int)$_SESSION[session_key]['recovery']['user_id'], $_POST['password']);
+		if (isset($_POST['password']) && $_POST['password'] !== "" && isset($_POST['password_check'])) {
+			if ($_POST['password'] !== $_POST['password_check']) {
+				$this->error = "Confirmation password did not match the password";
+			} else {
+				$userObj = new Users;
+				$userObj->resetPassword((int)$_SESSION[session_key]['recovery']['user_id'], $_POST['password']);
 				$userObj->logInSession((int)$_SESSION[session_key]['recovery']['user_id']);
 				unset($_SESSION[session_key]['recovery']);
 				$userObj->accesslog('Password Accepted - Recovery');
 				$fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user";
 				Core::forward($fwd);
-	    	}
-	    }
-		$this->template_view = Core::view(_app_server_path.'humblee/views/user/recovery_resetpassword.php', get_object_vars($this));
-		echo Core::view(_app_server_path.'application/views/templates/template.php', get_object_vars($this));
+			}
+		}
+		$this->template_view = Core::view(_app_server_path . 'humblee/views/user/recovery_resetpassword.php', get_object_vars($this));
+		echo Core::view(_app_server_path . 'application/views/templates/template.php', get_object_vars($this));
 	}
-
 }
