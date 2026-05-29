@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS `humblee_users` (
   `cellphone` varchar(20) NOT NULL,
   `cellphone_validated` tinyint(1) NOT NULL DEFAULT '0',
   `use_twofactor_auth` tinyint(1) NOT NULL DEFAULT '0',
-  `password` char(64) NOT NULL,
+  `password` char(128) NOT NULL,
   `name` varchar(100) NOT NULL,
   `username` varchar(127) NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT '0',
