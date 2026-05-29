@@ -212,7 +212,7 @@ if ($_ENV['config']['TWILIO_Enabled']) {
 
   <style type="text/css">
     .smsInputGroup .notification {
-      display: <?php echo ($user->cellphone != "" && $user->cellphone_verified == 0) ? "block" : "none"; ?>;
+      display: <?php echo ($user->cellphone != "" && $user->cellphone_validated == 0) ? "block" : "none"; ?>;
     }
 
     .smsInputGroup .help,

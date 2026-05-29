@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use Humblee\Foundation\Core;
+use Humblee\Model\Tools;
 ?>
 <h1 class="title">Manage Users</h1>
 
@@ -99,7 +100,7 @@ if (count($users) == 0) {
                             echo "Never";
                         } else {
                         ?>
-                            <span class="tooltip" data-tooltip="<?php echo date("M j, Y g:ia", strtotime($user->last_login)) ?>"><?php echo $tools->time_ago($user->last_login) ?></span>
+                            <span class="tooltip" data-tooltip="<?php echo date("M j, Y g:ia", strtotime($user->last_login)) ?>"><?php echo (new Tools)->time_ago($user->last_login) ?></span>
                         <?php
                         }
                         ?>

@@ -2,8 +2,9 @@
 declare(strict_types=1);
 
 use Humblee\Foundation\Core;
+use Humblee\Model\Tools;
 ?>
-<h1 class="title">Welcome, <?php echo $user->name ?></h2>
+<h1 class="title">Welcome, <?php echo $user->name ?></h1>
 
     <?php
     if (!Core::auth(['content', 'developer'])) {
@@ -24,7 +25,7 @@ use Humblee\Foundation\Core;
                 echo "<table class=\"table is-striped is-hoverable\" width=\"100%\"><thead><th>&nbsp</th><th>Page Label</th><th>Type</th><th>Status</th><th>&nbsp;</th></thead><tbody>";
                 foreach ($recent_contents as $recent_content):
                     $recentPage = ORM::for_table(_table_pages)->find_one($recent_content->page_id);
-                    echo '<td><span class="tooltip" data-tooltip="' . date("F j, Y h:ia", strtotime($recent_content->revision_date)) . '">' . $tools->time_ago($recent_content->revision_date) . '</span></td>';
+                    echo '<td><span class="tooltip" data-tooltip="' . date("F j, Y h:ia", strtotime($recent_content->revision_date)) . '">' . (new Tools)->time_ago($recent_content->revision_date) . '</span></td>';
                     echo "<td>" . $recentPage->label . "</td>";
                     echo "<td>" . $contentTypes[$recent_content->type_id];
                     if ($_ENV['config']['use_p13n'] && $recent_content->p13n_id != 0) {
