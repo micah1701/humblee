@@ -155,8 +155,8 @@ class Pages
 					 FROM ' . $table . ' WHERE parent_id = ' . $parent_id . $active . $sitemap . ' ORDER BY display_order';
 		} else {
 			$table = _table_pages;
-			$active = (array_key_exists('active_only', $params) && $params['active_only']) ? " AND active = 1 " : "";
-			$sitemap = (array_key_exists('display_in_sitemap_only', $params) && $params['display_in_sitemap_only']) ? " AND display_in_sitemap = 1 " : "";
+			$active = (array_key_exists('active_only', $params) && $params['active_only']) ? " AND p.active = 1 " : "";
+			$sitemap = (array_key_exists('display_in_sitemap_only', $params) && $params['display_in_sitemap_only']) ? " AND p.display_in_sitemap = 1 " : "";
 			$sql = 'SELECT p.id as thisID,
 					 p.slug,p.label,p.template_id,
 					 p.parent_id as thisParentID,
