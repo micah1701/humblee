@@ -86,7 +86,7 @@ class Pages
 		$route = implode("/", $uri_parts);
 
 		if ($route === "" || $route === trim(_app_path, "/")) {
-			$route = "/";
+			$route = "";
 			$uri_parts[0] = "/";
 			$uri_num_parts = 1;
 		} else {
@@ -94,7 +94,9 @@ class Pages
 		}
 
 		if ($uri_num_parts == 1) {
-			$sql_where = "slug = '{$route}' AND parent_id = 0";
+			$sql_where = "(slug = '{$route}' ";
+			$sql_where .= ($route == "") ? " OR slug IS NULL) " : ") ";
+			$sql_where .= "AND parent_id = 0";
 		} else {
 			$sql_where = "slug = '{$uri_parts[$uri_num_parts - 1]}' ";
 			$sub_query_braces = "";
