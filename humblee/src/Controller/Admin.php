@@ -16,6 +16,31 @@ class Admin {
 	private array $_uri_parts;
 	private Tools $tools;
 
+	// View data — set in action methods and passed to templates via get_object_vars($this)
+	public object|false $user            = false;
+	public array        $recent_contents = [];
+	public array        $contentTypes    = [];
+	public array        $p13nVersions    = [];
+	public string       $extra_head_code = '';
+	public string|false $template_view   = false;
+	public array        $access_roles    = [];
+	public array        $roles           = [];
+	public array        $hidden_users    = [];
+	public array        $users           = [];
+	public object|false $content         = false;
+	public array        $revisions       = [];
+	public object|false $content_type    = false;
+	public object|false $page_data       = false;
+	public object|false $template_data   = false;
+	public array        $allContentTypes = [];
+	public bool         $is_in_iframe    = false;
+	public array        $allP13nVersions = [];
+	public bool         $hasMediaRole    = false;
+	// Set by Tools::CRUD() via $thisObj
+	public array        $errors          = [];
+	public array        $crud_all        = [];
+	public object|false $crud_selected   = false;
+
 	public function __construct()
 	{
 		if(!Core::auth(['admin', 'developer']))

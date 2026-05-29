@@ -21,6 +21,11 @@ use Humblee\Model\Content;
  */
 class Template {
 
+	public object|false $page          = false;
+	public array|false  $content       = false;
+	public object|false $template      = false;
+	public string|false $template_view = false;
+
 	public function __construct()
 	{
 		$pageObj = new Pages;

@@ -15,6 +15,16 @@ class User {
 	private Tools $tools;
 	private Users $users;
 
+	public false|array       $content            = false;
+	public string|array|null $error              = null;
+	public string            $pagebody           = '';
+	public string            $name               = '';
+	public string            $cellphone_lastfour = '';
+	public string|false      $template_view      = false;
+	public object|false      $user               = false;
+	public array             $userAccessLog      = [];
+	public string            $email_masked       = '';
+
 	public function __construct()
 	{
 		$this->_uri_parts = Core::getURIparts();
@@ -321,6 +331,7 @@ class User {
 	    if(isset($_SESSION[session_key]['recovery']['user_id']))
 	    {
 			$this->user = \ORM::for_table(_table_users)->find_one($_SESSION[session_key]['recovery']['user_id']);
+			if(!$this->user) { Core::forward('user/login'); return; }
 			$email_parts = explode("@", $this->user->email);
 	    	$email_name = $email_parts[0][0]."****".substr($email_parts[0], -1);
 	    	$this->email_masked = $email_name."@".$email_parts[1];
