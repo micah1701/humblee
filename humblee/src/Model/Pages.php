@@ -146,25 +146,30 @@ class Pages
 
 		if (array_key_exists('menu_id', $params) && is_numeric($params['menu_id'])) {
 			$table = _table_menus_pages;
-			$sql = 'SELECT id as thisID,
-					 slug,label,template_id,
-					 parent_id as thisParentID,
-					 display_in_sitemap,
-					 (SELECT COUNT(id) FROM ' . $table . ' WHERE parent_id = thisID) as children,
-					 (SELECT slug FROM ' . $table . ' WHERE id = thisParentID) as parentName
-					 FROM ' . $table . ' WHERE parent_id = ' . $parent_id . $active . $sitemap . ' ORDER BY display_order';
+			$active = (array_key_exists('active_only', $params) && $params['active_only']) ? " AND m.active = 1 " : "";
+			$sitemap = (array_key_exists('display_in_sitemap_only', $params) && $params['display_in_sitemap_only']) ? " AND m.display_in_sitemap = 1 " : "";
+			$sql = 'SELECT m.id as thisid,
+					 m.slug, m.label, m.template_id,
+					 m.parent_id as thisparentid,
+					 m.display_in_sitemap,
+					 children.cnt as children,
+					 parent.slug as parentname
+					 FROM ' . $table . ' m
+					 LEFT JOIN (SELECT parent_id, COUNT(id) as cnt FROM ' . $table . ' GROUP BY parent_id) children ON children.parent_id = m.id
+					 LEFT JOIN ' . $table . ' parent ON parent.id = m.parent_id
+					 WHERE m.parent_id = ' . $parent_id . $active . $sitemap . ' ORDER BY m.display_order';
 		} else {
 			$table = _table_pages;
 			$active = (array_key_exists('active_only', $params) && $params['active_only']) ? " AND p.active = 1 " : "";
 			$sitemap = (array_key_exists('display_in_sitemap_only', $params) && $params['display_in_sitemap_only']) ? " AND p.display_in_sitemap = 1 " : "";
-			$sql = 'SELECT p.id as thisID,
-					 p.slug,p.label,p.template_id,
-					 p.parent_id as thisParentID,
+			$sql = 'SELECT p.id as thisid,
+					 p.slug, p.label, p.template_id,
+					 p.parent_id as thisparentid,
 					 p.required_role,
 					 p.active,
 					 p.display_in_sitemap,
 					 children.cnt as children,
-					 parent.slug as parentName
+					 parent.slug as parentname
 					 FROM ' . $table . ' p
 					 LEFT JOIN (SELECT parent_id, COUNT(id) as cnt FROM ' . $table . ' GROUP BY parent_id) children ON children.parent_id = p.id
 					 LEFT JOIN ' . $table . ' parent ON parent.id = p.parent_id
@@ -178,8 +183,8 @@ class Pages
 			if (
 				array_key_exists('selected_pages', $params) &&
 				is_array($params['selected_pages']) &&
-				$page->thisParentID == $params['toplevel_parent'] &&
-				!in_array($page->thisID, $params['selected_pages'])
+				$page->thisparentid == $params['toplevel_parent'] &&
+				!in_array($page->thisid, $params['selected_pages'])
 			) {
 				continue;
 			}
@@ -193,14 +198,14 @@ class Pages
 			}
 
 			if (array_key_exists('generate_uri', $params) && $params['generate_uri']) {
-				$page->uri = $this->buildLink($page->thisID);
+				$page->uri = $this->buildLink($page->thisid);
 			}
 
 			$menu[$i] = $page;
 			$menu[$i]->generation = $generation;
 
 			if ($page->children > 0) {
-				$params['parent_id'] = $page->thisID;
+				$params['parent_id'] = $page->thisid;
 				$menu[$i]->child_pages = $this->getPages($params, $generation);
 			}
 
@@ -231,8 +236,8 @@ class Pages
 		if (count((array)$pages) > 0) {
 			$html .= "<ul>\n";
 			foreach ($pages as $item) {
-				if ($slugRoot === "" && $item->thisParentID != 0) {
-					$slugRoot = $this->buildLink($item->thisParentID);
+				if ($slugRoot === "" && $item->thisparentid != 0) {
+					$slugRoot = $this->buildLink($item->thisparentid);
 				}
 
 				$newSlug = isset($item->slug) ? $slugRoot . "/" . $item->slug : $slugRoot;
@@ -254,7 +259,7 @@ class Pages
 					if (array_key_exists('thisID', $params)) {
 						$crumbs = $this->getBreadcrumbs($params['thisID']);
 						foreach ($crumbs as $crumb) {
-							if ($item->thisID == $crumb['id']) {
+							if ($item->thisid == $crumb['id']) {
 								$drawClass .= array_key_exists('currentPageParentClass', $params) ? $params['currentPageParentClass'] . ' ' : 'menu_currentPageParent ';
 								$currentParent = true;
 								continue;
@@ -263,13 +268,13 @@ class Pages
 					}
 				}
 
-				if (array_key_exists('thisID', $params) && $item->thisID == $params['thisID']) {
+				if (array_key_exists('thisID', $params) && $item->thisid == $params['thisID']) {
 					$drawClass .= array_key_exists('currentPageClass', $params) ? $params['currentPageClass'] . ' ' : 'menu_currentPage ';
 				}
 
 				$drawClass .= '"';
 
-				$html .= array_key_exists('id_label', $params) ? '<li id="' . $params['id_label'] . $item->thisID . '" ' . $drawClass . '>' : '<li ' . $drawClass . '>';
+				$html .= array_key_exists('id_label', $params) ? '<li id="' . $params['id_label'] . $item->thisid . '" ' . $drawClass . '>' : '<li ' . $drawClass . '>';
 				$html .= $liFormat($item, $newSlug, $drawClass);
 
 				if ($item->children > 0 && count((array)$item->child_pages) > 0 && (!$currentChildrenOnly || $currentParent)) {

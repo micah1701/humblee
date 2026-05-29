@@ -230,7 +230,7 @@ class Request extends Xhr
 		$pageObj = new Pages;
 		$menu = $pageObj->getPages(['active_only' => false, 'display_in_sitemap_only' => false]);
 		$li_format = function ($item, $slug, $class) {
-			return '<a href="' . _app_path . 'admin/edit/?page_id=' . $item->thisID . '">' . $item->label . '</a>';
+			return '<a href="' . _app_path . 'admin/edit/?page_id=' . $item->thisid . '">' . $item->label . '</a>';
 		};
 		echo $pageObj->drawMenu_UL($menu, ['li_format' => $li_format, 'id_label' => 'contentNav_']);
 	}
@@ -244,7 +244,7 @@ class Request extends Xhr
 		$pages = new Pages;
 		$all_pages = $pages->getPages(['active_only' => false, 'display_in_sitemap_only' => false]);
 		$li_format = function ($item, $slug, $class) {
-			return '<div class="pages_menu_item" data="' . $item->thisID . '"><a ' . $class . ' title="' . $slug . '">' . $item->label . '</a></div>';
+			return '<div class="pages_menu_item" data="' . $item->thisid . '"><a ' . $class . ' title="' . $slug . '">' . $item->label . '</a></div>';
 		};
 		echo $pages->drawMenu_UL($all_pages, ['li_format' => $li_format, 'id_label' => 'pageID_']);
 	}
