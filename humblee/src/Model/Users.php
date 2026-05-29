@@ -6,14 +6,15 @@ namespace Humblee\Model;
 
 use Humblee\Foundation\Core;
 
-class Users {
+class Users
+{
 
 	/**
 	 * Hash a password for storage using Argon2ID
 	 */
 	public function hashPassword(string $password, int $user_id): string
 	{
-		return password_hash($password.'-'.$user_id, PASSWORD_ARGON2ID);
+		return password_hash($password . '-' . $user_id, PASSWORD_ARGON2ID);
 	}
 
 	/**
@@ -21,7 +22,7 @@ class Users {
 	 */
 	public function stringToSaltedHash(string $string, int|string $salt): string
 	{
-		$salted_string = $string.'-'.$salt;
+		$salted_string = $string . '-' . $salt;
 		$crypto = new Crypto;
 		return $crypto->genericHash($salted_string);
 	}
@@ -62,52 +63,42 @@ class Users {
 			->where('active', 1)
 			->find_one();
 
-		if(!$user)
-		{
+		if (!$user) {
 			$this->accesslog('Failed: invalid credentials');
 			return ['access_granted' => false, 'error' => 'Invalid Username'];
 		}
 
-		if($sms_login)
-		{
-			if(!isset($_SESSION[session_key]['login_token']) ||
+		if ($sms_login) {
+			if (
+				!isset($_SESSION[session_key]['login_token']) ||
 				strtoupper($password) !== $_SESSION[session_key]['login_token']
-			){
+			) {
 				$this->accesslog('Failed: invalid SMS token');
 				return ['access_granted' => false, 'error' => 'Invalid SMS Code'];
 			}
-			if(!isset($_SESSION[session_key]['login_token_expires']) || time() > $_SESSION[session_key]['login_token_expires'])
-			{
+			if (!isset($_SESSION[session_key]['login_token_expires']) || time() > $_SESSION[session_key]['login_token_expires']) {
 				$this->accesslog('Failed: SMS token expired');
 				return ['access_granted' => false, 'error' => 'SMS Code Expired'];
 			}
-		}
-		else
-		{
+		} else {
 			$passwordCorrect = false;
-			if(password_verify($password.'-'.$user->id, $user->password))
-			{
+			if (password_verify($password . '-' . $user->id, $user->password)) {
 				$passwordCorrect = true;
-				if(password_needs_rehash($user->password, PASSWORD_ARGON2ID))
-				{
+				if (password_needs_rehash($user->password, PASSWORD_ARGON2ID)) {
 					$user->password = $this->hashPassword($password, (int)$user->id);
 					$user->save();
 				}
-			}
-			elseif($this->stringToSaltedHash($password, $user->id) === $user->password)
-			{
+			} elseif ($this->stringToSaltedHash($password, $user->id) === $user->password) {
 				$passwordCorrect = true;
 				$user->password = $this->hashPassword($password, (int)$user->id);
 				$user->save();
 			}
-			if(!$passwordCorrect)
-			{
+			if (!$passwordCorrect) {
 				$this->accesslog('Failed: Invalid Password');
 				return ['access_granted' => false, 'error' => 'Invalid Password'];
 			}
 
-			if($_ENV['config']['TWILIO_Enabled'] && $user->use_twofactor_auth == 1)
-			{
+			if ($_ENV['config']['TWILIO_Enabled'] && $user->use_twofactor_auth == 1) {
 				$this->accesslog('Valid password. SMS requested');
 				return ['access_granted' => false, 'error' => 'use_twofactor_auth', 'cellphone' => $user->cellphone, 'name' => $user->name, 'email' => $user->email];
 			}
@@ -164,8 +155,7 @@ class Users {
 	{
 		$chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 		$pw = "";
-		for($i = 0; $i < $length; $i++)
-		{
+		for ($i = 0; $i < $length; $i++) {
 			$random = rand(0, strlen($chars) - 1);
 			$pw .= $chars[$random];
 		}
@@ -175,13 +165,14 @@ class Users {
 	/**
 	 * Create a new user
 	 */
-	public function createUser(string $name, string $email, string $username, string $password = ''): int
+	public function createUser(string $name, string $email, string $username, string $password = '', string $cellphone = ''): int
 	{
 		$user = \ORM::for_table(_table_users)->create();
 		$user->name = $name;
 		$user->username = $username;
 		$user->email = $email;
-		$user->password = 'random-temp-password-'.time();
+		$user->cellphone = $cellphone;
+		$user->password = 'random-temp-password-' . time();
 		$user->save();
 
 		$user->password = $this->hashPassword($password, (int)$user->id);
@@ -197,12 +188,10 @@ class Users {
 	public function stripRoles(int $user_id): bool
 	{
 		$roles = \ORM::for_table(_table_user_roles)->where('user_id', $user_id)->find_many();
-		if(!$roles)
-		{
+		if (!$roles) {
 			return false;
 		}
-		foreach($roles as $role)
-		{
+		foreach ($roles as $role) {
 			$role->delete();
 		}
 		return true;
@@ -220,32 +209,33 @@ class Users {
 		return true;
 	}
 
-    /**
-     * Delete a user
-     *
-     * $complete_removal BOOL
-     *   True  physically deletes the row
-     *   False updates record to remove access (preserves revision history integrity)
-     */
-    public function deleteUser(int $user_id, bool $complete_removal = false): bool
+	/**
+	 * Delete a user
+	 *
+	 * $complete_removal BOOL
+	 *   True  physically deletes the row
+	 *   False updates record to remove access (preserves revision history integrity)
+	 */
+	public function deleteUser(int $user_id, bool $complete_removal = false): bool
 	{
 		$user = \ORM::for_table(_table_users)->find_one($user_id);
-		if(!$user){ return false; }
+		if (!$user) {
+			return false;
+		}
 
 		$this->stripRoles($user_id);
 
-		if($complete_removal)
-		{
+		if ($complete_removal) {
 			return (bool) $user->delete();
 		}
-		$user->name = $user->name." [DELETED USER]";
-		$user->username = $user->username." [DELETED USER]";
-		$user->email = $user->email." [DELETED USER]";
+		$user->name = $user->name . " [DELETED USER]";
+		$user->username = $user->username . " [DELETED USER]";
+		$user->email = $user->email . " [DELETED USER]";
 		$user->password = "";
 		$user->active = 0;
 		$user->save();
 		return true;
-    }
+	}
 
 	/**
 	 * Reset a user's password and optionally notify them by email
@@ -253,17 +243,18 @@ class Users {
 	public function resetPassword(int $user_id, string $new_password, bool $sendEmail = true): bool
 	{
 		$user = \ORM::for_table(_table_users)->find_one($user_id);
-		if(!$user){ return false; }
+		if (!$user) {
+			return false;
+		}
 		$user->password = $this->hashPassword($new_password, $user_id);
 		$user->save();
 
-		if($sendEmail)
-		{
+		if ($sendEmail) {
 			$from = $_ENV['config']['default_email'];
-			$subject = "You've successfully reset your ". $_ENV['config']['domain'] ." password";
+			$subject = "You've successfully reset your " . $_ENV['config']['domain'] . " password";
 			$body = "Hi {$user->name},\n\n";
 			$body .= "This message is to notify that the password associated with your account has been reset.\n\n";
-			$body .= "If you did not initiate this change, you can recover your account at <a href=\"http://". $_ENV['config']['domain'] . _app_path ."user/forgotPassword\">". $_ENV['config']['domain'] . _app_path ."user/forgotPassword</a>\n\n";
+			$body .= "If you did not initiate this change, you can recover your account at <a href=\"http://" . $_ENV['config']['domain'] . _app_path . "user/forgotPassword\">" . $_ENV['config']['domain'] . _app_path . "user/forgotPassword</a>\n\n";
 			$body .= " Thanks!";
 
 			$tools = new Tools;
@@ -280,12 +271,12 @@ class Users {
 	public function registrationEmail(string $email, string $name, string $password): bool
 	{
 		$from = $_ENV['config']['default_email'];
-		$subject = $_ENV['config']['domain'] ." Username and Password";
+		$subject = $_ENV['config']['domain'] . " Username and Password";
 		$body = "Hi {$name},\n\n";
-		$body .= "Welcome to ". $_ENV['config']['domain'] ."!\n\n";
+		$body .= "Welcome to " . $_ENV['config']['domain'] . "!\n\n";
 		$body .= "Your new account has been created.\n\n";
 		$body .= "Username: {$email} \n\n";
-		$body .= " To change your password, sign in to ". $_ENV['config']['domain'] ." and update your user profile.\n\n";
+		$body .= " To change your password, sign in to " . $_ENV['config']['domain'] . " and update your user profile.\n\n";
 		$body .= " Thanks!";
 
 		$tools = new Tools;
@@ -299,9 +290,9 @@ class Users {
 	public function forgotPasswordVerifyEmail(string $email, string $name, string $token): bool
 	{
 		$from = $_ENV['config']['default_email'];
-		$subject = $_ENV['config']['domain'] ." verification access code";
+		$subject = $_ENV['config']['domain'] . " verification access code";
 		$body = "Hi {$name},\n\n";
-		$body .= "Someone has initiated a password reset request for your account at  ". $_ENV['config']['domain'] ."!\n\n";
+		$body .= "Someone has initiated a password reset request for your account at  " . $_ENV['config']['domain'] . "!\n\n";
 		$body .= "The one-time temporary access code to complete this request is:<strong> {$token} </strong>\n\n";
 		$body .= " If you did not request this, you can ignore and delete this message.\n\n";
 		$body .= " Thanks!";
