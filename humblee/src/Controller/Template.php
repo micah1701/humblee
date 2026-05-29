@@ -19,7 +19,8 @@ use Humblee\Model\Content;
  *   $this->template  Object with data about the template this page uses
  *   $this->content   Associative Array of Objects with live content (keyed by content type objectkey)
  */
-class Template {
+class Template
+{
 
 	public object|false $page          = false;
 	public array|false  $content       = false;
@@ -31,47 +32,38 @@ class Template {
 		$pageObj = new Pages;
 		$this->page = $pageObj->getPagefromURL(Core::getURIparts());
 
-		if(!$this->page)
-		{
+		if (!$this->page) {
 			$this->page = new \stdClass();
 			$this->page->required_role = 0;
 			$this->page->id = '';
-            $this->page->template_id = 1;
+			$this->page->template_id = 1;
 		}
 
-		if($this->page->required_role != 0 && !Core::auth($this->page->required_role))
-		{
-			if(!isset($_SESSION[session_key]['user_id']))
-			{
-				Core::forward("user/login/?fwd=".Core::getURI());
-			}
-			else
-			{
+		if ($this->page->required_role != 0 && !Core::auth($this->page->required_role)) {
+			if (!isset($_SESSION[session_key]['user_id'])) {
+				Core::forward("user/login/?fwd=" . Core::getURI());
+			} else {
 				header('HTTP/1.1 403 Forbidden');
 				exit("<h1>403 Forbidden</h1>You do not have permission to view this page");
 			}
 		}
 
 		$contentObj = new Content;
-		$contents = $contentObj->findContent($this->page->id);
+		$contents = $contentObj->findContent((int)$this->page->id);
 
-		if(isset($_GET['preview']) && Core::auth('admin'))
-		{
-			if(preg_match("/[^0-9,]/", $_GET['preview']))
-			{
+		if (isset($_GET['preview']) && Core::auth('admin')) {
+			if (preg_match("/[^0-9,]/", $_GET['preview'])) {
 				exit('invalid GET parameters');
 			}
 			$preview_ids = explode(",", $_GET['preview']);
 			$getPreviewContent = \ORM::for_table(_table_content)
-						  			->join(_table_content_types, [_table_content.".type_id", "=", _table_content_types.".id"])
-						  			->where_in(_table_content.'.id', $preview_ids)
-									->find_many();
-			foreach($getPreviewContent as $prevContent)
-			{
+				->join(_table_content_types, [_table_content . ".type_id", "=", _table_content_types . ".id"])
+				->where_in(_table_content . '.id', $preview_ids)
+				->find_many();
+			foreach ($getPreviewContent as $prevContent) {
 				$contents[$prevContent->objectkey] = $prevContent;
 
-				if($prevContent->input_type === "markdown")
-				{
+				if ($prevContent->input_type === "markdown") {
 					$Parsedown = new \Parsedown();
 					$contents[$prevContent->objectkey]['content'] = $Parsedown->instance()->text($prevContent->content);
 				}
@@ -81,28 +73,23 @@ class Template {
 		$this->content = !empty($contents) ? $contents : false;
 
 		$personalizedContent = false;
-		if(is_array($this->content))
-		{
-			foreach($this->content as $contentBlock)
-			{
-				if($contentBlock->p13n_id !== "" && $contentBlock->p13n_id != 0)
-				{
+		if (is_array($this->content)) {
+			foreach ($this->content as $contentBlock) {
+				if ($contentBlock->p13n_id !== "" && $contentBlock->p13n_id != 0) {
 					$personalizedContent = true;
 					break;
 				}
 			}
 		}
-		if($personalizedContent)
-		{
+		if ($personalizedContent) {
 			header("Cache-Control: private");
 		}
 
-        $this->template = \ORM::for_table(_table_templates)->find_one($this->page->template_id);
+		$this->template = \ORM::for_table(_table_templates)->find_one($this->page->template_id);
 
-        if($this->page->id === "")
-        {
-            $this->template->page_type = "404";
-        }
+		if ($this->page->id === "") {
+			$this->template->page_type = "404";
+		}
 	}
 
 	/**
@@ -125,44 +112,43 @@ class Template {
 	{
 		$this->setTemplatePath('application/views/templates/template.php');
 
-		switch($this->template->page_type) {
+		switch ($this->template->page_type) {
 
 			case "controller":
 
 				$controller_data = unserialize($this->template->page_meta);
-				$controller = "App\\Controller\\".ucfirst($controller_data['controller']);
+				$controller = "App\\Controller\\" . ucfirst($controller_data['controller']);
 
 				$sub_controller = new $controller();
 				$action = $controller_data['action'];
 				$this->template_view = $sub_controller->$action(get_object_vars($this));
-			break;
+				break;
 
 			case "view":
 
-				$this->template_view = Core::view(_app_server_path."application/views/".$this->template->page_meta.".php", get_object_vars($this));
-			break;
+				$this->template_view = Core::view(_app_server_path . "application/views/" . $this->template->page_meta . ".php", get_object_vars($this));
+				break;
 
 			case "default":
 
-				$this->template_view = Core::view(_app_server_path.'application/views/default.php', get_object_vars($this));
-			break;
+				$this->template_view = Core::view(_app_server_path . 'application/views/default.php', get_object_vars($this));
+				break;
 
 			case "link":
 
 				Core::forward($this->template->page_meta);
-			break;
+				break;
 
 			case "301":
 
 				Core::forward($this->template->page_meta, "301 Moved Permanently");
-			break;
+				break;
 
 			default:
 				header('HTTP/1.1 404 Not Found');
-				$this->template_view = Core::view(_app_server_path."application/views/404.php", get_object_vars($this));
+				$this->template_view = Core::view(_app_server_path . "application/views/404.php", get_object_vars($this));
 		}
 
-		echo Core::view(_app_server_path.$_SESSION[session_key]['templatepath'], get_object_vars($this));
+		echo Core::view(_app_server_path . $_SESSION[session_key]['templatepath'], get_object_vars($this));
 	}
-
 }
