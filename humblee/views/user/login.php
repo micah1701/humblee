@@ -7,7 +7,7 @@ use Humblee\Model\Crypto;
 <h2 class="subtitle">Log in using your username and password</h2>
 
 <?php
-$fwd = (isset($_GET['fwd']) && preg_match('/^[\w-\/-]+$/', $_GET['fwd'])) ? "?fwd=".$_GET['fwd'] : '';
+$fwd = (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) ? "?fwd=".$_GET['fwd'] : '';
 
 if(isset($error))
 { 
