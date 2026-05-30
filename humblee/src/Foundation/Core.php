@@ -21,7 +21,7 @@ class Core {
  		}
         else
         {
-			$_path_info = $_SERVER['REQUEST_URI'];
+			$_path_info = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '';
 		}
 
 		if(str_starts_with($_path_info, _app_path))
