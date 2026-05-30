@@ -78,8 +78,8 @@ CREATE TABLE IF NOT EXISTS `humblee_pages` (
   `template_id` int(11) NOT NULL,
   `required_role` int(11) NOT NULL,
   `active` tinyint(1) NOT NULL,
-  `start_date` datetime NOT NULL,
-  `end_date` datetime NOT NULL,
+  `start_date` datetime DEFAULT NULL,
+  `end_date` datetime DEFAULT NULL,
   `searchable` tinyint(1) NOT NULL,
   `display_in_sitemap` tinyint(1) NOT NULL
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS `humblee_pages` (
 --
 
 INSERT INTO `humblee_pages` (`id`, `parent_id`, `slug`, `label`, `display_order`, `template_id`, `required_role`, `active`, `start_date`, `end_date`, `searchable`, `display_in_sitemap`) VALUES
-(1, 0, '', 'Homepage', 0, 2, 0, 1, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 1);
+(1, 0, '', 'Homepage', 0, 2, 0, 1, NULL, NULL, 0, 1);
 
 -- --------------------------------------------------------
 

@@ -54,14 +54,14 @@ CREATE TABLE IF NOT EXISTS humblee_pages (
   template_id INTEGER NOT NULL,
   required_role INTEGER NOT NULL,
   active SMALLINT NOT NULL,
-  start_date TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
-  end_date TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
+  start_date TIMESTAMP DEFAULT NULL,
+  end_date TIMESTAMP DEFAULT NULL,
   searchable SMALLINT NOT NULL,
   display_in_sitemap SMALLINT NOT NULL
 );
 
 INSERT INTO humblee_pages (id, parent_id, slug, label, display_order, template_id, required_role, active, start_date, end_date, searchable, display_in_sitemap) VALUES
-(1, 0, '', 'Homepage', 0, 2, 0, 1, '1970-01-01 00:00:00', '1970-01-01 00:00:00', 0, 1);
+(1, 0, '', 'Homepage', 0, 2, 0, 1, NULL, NULL, 0, 1);
 
 SELECT setval(pg_get_serial_sequence('humblee_pages', 'id'), MAX(id)) FROM humblee_pages;
 

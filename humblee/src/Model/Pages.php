@@ -33,16 +33,16 @@ class Pages
 			$page = \ORM::for_table(_table_pages)->create();
 			$page->parent_id = $post['parent_id'];
 		} elseif ($action === "update" && isset($post['page_id']) && is_numeric($post['page_id'])) {
-			$page = \ORM::for_table(_table_pages)->find_one($post['page_id']);
+			$page = \ORM::for_table(_table_pages)->find_one((int)$post['page_id']);
 			if (!$page) {
 				return "Could not find specified page to update.";
 			}
 		} elseif ($action === "delete" && isset($post['page_id']) && is_numeric($post['page_id'])) {
-			$page = \ORM::for_table(_table_pages)->find_one($post['page_id']);
+			$page = \ORM::for_table(_table_pages)->find_one((int)$post['page_id']);
 			if (!$page) {
 				return "Could not find specified page to delete.";
 			}
-			$subpages = \ORM::for_table(_table_pages)->where('parent_id', $post['page_id'])->find_many();
+			$subpages = \ORM::for_table(_table_pages)->where('parent_id', (int)$post['page_id'])->find_many();
 			if ($subpages) {
 				return "Can not delete this page because it has " . count($subpages) . " subpage(s).  Please move or delete child pages first.";
 			}
@@ -56,12 +56,10 @@ class Pages
 		$page->label = (isset($post['label']) && $post['label'] !== "") ? $post['label'] : "New Page";
 		$page->display_order = (isset($post['display_order']) && $post['display_order'] !== "") ? $post['display_order'] : 0;
 		$page->template_id = (isset($post['template_id']) && $post['template_id'] !== "") ? $post['template_id'] : 1;
-		$page->active = (isset($post['active']) && is_numeric($post['active'])) ? $post['active'] : 1;
-		$page->searchable = (isset($post['searchable']) && is_numeric($post['searchable'])) ? $post['searchable'] : 1;
-		$page->display_in_sitemap = (isset($post['display_in_sitemap']) && is_numeric($post['display_in_sitemap'])) ? $post['display_in_sitemap'] : 1;
-		if (isset($post['required_role'])) {
-			$page->required_role = $post['required_role'];
-		}
+		$page->active = (isset($post['active']) && is_numeric($post['active'])) ? (int)$post['active'] : 1;
+		$page->searchable = (isset($post['searchable']) && is_numeric($post['searchable'])) ? (int)$post['searchable'] : 1;
+		$page->display_in_sitemap = (isset($post['display_in_sitemap']) && is_numeric($post['display_in_sitemap'])) ? (int)$post['display_in_sitemap'] : 1;
+		$page->required_role = (isset($post['required_role']) && is_numeric($post['required_role'])) ? (int)$post['required_role'] : 0;
 		$page->save();
 
 		return (int) $page->id();
