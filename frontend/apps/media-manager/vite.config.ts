@@ -17,6 +17,7 @@ function removeHtml(): Plugin {
 export default defineConfig({
   plugins: [svelte(), removeHtml()],
   build: {
+    // ../../../ = up from media-manager/ → apps/ → frontend/ → project root
     outDir: resolve(__dirname, '../../../public/humblee/js/admin/media-manager'),
     emptyOutDir: true,
     rollupOptions: {

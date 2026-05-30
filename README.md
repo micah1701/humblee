@@ -38,25 +38,22 @@ Composer will create a `vendor` folder containing the following libraries:
 
 Note: PHP 8.3+ includes the sodium extension natively, so no separate encryption library is needed.
 
-4. **Run NPM** in two places to install Javascript and CSS libraries
+4. **Run NPM** from the project root to install all dependencies
 
-First, install the CMS UI libraries (Bulma, etc.):
 ```
-$ cd ~/public
-$ npm install
+$ npm run setup
 ```
-NPM will create a `node_modules` folder containing the following required libraries:
-* bulma - CSS framework used extensively for the CMS UI. Learn more at <https://bulma.io>
-* bulma-tooltip - an extension for bulma to display tooltip extension
-* nestedSortable - a jQueryUI plugin used for drag/drop functionality in the CMS page manager.
 
-Then, install and build the frontend tool apps (Svelte/React SPAs that power admin tools like the media manager):
+This installs:
+* In `~/public/node_modules/`: bulma, bulma-tooltip, nestedSortable — CSS/JS libraries served directly by the CMS admin UI
+* In `~/frontend/node_modules/`: Vite, Svelte, TypeScript — build tools for the modern frontend tool apps
+
+To build the frontend tool apps (Svelte/React SPAs such as the media manager) after making changes to their source:
 ```
-$ cd ~/frontend
-$ npm install
 $ npm run build
 ```
-This compiles all frontend tool apps and places the built assets in `~/public/humblee/js/admin/`. Built assets are committed to the repo, so this step is only required when developing or updating a tool — not for standard deployments.
+
+Built assets are committed to the repo, so `npm run build` is only required when actively developing a frontend tool — not for standard deployments. A plain `npm run setup` is all a production server needs.
 
 5. **Run the installer to create database tables and master user**. In your browser, navigate to //your-site.tld/humblee/install.  On first run, this page will install the necessary tables and default content then prompt you to create a user account.
 

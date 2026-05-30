@@ -95,13 +95,16 @@ Passwords are stored using `password_hash($password.'-'.$user_id, PASSWORD_ARGON
 
 Admin UI tools that need a modern component framework live in `frontend/apps/`. Each app is a self-contained Vite project (Svelte, React, etc.) with its own `package.json` and `vite.config.*`. All apps share a workspace root at `frontend/package.json`.
 
-### Build commands (run from `/frontend/`)
+### Build commands (run from the project root `/`)
 
 ```bash
-npm run build                   # build all apps
-npm run build:media-manager     # build one app
-npm run dev:media-manager       # Vite dev server for iteration
+npm run setup             # install all dependencies (public/ and frontend/)
+npm run build             # build all frontend tool apps
+npm run build:media-manager  # build one app
+npm run dev:media-manager    # Vite dev server for the media manager
 ```
+
+`public/node_modules/` (Bulma/CSS) and `frontend/node_modules/` (Vite/Svelte) are kept separate on purpose — npm workspace hoisting would pull Bulma out of `public/node_modules/` and break the PHP template's direct reference to it. The root `package.json` delegates to each without merging them.
 
 Built output (`index.js` + `index.css`, fixed filenames — no hash) is written directly to `public/humblee/js/admin/[app-name]/` and **committed to git**, consistent with other compiled assets in the repo.
 
