@@ -119,7 +119,7 @@ if (count($revisions) > 1 && $content->revision_date != $revisions[0]->revision_
             <strong>Saved: </strong><?php echo date("F j, Y h:ia", strtotime($content->revision_date)) ?> &nbsp; <strong>By:</strong> <?php echo ($updated_by_user->name) ?? 'Unknown User'; ?>
             <br>
             <?php
-            if ($content->publish_date == "0000-00-00 00:00:00") {
+            if ($content->publish_date === null) {
             ?>
                 <span class="has-text-info">Unpublished Draft.</span> This content has not yet been published.
             <?php
@@ -157,7 +157,7 @@ if (count($revisions) > 1 && $content->revision_date != $revisions[0]->revision_
                             echo date("M d, Y g:ia", strtotime($revision->revision_date));
                             if ($revision->live == 1) {
                                 echo " - LIVE";
-                            } elseif ($revision->publish_date != "0000-00-00 00:00:00") {
+                            } elseif ($revision->publish_date !== null) {
                                 echo " - Previously published";
                             } else {
                                 echo " - Draft (never published)";

@@ -94,6 +94,7 @@ class Content
 			$new_content->p13n_id = $post['p13n_id'];
 			$new_content->content = $content;
 			$new_content->live = 0;
+			$new_content->publish_date = null;
 			$new_content->revision_date = gmdate("Y-m-d H:i:s");
 			$new_content->updated_by = $_SESSION[session_key]['user_id'];
 			$new_content->save();

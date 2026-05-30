@@ -12,15 +12,15 @@ CREATE TABLE IF NOT EXISTS `humblee_content` (
   `page_id` int(11) NOT NULL,
   `content` text NOT NULL,
   `revision_date` datetime NOT NULL,
-  `publish_date` datetime NOT NULL,
+  `publish_date` datetime DEFAULT NULL,
   `updated_by` int(11) NOT NULL,
   `live` tinyint(1) NOT NULL
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
-INSERT INTO `humblee_content` (`id`,`type_id`,`p13n_id`,`page_id`,`content`,`updated_by`,`live`) VALUES
-(1,1,0,1,'<h1>Welcome to your Humblee powered website</h1>',1,1),
-(2,2,0,1,'{"page_title":"Welcome to Humblee!","meta_description":"","og_title":"","og_description":"","og_image":""}',1,1);
+INSERT INTO `humblee_content` (`id`,`type_id`,`p13n_id`,`page_id`,`content`,`publish_date`,`updated_by`,`live`) VALUES
+(1,1,0,1,'<h1>Welcome to your Humblee powered website</h1>','1970-01-01 00:00:00',1,1),
+(2,2,0,1,'{"page_title":"Welcome to Humblee!","meta_description":"","og_title":"","og_description":"","og_image":""}','1970-01-01 00:00:00',1,1);
 
 -- --------------------------------------------------------
 

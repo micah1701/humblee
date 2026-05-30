@@ -44,7 +44,7 @@ $p13nVersions ??= [];
                     echo "<td>";
                     if ($recent_content->live == 1) {
                         echo '<span class="recent_content_live">Live</span>';
-                    } else if ($recent_content->publish_date != "0000-00-00 00:00:00") {
+                    } else if ($recent_content->publish_date !== null) {
                         echo '<span class="recent_content_previsoulyLive">Previously Published</span>';
                     } else {
                         echo '<span class="recent_content_draft">Draft</span>';

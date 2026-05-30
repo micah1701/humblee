@@ -7,14 +7,14 @@ CREATE TABLE IF NOT EXISTS humblee_content (
   page_id INTEGER NOT NULL,
   content TEXT NOT NULL,
   revision_date TIMESTAMP NOT NULL DEFAULT NOW(),
-  publish_date TIMESTAMP NOT NULL DEFAULT NOW(),
+  publish_date TIMESTAMP DEFAULT NULL,
   updated_by INTEGER NOT NULL,
   live SMALLINT NOT NULL
 );
 
-INSERT INTO humblee_content (id, type_id, p13n_id, page_id, content, updated_by, live) VALUES
-(1, 1, 0, 1, '<h1>Welcome to your Humblee powered website</h1>', 1, 1),
-(2, 2, 0, 1, '{"page_title":"Welcome to Humblee!","meta_description":"","og_title":"","og_description":"","og_image":""}', 1, 1);
+INSERT INTO humblee_content (id, type_id, p13n_id, page_id, content, publish_date, updated_by, live) VALUES
+(1, 1, 0, 1, '<h1>Welcome to your Humblee powered website</h1>', '1970-01-01 00:00:00', 1, 1),
+(2, 2, 0, 1, '{"page_title":"Welcome to Humblee!","meta_description":"","og_title":"","og_description":"","og_image":""}', '1970-01-01 00:00:00', 1, 1);
 
 SELECT setval(pg_get_serial_sequence('humblee_content', 'id'), MAX(id)) FROM humblee_content;
 
