@@ -149,7 +149,7 @@ class Admin
                 $content->p13n_id = $p13n_id;
                 $content->content = '';
                 $content->revision_date = gmdate("Y-m-d H:i:s");
-                $content->live = 0;
+                $content->live = 1;
                 $content->updated_by = $_SESSION[session_key]['user_id'];
                 $content->save();
             }
