@@ -165,6 +165,11 @@ if (count($revisions) > 1 && $content->revision_date != $revisions[0]->revision_
                         </option>
                     <?php
                     }
+                    if (count($revisions) == 0) {
+                    ?>
+                        <option value="">No previous revisions found</option>
+                    <?php
+                    }
                     ?>
                 </select>
             </div>
