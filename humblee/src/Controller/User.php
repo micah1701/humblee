@@ -225,7 +225,7 @@ class User
 				} elseif ($_POST['cellphone_validate'] !== $validation->token) {
 					$this->error[] = "SMS Verification Code does not match value sent to phone.";
 				} else {
-					$validation->token_accepted = date("Y-m-d H:i:s");
+					$validation->token_accepted = gmdate("Y-m-d H:i:s");
 					$validation->old_value = $this->user->cellphone;
 					$validation->save();
 

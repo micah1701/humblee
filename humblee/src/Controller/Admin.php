@@ -148,7 +148,7 @@ class Admin
                 $content->type_id = $content_type;
                 $content->p13n_id = $p13n_id;
                 $content->content = '';
-                $content->revision_date = date("Y-m-d H:i:s");
+                $content->revision_date = gmdate("Y-m-d H:i:s");
                 $content->live = 0;
                 $content->updated_by = $_SESSION[session_key]['user_id'];
                 $content->save();

@@ -47,7 +47,7 @@ class Users
 		$log->ip_address = $_SERVER['REMOTE_ADDR'];
 		$log->ip_geolocation = '';
 		$log->user_agent = $_SERVER['HTTP_USER_AGENT'];
-		$log->timestamp = date("Y-m-d H:i:s");
+		$log->timestamp = gmdate("Y-m-d H:i:s");
 		$log->status = $status;
 		$log->save();
 	}
@@ -108,7 +108,7 @@ class Users
 		$this->logInSession($user->id);
 
 		$user->logins = $user->logins + 1;
-		$user->last_login = date("Y-m-d H:i:s");
+		$user->last_login = gmdate("Y-m-d H:i:s");
 		$user->save();
 
 		$log_msg = $sms_login ? 'Accepted SMS' : 'Accepted Password';

@@ -63,7 +63,7 @@ class Request extends Xhr
 		if ($sms_status['success']) {
 			$validation->new_value = $_POST['cellphone'];
 			$validation->token = $token;
-			$validation->token_created = date("Y-m-d H:i:s");
+			$validation->token_created = gmdate("Y-m-d H:i:s");
 			$validation->message_id = $sms_status['message_id'];
 			$validation->save();
 			echo "success";
@@ -453,6 +453,7 @@ class Request extends Xhr
 		if (!isset($_POST['type']) || !isset($_POST['record']) || !is_numeric($_POST['record'])) {
 			$this->json(['error' => 'invalid request']);
 		}
+		$record = false;
 		if ($_POST['type'] == "folder_name") {
 			$record = \ORM::for_table(_table_media_folders)->where('id', $_POST['record'])->find_one();
 		}
@@ -462,6 +463,7 @@ class Request extends Xhr
 
 		if (!$record) {
 			$this->json(['error' => 'record not found']);
+			return;
 		}
 
 		$record->name = $_POST['value'];
@@ -619,6 +621,7 @@ class Request extends Xhr
 
 		if (!$_FILES['uploaderFiles']) {
 			$errors[] = "No Files Uploaded";
+			$files = [];
 		} else {
 			$files = $this->reArrayFiles($_FILES['uploaderFiles']);
 		}
@@ -636,7 +639,7 @@ class Request extends Xhr
 			$fileRecord->size = $file['size'];
 			$fileRecord->type = $file['type'];
 			$fileRecord->upload_by = $_SESSION[session_key]['user_id'];
-			$fileRecord->upload_date = date("Y-m-d H:i:s");
+			$fileRecord->upload_date = gmdate("Y-m-d H:i:s");
 			$fileRecord->save();
 
 			$id = $fileRecord->id();

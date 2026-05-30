@@ -52,7 +52,7 @@ class Pages
 			return "Error: missing page action or page id";
 		}
 
-		$page->slug = (isset($post['slug']) && $post['slug'] !== "") ? $post['slug'] : "new-" . date("YmdHis");
+		$page->slug = (isset($post['slug']) && $post['slug'] !== "") ? $post['slug'] : "new-" . gmdate("YmdHis");
 		$page->label = (isset($post['label']) && $post['label'] !== "") ? $post['label'] : "New Page";
 		$page->display_order = (isset($post['display_order']) && $post['display_order'] !== "") ? $post['display_order'] : 0;
 		$page->template_id = (isset($post['template_id']) && $post['template_id'] !== "") ? $post['template_id'] : 1;

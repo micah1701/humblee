@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use Humblee\Foundation\Core;
@@ -6,30 +7,35 @@ use Humblee\Foundation\Core;
 $is_dev = Core::auth('developer');
 ?>
 <html class="has-navbar-fixed-top">
+
 <head>
-<meta charset="utf-8">
-<title><?php echo  $_ENV['config']['domain'] ?> CMS</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta charset="utf-8">
+    <title><?php echo  $_ENV['config']['domain'] ?> CMS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-<link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>node_modules/bulma/css/bulma.css">
-<link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>node_modules/bulma-tooltip/dist/bulma-tooltip.min.css">
-<link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>node_modules/bulma/css/bulma.css">
+    <link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>node_modules/bulma-tooltip/dist/bulma-tooltip.min.css">
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<!--
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!--
 <script defer src="https://use.fontawesome.com/releases/v5.0.0/js/all.js"></script>
 -->
-<script type="text/javascript">var  APP_PATH = "<?php echo  _app_path ?>", XHR_PATH = "<?php echo  _app_path ?>core-request/";</script>
-<script src="<?php echo  _app_path ?>humblee/js/admin/admin.js"></script>
-<?php echo (isset($extra_head_code) ) ? $extra_head_code : '' ?>
+    <script type="text/javascript">
+        var APP_PATH = "<?php echo  _app_path ?>",
+            XHR_PATH = "<?php echo  _app_path ?>core-request/";
+    </script>
+    <script src="<?php echo  _app_path ?>humblee/js/admin/admin.js"></script>
+    <?php echo (isset($extra_head_code)) ? $extra_head_code : '' ?>
 
 </head>
+
 <body>
     <nav id="navbar" class="navbar is-primary is-fixed-top has-shadow">
         <div class="container">
             <div class="navbar-brand">
                 <h1 class="is-size-3">Humblee CMS</h1>
-                 <button class="button navbar-burger">
+                <button class="button navbar-burger">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -41,51 +47,46 @@ $is_dev = Core::auth('developer');
                     <a class="navbar-item" href="<?php echo  _app_path ?>admin/">Admin Homepage</a>
 
                     <?php
-                    if(Core::auth('content') || $is_dev)
-                    {
+                    if (Core::auth('content') || $is_dev) {
                     ?>
-                    <a class="navbar-item" href="<?php echo _app_path ?>admin/media" class="tooltip" title="Manage Uploaded Content (files &amp; images)">Media Manager</a>
+                        <a class="navbar-item" href="<?php echo _app_path ?>admin/media" class="tooltip" title="Manage Uploaded Content (files &amp; images)">Media Manager</a>
                     <?php
                     }
                     ?>
 
                     <?php
-                    if(Core::auth('pages') || $is_dev)
-                    {
+                    if (Core::auth('pages') || $is_dev) {
                     ?>
-                    <a class="navbar-item" href="<?php echo  _app_path ?>admin/pages" class="tooltip" title="Edit page settings and manage sitemap structure.">Pages</a>
+                        <a class="navbar-item" href="<?php echo  _app_path ?>admin/pages" class="tooltip" title="Edit page settings and manage sitemap structure.">Pages</a>
                     <?php
                     }
                     ?>
 
                     <?php
-                    if(Core::auth('users') || $is_dev)
-                    {
+                    if (Core::auth('users') || $is_dev) {
                     ?>
-                    <a class="navbar-item" href="<?php echo  _app_path ?>admin/users" class="tooltip" title="View user information and modify permissions">Users</a>
+                        <a class="navbar-item" href="<?php echo  _app_path ?>admin/users" class="tooltip" title="View user information and modify permissions">Users</a>
                     <?php
                     }
                     ?>
 
                     <?php
-                    if(Core::auth('designer') || $is_dev)
-                    {
+                    if (Core::auth('designer') || $is_dev) {
                     ?>
-                    <div class="navbar-item has-dropdown is-hoverable">
-                        <div class="navbar-link">Design</div>
-                        <div class="navbar-dropdown">
-                            <a class="navbar-item" href="<?php echo  _app_path ?>admin/blocks">Manage Content Blocks</a>
-                            <a class="navbar-item" href="<?php echo  _app_path ?>admin/templates">Manage Templates</a>
-                        <?php
-                            if($_ENV['config']['use_p13n'])
-                            {
-                        ?>
-                            <a class="navbar-item" href="<?php echo  _app_path ?>admin/personalization">Personalization Personas</a>
-                        <?php
-                            }
-                        ?>
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <div class="navbar-link">Design</div>
+                            <div class="navbar-dropdown">
+                                <a class="navbar-item" href="<?php echo  _app_path ?>admin/blocks">Manage Content Blocks</a>
+                                <a class="navbar-item" href="<?php echo  _app_path ?>admin/templates">Manage Templates</a>
+                                <?php
+                                if ($_ENV['config']['use_p13n']) {
+                                ?>
+                                    <a class="navbar-item" href="<?php echo  _app_path ?>admin/personalization">Personalization Personas</a>
+                                <?php
+                                }
+                                ?>
+                            </div>
                         </div>
-                    </div>
                     <?php
                     }
                     ?>
@@ -112,21 +113,21 @@ $is_dev = Core::auth('developer');
 
     <section class="section">
         <div class="container">
-        <?php echo (isset($template_view) ) ? $template_view : '' ?>
+            <?php echo (isset($template_view)) ? $template_view : '' ?>
         </div>
     </section><!-- end "content" -->
 
     <footer class="footer">
         <div class="container">
             <div class="content has-text-centered">
-               <p>Powered by <a href="https://humblee.io" target="_blank">Humblee</a> &copy; <?php echo date("Y"); ?></p>
+                <p>Powered by <a href="https://humblee.io" target="_blank">Humblee</a> &copy; <?php echogmdate("Y"); ?></p>
             </div>
         </div>
     </footer>
 
     <div id="confirmationBox" class="modal">
         <div class="modal-background"></div>
-            <div class="modal-card">
+        <div class="modal-card">
             <header class="modal-card-head">
                 <p class="modal-card-title">Are you sure?</p>
             </header>
@@ -141,11 +142,12 @@ $is_dev = Core::auth('developer');
                 </article>
             </section>
             <footer class="modal-card-foot">
-              <button id="confirmButton" class="button is-info">Confirm</button>
-              <button class="button cancel">Cancel</button>
+                <button id="confirmButton" class="button is-info">Confirm</button>
+                <button class="button cancel">Cancel</button>
             </footer>
         </div>
     </div><!-- end of deletePageConfirmation -->
 
 </body>
+
 </html>
