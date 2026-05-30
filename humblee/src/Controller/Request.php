@@ -418,7 +418,7 @@ class Request extends Xhr
 			$this->json(['error' => 'Missing required parameters']);
 		}
 		$contentObj = new Content;
-		$content = $contentObj->listRevisions($_POST['page_id'], $_POST['content_type'], $_POST['p13n_id'], 1);
+		$content = $contentObj->listRevisions((int)$_POST['page_id'], (int)$_POST['content_type'], (int)$_POST['p13n_id'], 1);
 
 		if (!$content) {
 			$this->json(['error' => 'could not confirm previously saved content']);
