@@ -175,7 +175,7 @@ if (count($revisions) > 1 && $content->revision_date != $revisions[0]->revision_
 <hr>
 
 <form action="<?php echo _app_path . "admin/edit/" . $content->id ?>" id="savecontent" name="savecontent" method="post">
-    <input type="hidden" id="edit_time" value="<?php echogmdate("Y-m-d H:i:s") ?>">
+    <input type="hidden" id="edit_time" value="<?php echo gmdate("Y-m-d H:i:s") ?>">
     <input type="hidden" name="content_id" id="content_id" value="<?php echo $content->id ?>">
     <input type="hidden" name="page_id" id="page_id" value="<?php echo $content->page_id ?>">
     <input type="hidden" name="p13n_id" id="p13n_id" value="<?php echo $content->p13n_id ?>">
