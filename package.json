@@ -1,0 +1,10 @@
+{
+  "name": "humblee-app",
+  "private": true,
+  "scripts": {
+    "setup": "npm install --prefix public && npm install --prefix frontend",
+    "build": "npm --prefix frontend run build",
+    "build:media-manager": "npm --prefix frontend run build:media-manager",
+    "dev:media-manager": "npm --prefix frontend run dev:media-manager"
+  }
+}
