@@ -5,6 +5,7 @@
     "apps/*"
   ],
   "scripts": {
+    "//": "These scripts can also be run from the project root via: npm run build / npm run dev:media-manager",
     "build": "npm run build --workspaces",
     "build:media-manager": "npm run build --workspace=apps/media-manager",
     "dev:media-manager": "npm run dev --workspace=apps/media-manager"
