@@ -1,0 +1,83 @@
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+#app {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.tooltip {
+  position: relative;
+}
+
+.tooltip::before,
+.tooltip::after {
+  --scale: 0;
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%) scale(var(--scale));
+  transition: 150ms transform;
+  transform-origin: bottom center;
+}
+
+.tooltip::before {
+  content: attr(data-tooltip);
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+  background: hsl(0, 0%, 20%);
+  color: white;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  z-index: 100;
+}
+
+.tooltip:hover::before,
+.tooltip:hover::after {
+  --scale: 1;
+}
+
+.tooltip.is-tooltip-right::before {
+  left: 100%;
+  bottom: 50%;
+  transform: translateY(50%) scale(var(--scale));
+  transform-origin: left center;
+  margin-left: 0.5rem;
+}
+
+.tooltip.has-tooltip-left::before {
+  right: 100%;
+  left: auto;
+  bottom: 50%;
+  transform: translateY(50%) scale(var(--scale));
+  transform-origin: right center;
+  margin-right: 0.5rem;
+}
+
+.sortButton {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  width: 100%;
+  font-weight: bold;
+  transition: color 0.2s;
+}
+
+.sortButton:hover {
+  color: hsl(217, 71%, 53%);
+}
+
+.sortButton:focus {
+  outline: 2px solid hsl(217, 71%, 53%);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
