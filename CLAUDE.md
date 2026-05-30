@@ -137,7 +137,7 @@ Use `type="module"` — Vite outputs ES modules.
 
 1. Scaffold: `cd frontend/apps && npm create vite@latest [tool-name] -- --template svelte-ts` (or `react-ts`)
 2. Update `vite.config.*`:
-   - Set `build.outDir` to `resolve(__dirname, '../../public/humblee/js/admin/[tool-name]')`
+   - Set `build.outDir` to `resolve(__dirname, '../../../public/humblee/js/admin/[tool-name]')`
    - Set `build.emptyOutDir: true`
    - Set fixed output filenames (no hash) via `rollupOptions.output`
    - Add the `removeHtml()` plugin from `media-manager/vite.config.ts` to prevent Vite from writing a stray `index.html` into the public directory

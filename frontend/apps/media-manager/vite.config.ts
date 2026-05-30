@@ -8,7 +8,7 @@ function removeHtml(): Plugin {
     name: 'remove-html',
     closeBundle() {
       try {
-        rmSync(resolve(__dirname, '../../public/humblee/js/admin/media-manager/index.html'))
+        rmSync(resolve(__dirname, '../../../public/humblee/js/admin/media-manager/index.html'))
       } catch {}
     }
   }
@@ -17,7 +17,7 @@ function removeHtml(): Plugin {
 export default defineConfig({
   plugins: [svelte(), removeHtml()],
   build: {
-    outDir: resolve(__dirname, '../../public/humblee/js/admin/media-manager'),
+    outDir: resolve(__dirname, '../../../public/humblee/js/admin/media-manager'),
     emptyOutDir: true,
     rollupOptions: {
       output: {
