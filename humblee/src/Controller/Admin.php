@@ -210,11 +210,8 @@ class Admin
 
         $this->template_view = Core::view(_app_server_path . 'humblee/views/admin/media.php', get_object_vars($this));
 
-        $this->extra_head_code = '<script type="text/javascript" src="' . _app_path . 'humblee/js/tools/dateformat.js"></script>';
-        $this->extra_head_code .= '<script type="text/javascript" src="' . _app_path . 'humblee/js/tools/friendlyfilesize.js"></script>';
-        $this->extra_head_code .= '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.13/clipboard.min.js"></script>';
-        $this->extra_head_code .= '<script type="text/javascript" src="' . _app_path . 'humblee/js/admin/media.js"></script>';
-        $this->extra_head_code .= '<link rel="stylesheet" type="text/css" href="' . _app_path . 'humblee/css/admin/media.css">';
+        $this->extra_head_code = '<link rel="stylesheet" href="' . _app_path . 'humblee/js/admin/media-manager/index.css">';
+        $this->extra_head_code .= '<script type="module" src="' . _app_path . 'humblee/js/admin/media-manager/index.js"></script>';
 
         $outter_template = $this->is_in_iframe ? 'blank.php' : 'template.php';
         echo Core::view(_app_server_path . 'humblee/views/admin/templates/' . $outter_template, get_object_vars($this));

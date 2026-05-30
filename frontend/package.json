@@ -1,0 +1,12 @@
+{
+  "name": "humblee-frontend",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "build:media-manager": "npm run build --workspace=apps/media-manager",
+    "dev:media-manager": "npm run dev --workspace=apps/media-manager"
+  }
+}
