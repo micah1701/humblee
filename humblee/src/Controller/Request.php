@@ -440,10 +440,10 @@ class Request extends Xhr
 	{
 		$this->require_role(['content', 'media']);
 		if (!isset($_GET['folder']) || !is_numeric($_GET['folder'])) {
-			$result['error'] = "missing folder ID";
+			$result['error'] = "missing or invalidfolder ID";
 		}
 		$media = new Media;
-		$response = ['success' => true, 'files' => $media->listFilesByFolder($_GET['folder'])];
+		$response = ['success' => true, 'files' => $media->listFilesByFolder((int)$_GET['folder'])];
 		$this->json($response);
 	}
 
@@ -634,17 +634,15 @@ class Request extends Xhr
 			$cleanFilename = str_replace(" ", "-", $cleanFilename);
 
 			$fileRecord = \ORM::for_table(_table_media)->create();
-			$fileRecord->folder = (isset($_POST['folder_id']) && is_numeric($_POST['folder_id'])) ? $_POST['folder_id'] : 0;
+			$fileRecord->folder = (isset($_POST['folder_id']) && is_numeric($_POST['folder_id'])) ? (int)$_POST['folder_id'] : 0;
 			$fileRecord->name = $cleanFilename;
 			$fileRecord->size = $file['size'];
 			$fileRecord->type = $file['type'];
-			$fileRecord->upload_by = $_SESSION[session_key]['user_id'];
+			$fileRecord->upload_by = (isset($_SESSION[session_key]['user_id'])) ? (int)$_SESSION[session_key]['user_id'] : 0;
 			$fileRecord->upload_date = gmdate("Y-m-d H:i:s");
-			$fileRecord->save();
 
-			$id = $fileRecord->id();
 			$nameParts = explode(".", $file['name']);
-			$storageName = time() . $id . "." . strtolower(array_pop($nameParts));
+			$storageName = gmdate("YmdHis") . substr(md5($cleanFilename), 0, 6) . "." . strtolower(array_pop($nameParts));
 
 			if ($file['error'] == 0) {
 				if (
