@@ -481,7 +481,7 @@ class Request extends Xhr
 		if (!$file) {
 			exit("File record not found");
 		}
-		$file->required_role = $_POST['required_role'];
+		$file->required_role = (int)$_POST['required_role'];
 		$file->save();
 		$this->json(['success' => true]);
 	}
@@ -636,6 +636,9 @@ class Request extends Xhr
 			$fileRecord = \ORM::for_table(_table_media)->create();
 			$fileRecord->folder = (isset($_POST['folder_id']) && is_numeric($_POST['folder_id'])) ? (int)$_POST['folder_id'] : 0;
 			$fileRecord->name = $cleanFilename;
+			$fileRecord->encrypted = 0;
+			$fileRecord->crypto_nonce = "";
+			$fileRecord->required_role = 0;
 			$fileRecord->size = $file['size'];
 			$fileRecord->type = $file['type'];
 			$fileRecord->upload_by = (isset($_SESSION[session_key]['user_id'])) ? (int)$_SESSION[session_key]['user_id'] : 0;
