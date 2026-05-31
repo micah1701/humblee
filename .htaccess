@@ -20,4 +20,5 @@ Options -Indexes
 
 # Send All Requests to the "public" folder
 
+RewriteCond %{REQUEST_URI} !^/public/
 RewriteRule ^(.\*)$ public/$1 [L]
