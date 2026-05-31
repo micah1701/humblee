@@ -670,12 +670,14 @@ class Request extends Xhr
 						$savedFiles++;
 					} else {
 						$errors[] = 'could not store file ' . $file['name'];
-						$fileRecord->delete();
+						$fileRecord = null;
+						continue;
 					}
 				}
 			} else {
 				$errors[] = 'there was a problem with a file ' . $file['name'];
-				$fileRecord->delete();
+				$fileRecord = null;
+				continue;
 			}
 		}
 
