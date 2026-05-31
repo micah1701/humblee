@@ -1,14 +1,23 @@
 # Turn on URL rewriting
+
 RewriteEngine On
 
 # Protect hidden files from being viewed
-<Files .*>
-	Order Deny,Allow
-	Deny From All
+
+<Files .\*>
+Order Deny,Allow
+Deny From All
 </Files>
 
+# Override Max Filesize (remove these to use default values set in php ini file)
+
+php_value upload_max_filesize 50M
+php_value post_max_size 52M
+
 # Turn of Indexes
+
 Options -Indexes
 
 # Send All Requests to the "public" folder
-RewriteRule ^(.*)$ public/$1 [L]
+
+RewriteRule ^(.\*)$ public/$1 [L]
