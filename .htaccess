@@ -9,7 +9,12 @@ Order Deny,Allow
 Deny From All
 </Files>
 
-# Turn of Indexes
+# Override Max Filesize (remove these to use default values set in php ini file)
+
+php_value upload_max_filesize 50M
+php_value post_max_size 52M
+
+# Turn off Indexes
 
 Options -Indexes
 
