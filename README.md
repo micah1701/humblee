@@ -79,6 +79,27 @@ $uri = (!isset($_path_info[0]) || $_path_info[0] === "" || $_path_info[0] === "p
 return $uri;
 ```
 
+**PHP runtime settings (upload size, memory, etc.)**
+
+The preferred place to configure PHP runtime settings (such as `upload_max_filesize` and `post_max_size`) is your server's main `php.ini` file, since those values apply globally and survive `.htaccess` changes.
+
+If you need per-project overrides, the right approach depends on your PHP mode:
+
+- **CGI / FastCGI (php-fpm):** Use a `.user.ini` file placed in your web root (`public/.user.ini`). PHP-FPM reads this file automatically and respects directives like:
+  ```ini
+  upload_max_filesize = 50M
+  post_max_size = 52M
+  ```
+  Note: PHP-FPM caches `.user.ini` for 5 minutes by default, so changes may take a moment to take effect.
+
+  > **Warning:** Do _not_ use `php_value` directives in `.htaccess` when running CGI/FastCGI. Apache cannot pass these to the FPM process and will fail to parse the `.htaccess` file entirely, which prevents your rewrite rules from running and typically causes a 403 Forbidden error on the site root.
+
+- **mod_php (non-CGI):** `php_value` directives in `.htaccess` work as expected:
+  ```apache
+  php_value upload_max_filesize 50M
+  php_value post_max_size 52M
+  ```
+
 **Folder permissions**
 
 Depending on how you installed the application, you may encounter folder permission issues when the application is attempting to save a file to the server.  There are two areas where you may need to use `chown` or `chmod` to update folders necessary for the proper functionality of the system.
