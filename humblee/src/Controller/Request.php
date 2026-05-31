@@ -675,7 +675,7 @@ class Request extends Xhr
 					}
 				}
 			} else {
-				$errors[] = 'there was a problem with a file ' . $file['name'];
+				$errors[] = ["error" => 'there was a problem with the file: ' . $file['name'], "code" => $file['error']];
 				$fileRecord = null;
 				continue;
 			}
