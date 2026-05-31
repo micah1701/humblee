@@ -83,7 +83,18 @@ return $uri;
 
 Depending on how you installed the application, you may encounter folder permission issues when the application is attempting to save a file to the server.  There are two areas where you may need to use `chown` or `chmod` to update folders necessary for the proper functionality of the system.
 1. During installation, in step 5 above, the site attempts to make a new directory in `~/humbleee/configuration/` and add a file with the site's encryption key.  If the installation file throws an error, you may need to temporarily change that folder's permissions.  You can (and should) change it back to at least `755` after the installation has created the file.
-2. The site's media manager tool in the CMS saves all files to the `~/storage` folder in the root of the application. This folder must be writable by the website.
+2. The site's media manager tool in the CMS saves all files to the `~/storage` folder in the root of the application. This folder must be writable by the website. On Ubuntu/Debian with Apache, the web server runs as `www-data`. Give that user ownership of the folder:
+```bash
+sudo chown -R www-data:www-data /path/to/storage
+sudo chmod -R 755 /path/to/storage
+```
+If you also need your own user account to manage files in that directory (e.g. via CLI), use shared group ownership with the setgid bit so new files inherit the `www-data` group automatically:
+```bash
+sudo chown -R youruser:www-data /path/to/storage
+sudo chmod -R 775 /path/to/storage
+sudo chmod g+s /path/to/storage
+```
+To confirm Apache is running as `www-data`: `ps aux | grep apache2 | grep -v root`
 
 ## Documentation
 Full documentation can be found at <https://humblee.app>
