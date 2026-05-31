@@ -543,7 +543,7 @@ class Request extends Xhr
 			exit("Invalid or missing file ID");
 		}
 		$mediaObj = new Media;
-		$delete = $mediaObj->deleteFile($_POST['file_id']);
+		$delete = $mediaObj->deleteFile((int)$_POST['file_id']);
 
 		if ($delete !== true) {
 			$this->json(["success" => false, "error" => $delete]);
@@ -571,12 +571,12 @@ class Request extends Xhr
 			exit("Invalid or missing file ID");
 		}
 
-		$children = \ORM::for_table(_table_media_folders)->where('parent_id', $_POST['folder_id'])->find_many();
+		$children = \ORM::for_table(_table_media_folders)->where('parent_id', (int)$_POST['folder_id'])->find_many();
 		if ($children) {
 			$this->json(["success" => false, "errors" => "This folder has subfolders and can not be deleted. Delete the child folders first!"]);
 		}
 
-		$files = \ORM::for_table(_table_media)->where('folder', $_POST['folder_id'])->find_many();
+		$files = \ORM::for_table(_table_media)->where('folder', (int)$_POST['folder_id'])->find_many();
 		$mediaObj = new Media;
 		$errors = [];
 		foreach ($files as $file) {
@@ -599,7 +599,7 @@ class Request extends Xhr
 		$this->json(['success' => true]);
 	}
 
-	private function reArrayFiles(&$file_post): array
+	private function reArrayFiles(array &$file_post): array
 	{
 		$file_ary = [];
 		$file_count = count($file_post['name']);
