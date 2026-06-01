@@ -23,7 +23,7 @@
 
     <div class="column">
         <figure class="image homepage card">
-            <img src="<?php echo _app_path ?>/media/7/15191111271.jpg">
+            <img src="https://humblee.app/media/7/15191111271.jpg">
             The Humblee CMS is fully responsive and works accross all devices.
         </figure>
     </div>
