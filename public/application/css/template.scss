@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('../../node_modules/bulma/css/bulma.css');
 
 $font-primary: 'Roboto', sans-serif;
 $color-gray-light: #f1f1f1;
@@ -6,19 +7,43 @@ $color-gray: #d7d7d7;
 $color-gray-dark: #bfbfbf;
 $color-black: #222;
 
+$color-primary: #3F51B5; /* 500 */
+$color-primary-light: #7986CB; /* 300 */
+$color-primary-gray: #E8EAF6; /* 50 */
+
 body, button, input, select, textarea {
     font-family: $font-primary;
 }
 
 .hero {
+  background: $color-primary url('../images/humblee-bg-train.jpg') center no-repeat;
+  background-size: cover;
+  
+  .title, .subtitle {
+    color: $color-gray-light;
+  }
 
-    .title {
-        color: $color-gray-light;
-    }
-    .nav a {
-        
-        &:hover {
-            text-decoration: underline;
-        }
-    }
+}
+
+s, strike {
+  text-decoration: none;
+  display: inline-block;
+  position: relative;
+  &:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border-top: 2px solid orangered;
+    height: 45%;
+    height: calc(50% - 1px);
+    width: 105%;
+    transform: rotateZ(-5deg);    
+  }
+}
+
+figure.homepage.image {
+  background-color: #e8e8e8;
+  padding: 12px;
+  border-radius: 5px;
 }
