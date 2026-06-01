@@ -30,10 +30,10 @@
 </section>
 <hr>
 
-<section class="tile is-ancestor content">
+<section class="fixed-grid has-1-cols has-2-cols-desktop content">
+    <div class="grid">
 
-    <div class="tile is-parent is-vertical is-6">
-        <article class="tile is-child is-vertical notification is-danger">
+        <article class="cell is-row-span-2-desktop notification is-danger">
             <p class="title has-text-centered"><span class="icon"><span class="fas fa-flask"></span></span>&nbsp;
                 Developer Tools</p>
             <ul>
@@ -54,39 +54,33 @@
                 <br>
                 &hellip;or do it your own way. It's your app.
             </div>
-
         </article>
-    </div>
 
-    <div class="tile is-vertical is-6">
-        <div class="tile">
-            <div class="tile is-parent is-vertical">
-                <article class="tile is-child notification is-info">
-                    <p class="title has-text-centered">
-                        <span class="icon"><span class="fas fa-lock"></span></span>&nbsp;
-                        Login System Features
-                    </p>
-                    <ul>
-                        <li><u>Self service</u> user registration, profile management, and password recovery.</li>
-                        <li><u>Role-based user authorization</u> defining who can see certain pages or content, view and download specific files, use the CMS, edit and/or publish content, create and modify
-                            pages or manage other users.</li>
-                        <li><i>Optional</i> <u>Two-Factor Authentication</u> (2FA) via SMS text messages (requires a paid <a href="https://www.twilio.com/docs/api" target="_blank">Twilio</a> account.)</li>
-                        <li><u>Security features</u> include hashed passwords, rate limiting of login attempts, CSRF mitigation via session based HMAC tokens, and logging of all access attempts in the database.</li>
-                    </ul>
-                </article>
+        <article class="cell notification is-info">
+            <p class="title has-text-centered">
+                <span class="icon"><span class="fas fa-lock"></span></span>&nbsp;
+                Login System Features
+            </p>
+            <ul>
+                <li><u>Self service</u> user registration, profile management, and password recovery.</li>
+                <li><u>Role-based user authorization</u> defining who can see certain pages or content, view and download specific files, use the CMS, edit and/or publish content, create and modify
+                    pages or manage other users.</li>
+                <li><i>Optional</i> <u>Two-Factor Authentication</u> (2FA) via SMS text messages (requires a paid <a href="https://www.twilio.com/docs/api" target="_blank">Twilio</a> account.)</li>
+                <li><u>Security features</u> include hashed passwords, rate limiting of login attempts, CSRF mitigation via session based HMAC tokens, and logging of all access attempts in the database.</li>
+            </ul>
+        </article>
 
-                <article class="tile is-child notification is-primary">
-                    <p class="title has-text-centered"><span class="icon"><span class="fas fa-edit"></span></span>&nbsp;
-                        CMS Features</p>
-                    <ul>
-                        <li><u>Page Manager</u> for adding, editing, reordering or deleting pages and setting required user roles for access.</li>
-                        <li><u>User Manager</u> for assigning user roles or removing accounts from they system.</li>
-                        <li><u>Media Manager</u> to upload, rename or delete images and files. Media files can also be secured with required access roles and be encrypted at rest.</li>
-                        <li><u>Content Manager</u> allows modifying page content via WYSIWYG editor or through custom developed UI forms, as the specific content requires. Content can be saved as a draft
-                            or published live to the site and an unlimited number of revisions are stored and can be rolled back.</li>
-                    </ul>
-                </article>
-            </div>
-        </div>
+        <article class="cell notification is-primary">
+            <p class="title has-text-centered"><span class="icon"><span class="fas fa-edit"></span></span>&nbsp;
+                CMS Features</p>
+            <ul>
+                <li><u>Page Manager</u> for adding, editing, reordering or deleting pages and setting required user roles for access.</li>
+                <li><u>User Manager</u> for assigning user roles or removing accounts from they system.</li>
+                <li><u>Media Manager</u> to upload, rename or delete images and files. Media files can also be secured with required access roles and be encrypted at rest.</li>
+                <li><u>Content Manager</u> allows modifying page content via WYSIWYG editor or through custom developed UI forms, as the specific content requires. Content can be saved as a draft
+                    or published live to the site and an unlimited number of revisions are stored and can be rolled back.</li>
+            </ul>
+        </article>
+
     </div>
 </section>
