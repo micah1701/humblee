@@ -221,9 +221,8 @@ if (count($revisions) > 1 && $content->revision_date != $revisions[0]->revision_
     elseif ($content_type->input_type == "wysiwyg") {
         echo  preg_replace('@{content}@', $content->content, $content_type->input_parameters);
     ?>
-        <script src="https://cdn.quilljs.com/1.3.5/quill.js"></script>
-        <script src="<?php echo _app_path ?>humblee/js/tools/quill.js"></script>
-
+        <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+        <script src="<?php echo _app_path ?>humblee/js/tools/summernote.js"></script>
     <?php
     }
 
