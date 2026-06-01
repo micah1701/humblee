@@ -155,7 +155,6 @@ CREATE TABLE IF NOT EXISTS humblee_media (
   size INTEGER NOT NULL,
   required_role INTEGER NOT NULL,
   encrypted SMALLINT NOT NULL,
-  crypto_nonce VARCHAR(255) NOT NULL,
   upload_by INTEGER NOT NULL,
   upload_date TIMESTAMP NOT NULL DEFAULT NOW()
 );

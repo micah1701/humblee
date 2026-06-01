@@ -117,6 +117,18 @@ sudo chmod g+s /path/to/storage
 ```
 To confirm Apache is running as `www-data`: `ps aux | grep apache2 | grep -v root`
 
+## Media file encryption
+
+Humblee supports optional at-rest encryption for media files stored in the `/storage` directory. Encryption is performed per-file from the admin media manager and can be toggled on or off at any time.
+
+**Algorithm:** libsodium `secretbox` (XSalsa20-Poly1305 authenticated encryption). This provides confidentiality and integrity in a single primitive using PHP's built-in sodium extension (no external library required).
+
+**Key:** A 32-byte symmetric key is generated automatically by the installer and written to `~/humblee/configuration/crypto/key.php`. This file is excluded from version control. **Do not lose this file** — it is the only way to decrypt your files. Back it up securely alongside your database.
+
+**Nonce handling:** Each file gets a fresh random 24-byte nonce at encryption time. The nonce is prepended to the ciphertext and stored together in the file itself — no database column is required to hold it. The encrypted file on disk is `[24-byte nonce][ciphertext]`; decryption extracts the nonce from the first 24 bytes automatically.
+
+**Database:** The `humblee_media` table tracks encryption state via the `encrypted` column (`0` = plaintext on disk, `1` = encrypted on disk). When a file is served through `/media/{id}/`, the CMS detects the flag, decrypts the payload in memory, and streams the plaintext to the browser — the file on disk is never written back as plaintext during a read.
+
 ## Documentation
 Full documentation can be found at <https://humblee.app>
 

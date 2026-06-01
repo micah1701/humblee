@@ -508,20 +508,19 @@ class Request extends Xhr
 		$crypto = new \Humblee\Model\Crypto;
 		if ($_POST['action'] == "encrypt") {
 			$encrypt = $crypto->encrypt($file_content);
-			if (!$encrypt || !is_array($encrypt) || !isset($encrypt['crypttext']) || !isset($encrypt['nonce'])) {
+			if ($encrypt === false) {
 				exit("Error encrypting file");
 			}
-			if (!file_put_contents($file_location, $encrypt['crypttext'])) {
+			if (!file_put_contents($file_location, $encrypt)) {
 				exit("Could not save encrypted text to file");
 			} else {
-				$file->crypto_nonce = $encrypt['nonce'];
 				$file->encrypted = 1;
 				$file->save();
 				$this->json(["success" => true]);
 			}
 		} elseif ($_POST['action'] == "decrypt") {
-			$decrypt = $crypto->decrypt($file_content, $file->crypto_nonce);
-			if (!$decrypt) {
+			$decrypt = $crypto->decrypt($file_content);
+			if ($decrypt === false) {
 				exit("Error decrypting file");
 			}
 			if (!file_put_contents($file_location, $decrypt)) {
@@ -731,6 +730,56 @@ class Request extends Xhr
 			"_app_path" => _app_path,
 			"js_load" => _app_path . "humblee/js/admin/toolbar.js?time=" . time(),
 			"name" => $user->name
+		]);
+	}
+
+	/**
+	 * One-time migration: prepend stored DB nonces into their encrypted files on disk,
+	 * then clear the crypto_nonce column. Run this once before deploying the new
+	 * encrypt/decrypt signatures that embed the nonce in the file payload.
+	 */
+	public function migrateNonces(): void
+	{
+		$this->require_role('admin');
+
+		$files = \ORM::for_table(_table_media)
+			->where('encrypted', 1)
+			->where_not_equal('crypto_nonce', '')
+			->find_many();
+
+		$migrated = 0;
+		$errors   = [];
+
+		foreach ($files as $file) {
+			$nonce = $file->crypto_nonce;
+
+			if (strlen($nonce) !== SODIUM_CRYPTO_SECRETBOX_NONCEBYTES) {
+				$errors[] = "File ID {$file->id}: unexpected nonce length (" . strlen($nonce) . " bytes), skipped";
+				continue;
+			}
+
+			$file_location = _app_server_path . 'storage/' . $file->filepath;
+			$ciphertext    = file_get_contents($file_location);
+
+			if ($ciphertext === false) {
+				$errors[] = "File ID {$file->id}: could not read from disk, skipped";
+				continue;
+			}
+
+			if (!file_put_contents($file_location, $nonce . $ciphertext)) {
+				$errors[] = "File ID {$file->id}: could not write migrated payload to disk, skipped";
+				continue;
+			}
+
+			$file->crypto_nonce = '';
+			$file->save();
+			$migrated++;
+		}
+
+		$this->json([
+			"success"  => empty($errors),
+			"migrated" => $migrated,
+			"errors"   => $errors,
 		]);
 	}
 }

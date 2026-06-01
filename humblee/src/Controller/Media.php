@@ -80,9 +80,20 @@ class Media {
     			exit("<h1>500 Internal Server Error</h1>The file system could not read the requested resource");
             }
 
-            $this->setHeaders();
-            $crypto = new Crypto;
-            echo $crypto->decrypt($encrypted_content, $this->file->crypto_nonce);
+            $crypto    = new Crypto;
+            $decrypted = $crypto->decrypt($encrypted_content);
+
+            if($decrypted === false)
+            {
+                header('HTTP/1.1 500 Internal Server Error');
+                exit("<h1>500 Internal Server Error</h1>Could not decrypt the requested resource");
+            }
+
+            $cacheControl = ($this->file->required_role != 0) ? 'private' : 'public';
+            header('Content-Type: ' . $this->file->type);
+            header('Cache-Control: ' . $cacheControl);
+            header('Content-Length: ' . strlen($decrypted));
+            echo $decrypted;
         }
         else
         {

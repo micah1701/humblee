@@ -221,7 +221,6 @@ CREATE TABLE `humblee_media` (
   `size` int(11) NOT NULL,
   `required_role` int(11) NOT NULL,
   `encrypted` tinyint(1) NOT NULL,
-  `crypto_nonce` varchar(255) NOT NULL,
   `upload_by` int(11) NOT NULL,
   `upload_date` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

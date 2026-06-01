@@ -36,7 +36,7 @@ class Crypto {
 	 */
 	 public function get_hmac_pair(): array
 	 {
- 		$random_string = md5(uniqid((string)rand(), true). time() . session_id());
+ 		$random_string = bin2hex(random_bytes(16));
 	 	return [
 	 		'message' => $random_string,
 	 		'hmac' => base64_encode(hash_hmac('sha256', $random_string, $this->getCsrfToken()))
@@ -53,8 +53,7 @@ class Crypto {
 
     private function generateCsrfToken(): string
     {
-		$token = uniqid((string)rand(), true). time() . session_id();
-		return $this->genericHash($token);
+		return $this->genericHash(bin2hex(random_bytes(32)));
     }
 
     private function getCryptoKey(): string
@@ -64,25 +63,29 @@ class Crypto {
 	}
 
 	/**
-	 * Encrypt a string using libsodium
-	 * Returns ARRAY with 'crypttext' and 'nonce' — both must be saved for decryption
+	 * Encrypt plaintext with libsodium secretbox.
+	 * Returns a single binary string: [24-byte nonce][ciphertext].
+	 * The nonce is prepended at a fixed length so decrypt() can extract it without a separator.
 	 */
-	public function encrypt(string $plaintext): array|false
+	public function encrypt(string $plaintext): string|false
 	{
 		$nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
-		$crypttext = sodium_crypto_secretbox($plaintext, $nonce, $this->getCryptoKey());
-		return ['crypttext' => $crypttext, 'nonce' => $nonce];
+		$ciphertext = sodium_crypto_secretbox($plaintext, $nonce, $this->getCryptoKey());
+		if ($ciphertext === false) {
+			return false;
+		}
+		return $nonce . $ciphertext;
 	}
 
 	/**
-	 * Decrypt a previously encrypted string
-	 *
-	 * $crypttext  ciphered text previously encrypted by this site
-	 * $nonce      unique one-time token originally generated at encryption time
+	 * Decrypt a payload produced by encrypt().
+	 * Extracts the nonce from the first SODIUM_CRYPTO_SECRETBOX_NONCEBYTES bytes.
 	 */
-	public function decrypt(string $crypttext, string $nonce): string|false
+	public function decrypt(string $payload): string|false
 	{
-		return sodium_crypto_secretbox_open($crypttext, $nonce, $this->getCryptoKey());
+		$nonce      = substr($payload, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+		$ciphertext = substr($payload, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+		return sodium_crypto_secretbox_open($ciphertext, $nonce, $this->getCryptoKey());
 	}
 
 }
