@@ -1,0 +1,19 @@
+/* Light Mode Theme */
+:root {
+  --bulma-scheme-brightness: light;
+
+  /* Light mode - similar to original Bulma */
+  --bulma-scheme-main-l: 100%;
+  --bulma-scheme-main-bis-l: 98%;
+  --bulma-scheme-main-ter-l: 96%;
+  --bulma-scheme-invert-l: 4%;
+  --bulma-scheme-invert-bis-l: 10%;
+  --bulma-scheme-invert-ter-l: 14%;
+
+  /* Background and text colors */
+  --bulma-background-l: 98%;
+  --bulma-border-l: 92%;
+  --bulma-text-l: 20%;
+  --bulma-text-weak-l: 48%;
+  --bulma-text-strong-l: 14%;
+}

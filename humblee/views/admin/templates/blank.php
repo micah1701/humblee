@@ -4,14 +4,22 @@
 <title><?php echo  $_ENV['config']['domain'] ?> CMS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
+<?php
+use Humblee\Model\Crypto;
+$crypto = new Crypto();
+$hmac_pair = $crypto->get_hmac_pair();
+?>
+
 <link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>node_modules/bulma/css/bulma.css">
+<link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>humblee/css/admin/theme-<?php echo $userTheme ?? 'light' ?>.css">
 <link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>node_modules/bulma-tooltip/dist/bulma-tooltip.min.css">
 <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-<script type="text/javascript">var  APP_PATH = "<?php echo  _app_path ?>", XHR_PATH = "<?php echo  _app_path ?>core-request/";</script>
+<script type="text/javascript">var  APP_PATH = "<?php echo  _app_path ?>", XHR_PATH = "<?php echo  _app_path ?>core-request/", CURRENT_THEME = "<?php echo $userTheme ?? 'light' ?>", hmac_key = "<?php echo $hmac_pair['key'] ?>", hmac_token = "<?php echo $hmac_pair['message'] ?>";</script>
 <script src="<?php echo  _app_path ?>humblee/js/admin/admin.js"></script>
+<script src="<?php echo  _app_path ?>humblee/js/admin/theme-toggle.js"></script>
 <?php echo (isset($extra_head_code) ) ? $extra_head_code : '' ?>
 
 </head>

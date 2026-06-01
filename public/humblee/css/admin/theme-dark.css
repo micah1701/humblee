@@ -1,0 +1,19 @@
+/* Dark Mode Theme */
+:root {
+  --bulma-scheme-brightness: dark;
+
+  /* Dark mode - inverted colors for comfortable viewing */
+  --bulma-scheme-main-l: 20%;
+  --bulma-scheme-main-bis-l: 25%;
+  --bulma-scheme-main-ter-l: 30%;
+  --bulma-scheme-invert-l: 100%;
+  --bulma-scheme-invert-bis-l: 98%;
+  --bulma-scheme-invert-ter-l: 96%;
+
+  /* Background and text colors for dark mode */
+  --bulma-background-l: 22%;
+  --bulma-border-l: 35%;
+  --bulma-text-l: 90%;
+  --bulma-text-weak-l: 70%;
+  --bulma-text-strong-l: 100%;
+}

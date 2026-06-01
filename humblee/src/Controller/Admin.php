@@ -37,6 +37,7 @@ class Admin
     public bool         $is_in_iframe    = false;
     public array        $allP13nVersions = [];
     public bool         $hasMediaRole    = false;
+    public string       $userTheme       = 'light';
     // Set by Tools::CRUD() via $thisObj
     public array        $errors          = [];
     public array        $crud_all        = [];
@@ -50,6 +51,12 @@ class Admin
 
         $this->_uri_parts = Core::getURIparts();
         $this->tools = new Tools;
+
+        // Load user's theme preference
+        if (isset($_SESSION[session_key]['user_id'])) {
+            $users = new Users();
+            $this->userTheme = $users->getThemePreference($_SESSION[session_key]['user_id']);
+        }
     }
 
     private function getUser(): object|false

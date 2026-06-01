@@ -782,4 +782,27 @@ class Request extends Xhr
 			"errors"   => $errors,
 		]);
 	}
+
+	/**
+	 * Set user's theme preference (light/dark/system)
+	 */
+	public function setThemePreference(): void
+	{
+		$this->require_role('login');
+		$this->require_hmac();
+
+		if (!isset($_POST['theme']) || !is_string($_POST['theme'])) {
+			$this->json(["error" => "Missing or invalid theme parameter"]);
+		}
+
+		$users = new Users();
+		$user_id = $_SESSION[session_key]['user_id'];
+		$theme = $_POST['theme'];
+
+		if ($users->setThemePreference($user_id, $theme)) {
+			$this->json(["success" => true, "theme" => $theme]);
+		} else {
+			$this->json(["error" => "Failed to update theme preference"], 400);
+		}
+	}
 }

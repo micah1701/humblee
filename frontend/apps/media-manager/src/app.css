@@ -28,8 +28,8 @@ body {
   content: attr(data-tooltip);
   padding: 0.5rem;
   border-radius: 0.3rem;
-  background: hsl(0, 0%, 20%);
-  color: white;
+  background: var(--bulma-dark);
+  color: var(--bulma-white);
   font-size: 0.875rem;
   white-space: nowrap;
   z-index: 100;
@@ -73,11 +73,11 @@ body {
 }
 
 .sortButton:hover {
-  color: hsl(217, 71%, 53%);
+  color: var(--bulma-info);
 }
 
 .sortButton:focus {
-  outline: 2px solid hsl(217, 71%, 53%);
+  outline: 2px solid var(--bulma-info);
   outline-offset: 2px;
   border-radius: 2px;
 }

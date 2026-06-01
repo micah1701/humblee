@@ -3,8 +3,13 @@
 declare(strict_types=1);
 
 use Humblee\Foundation\Core;
+use Humblee\Model\Crypto;
 
 $is_dev = Core::auth('developer');
+
+// Generate HMAC tokens for AJAX requests
+$crypto = new Crypto();
+$hmac_pair = $crypto->get_hmac_pair();
 ?>
 <html class="has-navbar-fixed-top">
 
@@ -14,6 +19,7 @@ $is_dev = Core::auth('developer');
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
     <link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>node_modules/bulma/css/bulma.css">
+    <link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>humblee/css/admin/theme-<?php echo $userTheme ?? 'light' ?>.css">
     <link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>node_modules/bulma-tooltip/dist/bulma-tooltip.min.css">
     <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
 
@@ -23,9 +29,13 @@ $is_dev = Core::auth('developer');
 -->
     <script type="text/javascript">
         var APP_PATH = "<?php echo  _app_path ?>",
-            XHR_PATH = "<?php echo  _app_path ?>core-request/";
+            XHR_PATH = "<?php echo  _app_path ?>core-request/",
+            CURRENT_THEME = "<?php echo $userTheme ?? 'light' ?>",
+            hmac_key = "<?php echo $hmac_pair['key'] ?>",
+            hmac_token = "<?php echo $hmac_pair['message'] ?>";
     </script>
     <script src="<?php echo  _app_path ?>humblee/js/admin/admin.js"></script>
+    <script src="<?php echo  _app_path ?>humblee/js/admin/theme-toggle.js"></script>
     <?php echo (isset($extra_head_code)) ? $extra_head_code : '' ?>
 
 </head>
@@ -98,6 +108,12 @@ $is_dev = Core::auth('developer');
                                 <span class="icon has-text-info"><i class="fas fa-user" aria-hidden="true"></i></span>
                                 Update Profile
                             </a>
+                            <hr class="navbar-divider">
+                            <a class="navbar-item" id="themeToggle">
+                                <span class="icon has-text-warning"><i class="fas fa-moon" aria-hidden="true"></i></span>
+                                <span id="themeLabel">Switch to Dark Mode</span>
+                            </a>
+                            <hr class="navbar-divider">
                             <a class="navbar-item" href="<?php echo  _app_path ?>user/logout">
                                 <span class="icon has-text-danger"><i class="fas fa-sign-out-alt" aria-hidden="true"></i></span>
                                 Log Out

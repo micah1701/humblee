@@ -2,23 +2,29 @@
   border: 1px solid #dbdbdb;
   border-radius: 5px;
   background-color: whitesmoke;
-  padding: 20px 15px; }
-  .criteria_OR .column-slim {
-    max-width: 50px;
-    text-align: right; }
+  padding: 20px 15px;
+}
+.criteria_OR .column-slim {
+  max-width: 50px;
+  text-align: right;
+}
 
 .criteria_seperator {
-  margin: -20px auto 5px 0; }
+  margin: -20px auto 5px 0;
+}
 
 .or_seperator {
-  margin: 10px auto; }
+  margin: 10px auto;
+}
 
 .criteria_add_and,
 .criteria_remove_or,
 #add_or_criteria {
-  cursor: pointer; }
+  cursor: pointer;
+}
 
 #add_or_criteria {
-  margin-top: 10px; }
+  margin-top: 10px;
+}
 
 /*# sourceMappingURL=personalization.css.map */

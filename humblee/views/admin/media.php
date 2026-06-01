@@ -24,7 +24,8 @@ $access_roles ??= [];
                             iterator_to_array($access_roles)
                         ))) ?>,
         XHR_PATH: "<?php echo _app_path ?>core-request/",
-        WEB_ROOT: "<?php echo rtrim(_app_path, '/') ?>"
+        WEB_ROOT: "<?php echo rtrim(_app_path, '/') ?>",
+        theme: "<?php echo $userTheme ?? 'light' ?>"
     };
 </script>
 <div id="app"></div>

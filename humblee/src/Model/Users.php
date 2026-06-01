@@ -302,4 +302,33 @@ class Users
 		$message = $tools->emailTemplate($subject, nl2br($body), _app_server_path . 'humblee/views/email/notification.php');
 		return $tools->sendEmail($email, $from, $subject, $message);
 	}
+
+	/**
+	 * Get theme preference for a user (light, dark, or system)
+	 */
+	public function getThemePreference(int $user_id): string
+	{
+		$user = \ORM::for_table(_table_users)->find_one($user_id);
+		if (!$user) {
+			return 'light';
+		}
+		$theme = $user->theme_preference ?? 'light';
+		return in_array($theme, ['light', 'dark', 'system'], true) ? $theme : 'light';
+	}
+
+	/**
+	 * Set theme preference for a user
+	 */
+	public function setThemePreference(int $user_id, string $theme): bool
+	{
+		if (!in_array($theme, ['light', 'dark', 'system'], true)) {
+			return false;
+		}
+		$user = \ORM::for_table(_table_users)->find_one($user_id);
+		if (!$user) {
+			return false;
+		}
+		$user->theme_preference = $theme;
+		return (bool) $user->save();
+	}
 }

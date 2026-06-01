@@ -4,13 +4,17 @@
   "description": "Scripts and Styles used by the Humblee.io Framework",
   "main": "index.js",
   "dependencies": {
-    "bulma": "^0.6.2",
-    "bulma-tooltip": "^0.1.1",
+    "bulma": "^1.0.4",
+    "bulma-tooltip": "^3.0.2",
     "nestedSortable": "^1.3.4"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "sass": "^1.69.5"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:css": "for f in humblee/css/admin/*.scss; do npx sass \"$f\" \"${f%.scss}.css\"; done",
+    "build:css:app": "npx sass application/css/template.scss application/css/template.css"
   },
   "keywords": [],
   "author": "",
