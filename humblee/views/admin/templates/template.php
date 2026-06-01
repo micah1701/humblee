@@ -20,7 +20,7 @@ $hmac_pair = $crypto->get_hmac_pair();
 
     <link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>node_modules/bulma/css/bulma.css">
     <link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>humblee/css/admin/theme-<?php echo $userTheme ?? 'light' ?>.css">
-    <link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>node_modules/bulma-tooltip/dist/bulma-tooltip.min.css">
+    <link rel="stylesheet" type="text/css" href="<?php echo _app_path ?>node_modules/bulma-tooltip/dist/css/bulma-tooltip.min.css">
     <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>

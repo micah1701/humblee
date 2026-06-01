@@ -129,6 +129,37 @@ Humblee supports optional at-rest encryption for media files stored in the `/sto
 
 **Database:** The `humblee_media` table tracks encryption state via the `encrypted` column (`0` = plaintext on disk, `1` = encrypted on disk). When a file is served through `/media/{id}/`, the CMS detects the flag, decrypts the payload in memory, and streams the plaintext to the browser — the file on disk is never written back as plaintext during a read.
 
+## Admin UI — Bulma CSS framework
+
+The CMS admin interface uses [Bulma 1.4](https://bulma.io) as its CSS framework. Bulma is installed as an npm dependency in `public/` and served directly from `node_modules/` — no build step is needed for Bulma itself.
+
+### File locations
+
+| File | Purpose |
+|------|---------|
+| `public/node_modules/bulma/css/bulma.css` | Bulma core CSS (served directly) |
+| `public/node_modules/bulma-tooltip/dist/css/bulma-tooltip.min.css` | Tooltip extension (served directly) |
+| `public/humblee/css/admin/theme-light.css` | Light mode CSS variable overrides |
+| `public/humblee/css/admin/theme-dark.css` | Dark mode CSS variable overrides |
+| `public/humblee/css/admin/*.scss` | Admin UI component styles (compiled to `.css`) |
+
+### Customizing Bulma's appearance
+
+Bulma 1.x uses CSS custom properties (variables) for all colors and spacing. To change the look of the admin UI, edit the theme files rather than modifying Bulma's source:
+
+- **Colors, contrast, backgrounds:** override `--bulma-*` variables in `theme-light.css` or `theme-dark.css`
+- **Component-specific styles:** add rules to the relevant SCSS file in `public/humblee/css/admin/` and recompile
+
+### Compiling admin SCSS
+
+After editing any `.scss` file in `public/humblee/css/admin/`:
+
+```bash
+npm run build:css
+```
+
+This delegates to `npm --prefix public run build:css`, which runs `sass` on each admin SCSS file and outputs the compiled `.css` alongside it.
+
 ## Documentation
 Full documentation can be found at <https://humblee.app>
 
