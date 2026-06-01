@@ -4,7 +4,7 @@
   "description": "Scripts and Styles used by the Humblee.io Framework",
   "main": "index.js",
   "dependencies": {
-    "bulma": "^1.4.0",
+    "bulma": "^1.0.4",
     "bulma-tooltip": "^3.0.2",
     "nestedSortable": "^1.3.4"
   },
