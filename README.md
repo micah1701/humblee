@@ -8,11 +8,11 @@ Humblee covers the boring stuff, like page routing, content managment tools, and
 
 ### Prerequisites
 
-- Apache with .htaccess and mod_rewrite
-- PHP 8.3+
-- MySQL Database
-- npm
-- composer
+- Apache with mod_rewrite with .htaccess and/or configurable v-host
+- NGINX and IIS are also supported but required additional configuration for pathing
+- MySQL or PostgreSQL Database
+- Node.js runtime for `npm` package manager and `build` commands
+- composer (php package manager)
 
 ### Installing
 
