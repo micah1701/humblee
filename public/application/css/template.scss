@@ -25,14 +25,14 @@ body, button, input, select, textarea {
     border-radius: 8px;
 
         .title span.icon:not(span.fas) {
-            background-color: rgba(0,0,0,.5);
+            background-color: rgba(121, 173, 255, 0.5);
             width: 46px;
-            height: 40px;
+            height: 41px;
             margin: 0 -10px;
             border-radius: 5px;
         }
 
-        .title {
+        .title:not(.icon, .fas) {
             text-shadow: 4px 4px 11px black;
         }
 
