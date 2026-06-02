@@ -23,7 +23,15 @@ body, button, input, select, textarea {
     background-color: rgba(0, 50, 103, 0.5);
     padding: 10px 0 10px 20px;
     border-radius: 8px;
-  }
+
+        .title, span.icon {
+            background-color: rgba(0,0,0,.5);
+            width: 46px;
+            height: 40px;
+            margin: 0 -10px;
+            border-radius: 5px;
+        }
+    }
 
   .title, .subtitle {
     color: $color-gray-light;
