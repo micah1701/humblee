@@ -19,6 +19,12 @@ body, button, input, select, textarea {
   background: $color-primary url('https://humblee.app/media/9/header-background-springfield-ma.png') center no-repeat;
   background-size: cover;
   
+  .container {
+    background-color: rgba(0, 50, 103, 0.5);
+    padding: 10px 0 10px 20px;
+    border-radius: 8px;
+  }
+
   .title, .subtitle {
     color: $color-gray-light;
   }
