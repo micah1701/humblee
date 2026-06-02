@@ -32,8 +32,8 @@
     loading = true;
     try {
       const [tmpl, blks] = await Promise.all([
-        api.list<Template>('listTemplates'),
-        api.list<Block>('listBlocks'),
+        api.list<Template>('templates/list'),
+        api.list<Block>('blocks/list'),
       ]);
       templates = tmpl;
       allBlocks = blks;
@@ -120,7 +120,7 @@
 
       if (selectedId !== null) payload.id = selectedId;
 
-      const res = await api.save('saveTemplate', payload);
+      const res = await api.save('templates/save', payload);
       if (!res.success) {
         errors = res.errors ?? ['Save failed'];
       } else {
@@ -146,7 +146,7 @@
       async () => {
         saving = true;
         try {
-          const res = await api.remove('deleteTemplate', selectedId!);
+          const res = await api.remove('templates/delete', selectedId!);
           if (!res.success) {
             quickNotice('Delete failed', 'is-danger');
           } else {

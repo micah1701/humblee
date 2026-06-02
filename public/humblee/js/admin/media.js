@@ -21,7 +21,7 @@ $(document).ready(function(){
             return;
         }
         var role_id = $(this).val();
-        $.post(XHR_PATH+'updateMediaRole',{file_id:$("#file_name").data('fieldID'),required_role:role_id},function(response){
+        $.post(XHR_PATH+'media_files/update-role',{file_id:$("#file_name").data('fieldID'),required_role:role_id},function(response){
             if(response.success)
             {
                 var show = (role_id != 0) ? true : 0;
@@ -38,7 +38,7 @@ $(document).ready(function(){
     $("#encrypt").on("change",function(e){
         var state = $("#encrypt").is(":checked") ? "encrypt" : "decrypt";
 
-        $.post(XHR_PATH+'encryptMedia',{file_id:$("#file_name").data('fieldID'),action:state},function(response){
+        $.post(XHR_PATH+'media_files/encrypt',{file_id:$("#file_name").data('fieldID'),action:state},function(response){
             if(response.success)
             {
                 quickNotice('File has been '+state+'ed');
@@ -111,7 +111,7 @@ function generateMenu(data,parent)
 
 function loadFolders(openFirstFolder){
 
-    $.getJSON(XHR_PATH +'listMediaFolders',function(response)
+    $.getJSON(XHR_PATH +'media_files/list-folders',function(response)
     {
         $("#folders").html(generateMenu(response,0));
 
@@ -168,7 +168,7 @@ function loadFiles(folder,updateCache)
     if(cacheData == undefined || updateCache)
     {
         $("#files table tbody").html('<tr><td colspan="3">loading...</td></tr>');
-        $.getJSON(XHR_PATH+'listMediaFilesByFolder',{folder:folder}, function(response){
+        $.getJSON(XHR_PATH+'media_files/list-by-folder',{folder:folder}, function(response){
             if(response.error)
             {
                 alert(response.error);
@@ -269,7 +269,7 @@ function show_hide_encryption_option(show,animate)
 function deleteFile()
 {
     var fileID = $("#file_name").data('fieldID');
-    $.post(XHR_PATH+'deleteMediaFile',{file_id:fileID},function(response){
+    $.post(XHR_PATH+'media_files/delete-file',{file_id:fileID},function(response){
         if(response.success)
         {
             quickNotice('File Deleted');
@@ -287,7 +287,7 @@ function deleteFile()
 function deleteFolder()
 {
     var folderID = $("#folder_id").val();
-    $.post(XHR_PATH+'deleteMediaFolder',{folder_id:folderID},function(response){
+    $.post(XHR_PATH+'media_files/delete-folder',{folder_id:folderID},function(response){
         if(response.success)
         {
             quickNotice('Folder Deleted');
@@ -307,7 +307,7 @@ function deleteFolder()
 function addFolder(button)
 {
     var parent_folder = (button.data('folderparent') == 0) ? 0 : $("#folder_id").val();
-    $.post(XHR_PATH+'createMediaFolder',{parent_id:parent_folder},function(response){
+    $.post(XHR_PATH+'media_files/create-folder',{parent_id:parent_folder},function(response){
         if(response.success)
         {
             quickNotice("Folder Created");
@@ -341,7 +341,7 @@ $(document).on("click", ".editable-text", function() {
       else
       {
 
-        $.post(XHR_PATH +'updateMediaName',{type:dom_id,record:field_id,value:new_input.val()},function(response){
+        $.post(XHR_PATH +'media_files/update-name',{type:dom_id,record:field_id,value:new_input.val()},function(response){
           if(response.success)
           {
             updated_text.text(new_input.val());
@@ -446,7 +446,7 @@ function uploaderSubmit(droppedFiles) {
     }
 
     $.ajax({
-        url: XHR_PATH+'uploadMediaFiles',
+        url: XHR_PATH+'media_files/upload',
         type: 'POST',
         data: ajaxData,
         dataType: 'json',

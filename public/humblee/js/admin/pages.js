@@ -7,7 +7,7 @@ $(document).ready(function(){
 function loadPages()
 {
 	saveToolbar();
-	$.get(XHR_PATH + 'loadPagesTable', function(response){
+	$.get(XHR_PATH + 'pages/load-table', function(response){
 		$("#pages").html(response);
 		$("#pages ul:first").addClass('sortable');
 		$("#pages ul").addClass('menu-list').not(':first').addClass('is-closed');
@@ -51,7 +51,7 @@ function loadPages()
 							orderData['pageID_' + item.item_id] = item.depth;
 						}
 					});
-					$.post(XHR_PATH +'order_pages',{ list_order: JSON.stringify(orderData) }, function(response){
+					$.post(XHR_PATH +'pages/order',{ list_order: JSON.stringify(orderData) }, function(response){
 						if(!response.success)
 						{
 							alert(response);
@@ -74,7 +74,7 @@ function openPagePropertiesModal(page_id)
 {
     $("#page_id").val(page_id);
 
-    $.post(XHR_PATH + 'getPageProperties', {page_id:page_id}, function(response){
+    $.post(XHR_PATH + 'pages/get-properties', {page_id:page_id}, function(response){
         if(response.success)
         {
             $("#label").val(response.label);
@@ -194,7 +194,7 @@ function savePageProperties()
                     display_in_sitemap: ( $("#display_in_sitemap").is(':checked')) ? 1 : 0,
                     required_role: $("#required_role").val()
     };
-    $.post(XHR_PATH + 'setPageProperties', postData, function(response){
+    $.post(XHR_PATH + 'pages/set-properties', postData, function(response){
 
         if(response.success)
         {
@@ -226,7 +226,7 @@ function closePagePropertiesModal()
 function addPage(parent_id)
 {
 	saveToolbar();
-	$.post(XHR_PATH +'add_page',{parent_id:parent_id}, function(response){
+	$.post(XHR_PATH +'pages/add',{parent_id:parent_id}, function(response){
 		if(response.success)
 		{
 			var newPageItem = '<li id="pageID_'+response.page_id+'"><div class="pages_menu_item" data="'+ response.page_id +'"><a>New Page</a></div></li>';
@@ -279,7 +279,7 @@ function deletePage(page_id,page_name)
     $("#deleteButton").on('click',function(){
     	$(this).attr('disabled',true);
 
-    	$.post(XHR_PATH +'delete_page',{page_id:page_id},function(response){
+    	$.post(XHR_PATH +'pages/delete',{page_id:page_id},function(response){
     		$("#deleteButton").attr('disabled',false);
 			if(response.success)
 			{

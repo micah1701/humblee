@@ -6,17 +6,17 @@ import type {
 
 export const createMediaApi = (xhrPath: string) => ({
   async listMediaFolders(): Promise<MediaFoldersResponse> {
-    const response = await fetch(`${xhrPath}listMediaFolders`);
+    const response = await fetch(`${xhrPath}media_files/list-folders`);
     return response.json();
   },
 
   async listMediaFilesByFolder(folderId: number): Promise<MediaFilesResponse> {
-    const response = await fetch(`${xhrPath}listMediaFilesByFolder?folder=${folderId}`);
+    const response = await fetch(`${xhrPath}media_files/list-by-folder?folder=${folderId}`);
     return response.json();
   },
 
   async createMediaFolder(parentId: number): Promise<{ success: boolean }> {
-    const response = await fetch(`${xhrPath}createMediaFolder`, {
+    const response = await fetch(`${xhrPath}media_files/create-folder`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: `parent_id=${parentId}`
@@ -25,7 +25,7 @@ export const createMediaApi = (xhrPath: string) => ({
   },
 
   async deleteMediaFolder(folderId: number): Promise<{ success: boolean; errors?: string }> {
-    const response = await fetch(`${xhrPath}deleteMediaFolder`, {
+    const response = await fetch(`${xhrPath}media_files/delete-folder`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: `folder_id=${folderId}`
@@ -34,7 +34,7 @@ export const createMediaApi = (xhrPath: string) => ({
   },
 
   async deleteMediaFile(fileId: number): Promise<{ success: boolean }> {
-    const response = await fetch(`${xhrPath}deleteMediaFile`, {
+    const response = await fetch(`${xhrPath}media_files/delete-file`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: `file_id=${fileId}`
@@ -47,7 +47,7 @@ export const createMediaApi = (xhrPath: string) => ({
     recordId: number,
     value: string
   ): Promise<{ success: boolean }> {
-    const response = await fetch(`${xhrPath}updateMediaName`, {
+    const response = await fetch(`${xhrPath}media_files/update-name`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: `type=${type}&record=${recordId}&value=${encodeURIComponent(value)}`
@@ -59,7 +59,7 @@ export const createMediaApi = (xhrPath: string) => ({
     fileId: number,
     requiredRole: number
   ): Promise<{ success: boolean }> {
-    const response = await fetch(`${xhrPath}updateMediaRole`, {
+    const response = await fetch(`${xhrPath}media_files/update-role`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: `file_id=${fileId}&required_role=${requiredRole}`
@@ -71,7 +71,7 @@ export const createMediaApi = (xhrPath: string) => ({
     fileId: number,
     action: 'encrypt' | 'decrypt'
   ): Promise<{ success: boolean }> {
-    const response = await fetch(`${xhrPath}encryptMedia`, {
+    const response = await fetch(`${xhrPath}media_files/encrypt`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: `file_id=${fileId}&action=${action}`
@@ -80,7 +80,7 @@ export const createMediaApi = (xhrPath: string) => ({
   },
 
   async uploadMediaFiles(formData: FormData): Promise<UploadResponse> {
-    const response = await fetch(`${xhrPath}uploadMediaFiles`, {
+    const response = await fetch(`${xhrPath}media_files/upload`, {
       method: 'POST',
       body: formData
     });

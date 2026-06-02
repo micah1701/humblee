@@ -40,7 +40,7 @@
   async function loadBlocks() {
     loading = true;
     try {
-      blocks = await api.list<Block>('listBlocks');
+      blocks = await api.list<Block>('blocks/list');
     } catch {
       quickNotice('Failed to load content blocks', 'is-danger');
     } finally {
@@ -119,7 +119,7 @@
       };
       if (selectedId !== null) payload.id = selectedId;
 
-      const res = await api.save('saveBlock', payload);
+      const res = await api.save('blocks/save', payload);
       if (!res.success) {
         errors = res.errors ?? ['Save failed'];
       } else {
@@ -145,7 +145,7 @@
       async () => {
         saving = true;
         try {
-          const res = await api.remove('deleteBlock', selectedId!);
+          const res = await api.remove('blocks/delete', selectedId!);
           if (!res.success) {
             quickNotice('Delete failed', 'is-danger');
           } else {
