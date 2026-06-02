@@ -5,9 +5,13 @@
     "apps/*"
   ],
   "scripts": {
-    "//": "These scripts can also be run from the project root via: npm run build / npm run dev:media-manager",
+    "//": "These scripts can also be run from the project root via: npm run build / npm run dev:*",
     "build": "npm run build --workspaces",
     "build:media-manager": "npm run build --workspace=apps/media-manager",
-    "dev:media-manager": "npm run dev --workspace=apps/media-manager"
+    "build:blocks": "npm run build --workspace=apps/blocks",
+    "build:templates": "npm run build --workspace=apps/templates",
+    "dev:media-manager": "npm run dev --workspace=apps/media-manager",
+    "dev:blocks": "npm run dev --workspace=apps/blocks",
+    "dev:templates": "npm run dev --workspace=apps/templates"
   }
 }
