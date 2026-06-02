@@ -6,6 +6,10 @@
     "build": "npm --prefix public run build:css && npm --prefix frontend run build",
     "build:css": "npm --prefix public run build:css",
     "build:media-manager": "npm --prefix frontend run build:media-manager",
-    "dev:media-manager": "npm --prefix frontend run dev:media-manager"
+    "build:blocks": "npm --prefix frontend run build:blocks",
+    "build:templates": "npm --prefix frontend run build:templates",
+    "dev:media-manager": "npm --prefix frontend run dev:media-manager",
+    "dev:blocks": "npm --prefix frontend run dev:blocks",
+    "dev:templates": "npm --prefix frontend run dev:templates"
   }
 }

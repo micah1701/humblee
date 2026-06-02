@@ -257,62 +257,19 @@ class Admin
     public function blocks(): void
     {
         $this->require_role('designer');
-        $params = [
-            'id'    => $this->_uri_parts[2] ?? false,
-            'table' => _table_content_types,
-            'view'  => _app_server_path . 'humblee/views/admin/blocks.php',
-            'post'  => !empty($_POST) ? $_POST : false,
-            'allow_html' => true,
-            'validate' => [
-                'name'      => ['if' => fn($val) => $val !== '', 'error_message' => 'Name field cannot be blank'],
-                'objectkey' => ['if' => fn($val) => $val !== '', 'error_message' => 'objectKey field cannot be blank']
-            ],
-            'post_ignore'       => ['submit'],
-            'crud_all_order_by' => 'name'
-        ];
-
-        $this->extra_head_code = '<script type="text/javascript" src="' . _app_path . 'humblee/js/admin/blocks.js"></script>';
-        $this->tools->CRUD($params, $this);
+        $this->template_view = Core::view(_app_server_path . 'humblee/views/admin/blocks.php', get_object_vars($this));
+        $this->extra_head_code  = '<link rel="stylesheet" href="' . _app_path . 'humblee/js/admin/blocks/index.css">';
+        $this->extra_head_code .= '<script type="module" src="' . _app_path . 'humblee/js/admin/blocks/index.js"></script>';
+        echo Core::view(_app_server_path . 'humblee/views/admin/templates/template.php', get_object_vars($this));
     }
 
     public function templates(): void
     {
         $this->require_role('designer');
-
-        if (!empty($_POST)) {
-            $_POST['blocks'] = isset($_POST['blocks']) ? implode(",", $_POST['blocks']) : '';
-            $_POST['dynamic_uri'] = $_POST['dynamic_uri'] ?? 0;
-            $_POST['available'] = $_POST['available'] ?? 0;
-
-            if (isset($_POST['page_type'])) {
-                switch ($_POST['page_type']) {
-                    case 'view':
-                        $_POST['page_meta'] = $_POST['default_view'];
-                        break;
-                    case 'controller':
-                        $page_meta['controller'] = $_POST['controller'];
-                        $page_meta['action'] = $_POST['controller_action'];
-                        $_POST['page_meta'] = serialize($page_meta);
-                        break;
-                    default:
-                        $_POST['page_type'] = 'default';
-                        $_POST['page_meta'] = 'tierpage';
-                }
-            }
-        }
-        $params = [
-            'id'    => $this->_uri_parts[2] ?? false,
-            'table' => _table_templates,
-            'view'  => _app_server_path . "humblee/views/admin/templates.php",
-            'post'  => !empty($_POST) ? $_POST : false,
-            'allow_html' => true,
-            'validate' => [
-                'name' => ['if' => fn($val) => $val !== '', 'error_message' => 'Name field cannot be blank']
-            ],
-            'post_ignore'       => ['submit', 'controller', 'controller_action', 'default_view'],
-            'crud_all_order_by' => 'name'
-        ];
-        $this->tools->CRUD($params, $this);
+        $this->template_view = Core::view(_app_server_path . 'humblee/views/admin/templates.php', get_object_vars($this));
+        $this->extra_head_code  = '<link rel="stylesheet" href="' . _app_path . 'humblee/js/admin/templates/index.css">';
+        $this->extra_head_code .= '<script type="module" src="' . _app_path . 'humblee/js/admin/templates/index.js"></script>';
+        echo Core::view(_app_server_path . 'humblee/views/admin/templates/template.php', get_object_vars($this));
     }
 
     public function personalization(): void
