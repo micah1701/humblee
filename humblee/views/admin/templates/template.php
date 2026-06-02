@@ -31,7 +31,7 @@ $hmac_pair = $crypto->get_hmac_pair();
         var APP_PATH = "<?php echo  _app_path ?>",
             XHR_PATH = "<?php echo  _app_path ?>core-request/",
             CURRENT_THEME = "<?php echo $userTheme ?? 'light' ?>",
-            hmac_key = "<?php echo $hmac_pair['key'] ?>",
+            hmac_key = "<?php echo $hmac_pair['hmac'] ?>",
             hmac_token = "<?php echo $hmac_pair['message'] ?>";
     </script>
     <script src="<?php echo  _app_path ?>humblee/js/admin/admin.js"></script>
