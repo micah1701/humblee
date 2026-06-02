@@ -5,7 +5,7 @@ $(document).ready(function(){
         var userRow = $(this).closest('tr'),
             userID = userRow.data('userid'),
             removeUser = function(){
-                $.post(XHR_PATH+'removeUser',{userID:userID},function(response){
+                $.post(XHR_PATH+'users/remove',{userID:userID},function(response){
                     if(response.success)
                     {
                         userRow.fadeOut('slow');
@@ -62,7 +62,7 @@ $(document).ready(function(){
             newRoles = newRoles.slice(0,-1);
             newRolesNames = newRolesNames.slice(0,-2); //and remove the whitespace too
             
-            $.post(XHR_PATH+'setUserRoles',{userID:userID,roles:newRoles},function(response){
+            $.post(XHR_PATH+'users/set-roles',{userID:userID,roles:newRoles},function(response){
                 if(response.success)
                 {
                     rolesTD.data('userroles',newRoles);

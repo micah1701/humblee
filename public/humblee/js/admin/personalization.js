@@ -31,7 +31,7 @@ $(document).ready(function(){
 			update: function(){
 			    var serialized = $('ul.sortable').sortable('serialize');
 				var order = $('ul.sortable').sortable('toArray');
-				$.post(XHR_PATH +'p13n_order_priorities',{ list_order:order }, function(response){
+				$.post(XHR_PATH +'content/p13n-order-priorities',{ list_order:order }, function(response){
 					if(response.success)
 					{
 						quickNotice('Persona priority updated');
