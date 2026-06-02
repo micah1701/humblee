@@ -835,6 +835,7 @@ class Request extends Xhr
 		$row->output_type      = htmlspecialchars(trim($_POST['output_type'] ?? ''));
 		$row->input_type       = htmlspecialchars(trim($_POST['input_type'] ?? ''));
 		$row->input_parameters = trim($_POST['input_parameters'] ?? '');
+		$row->required_role	  = isset($_POST['required_role']) && is_numeric($_POST['required_role']) ? (int)$_POST['required_role'] : 0;
 		$row->save();
 
 		$this->json(['success' => true, 'id' => (int)$row->id]);
