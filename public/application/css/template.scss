@@ -24,18 +24,23 @@ body, button, input, select, textarea {
     padding: 10px 0 10px 20px;
     border-radius: 8px;
 
-        .title, span.icon {
+        .title span.icon:not(span.fas) {
             background-color: rgba(0,0,0,.5);
             width: 46px;
             height: 40px;
             margin: 0 -10px;
             border-radius: 5px;
         }
-    }
 
-  .title, .subtitle {
-    color: $color-gray-light;
-  }
+        .title {
+            text-shadow: 4px 4px 11px black;
+        }
+
+        .title, .subtitle {
+            color: $color-gray-light;
+        }
+
+    }
 
 }
 
