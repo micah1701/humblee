@@ -66,3 +66,57 @@ figure.homepage.image {
   padding: 12px;
   border-radius: 5px;
 }
+
+// ─── Documentation layout ────────────────────────────────────────────────────
+
+.docs-layout {
+    align-items: flex-start;
+
+    .docs-sidebar {
+        .menu {
+            position: sticky;
+            top: 1.5rem;
+        }
+
+        .menu-label {
+            color: $color-primary;
+            font-weight: 700;
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding-bottom: 0.6rem;
+            margin-bottom: 0.6rem;
+            border-bottom: 2px solid $color-primary-gray;
+        }
+
+        .menu-list {
+            a {
+                border-radius: 0 4px 4px 0;
+                color: $color-black;
+                padding: 0.55rem 0.85rem;
+                border-left: 3px solid transparent;
+                transition: background-color 0.15s ease, color 0.15s ease, border-left-color 0.15s ease;
+
+                &:hover:not(.is-active) {
+                    background-color: $color-primary-gray;
+                    color: $color-primary;
+                    border-left-color: $color-primary-light;
+                }
+
+                &.is-active {
+                    background-color: $color-primary-gray;
+                    color: $color-primary;
+                    font-weight: 600;
+                    border-left-color: $color-primary;
+                }
+            }
+        }
+    }
+
+    .docs-content {
+        @media screen and (min-width: 769px) {
+            padding-left: 2rem;
+            border-left: 1px solid $color-gray;
+        }
+    }
+}
