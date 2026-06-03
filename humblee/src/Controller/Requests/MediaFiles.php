@@ -225,7 +225,6 @@ final class MediaFiles
                                 "width" => $_ENV['config']['TINYPNG_Max_Width']
                             ]);
                         }
-                        $source->preserve("copyright", "creation", "location");
                         $source->toFile(_app_server_path . "storage/" . $storageName);
 
                         $fileRecord->filepath = $storageName;
