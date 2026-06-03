@@ -219,6 +219,13 @@ final class MediaFiles
                     try {
                         \Tinify\setKey($_ENV['config']['TINYPNG_API_Key']);
                         $source = \Tinify\fromFile($file['tmp_name']);
+                        if ($_ENV['config']['TINYPNG_Max_Width'] && $source->result()->width() > $_ENV['config']['TINYPNG_Max_Width']) {
+                            $source = $source->resize([
+                                "method" => "scale",
+                                "width" => $_ENV['config']['TINYPNG_Max_Width']
+                            ]);
+                        }
+                        $source->preserve("copyright", "creation", "location");
                         $source->toFile(_app_server_path . "storage/" . $storageName);
 
                         $fileRecord->filepath = $storageName;

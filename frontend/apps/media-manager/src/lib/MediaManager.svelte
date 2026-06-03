@@ -25,6 +25,7 @@
   export let appPath: string = '/';
   export let XHR_PATH: string;
   export let WEB_ROOT: string;
+  export let tinyPngEnabled: boolean = false;
 
   const mediaApi = createMediaApi(XHR_PATH);
 
@@ -865,10 +866,12 @@
               </label>
             </div>
             <div class="column is-half">
+              {#if tinyPngEnabled}
               <label class="checkbox is-pulled-right tooltip is-tooltip-left" data-tooltip="Apply TinyPNG smart compression to reduce file size">
                 Optimize Images
                 <input name="useCompression" value="1" type="checkbox" checked />
               </label>
+              {/if}
             </div>
           </div>
         </form>

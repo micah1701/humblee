@@ -40,6 +40,7 @@ return [
     // install tinify library via composer
     'TINYPNG_Enabled' => false,
     'TINYPNG_API_Key' => '',
+    'TINYPNG_Max_Width' => 1920, // max width for uploaded images; set to false for no resizing
 
     // Path to encryption key
     'crypto_key' => 'humblee/configuration/crypto/key.php'
