@@ -28,7 +28,7 @@ $navItems = [
                 ?>
                     <li>
                         <a href="<?php echo _app_path . $slug ?>"
-                            <?php if (rtrim($currentSlug, '/') === $slug): ?>class="is-active" <?php endif; ?>>
+                            <?php if (rtrim($currentSlug, '/') === $slug || $slug === 'docs'): ?>class="is-active" <?php endif; ?>>
                             <?php echo htmlspecialchars($label) ?>
                         </a>
                     </li>
