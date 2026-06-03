@@ -47,6 +47,8 @@
       const block = (e.target as Element).closest<HTMLElement>('.cms_block');
       if (!block) return;
       if (block.contains(e.relatedTarget as Node | null)) return;
+      // Don't clear when the mouse moves onto our fixed-position button overlay
+      if ((e.relatedTarget as Element | null)?.closest('#toolbar-app')) return;
       hoveredBlock = null;
       opacity = 0;
     }
