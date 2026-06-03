@@ -10,8 +10,10 @@
     "build:media-manager": "npm run build --workspace=apps/media-manager",
     "build:blocks": "npm run build --workspace=apps/blocks",
     "build:templates": "npm run build --workspace=apps/templates",
+    "build:toolbar": "npm run build --workspace=apps/toolbar",
     "dev:media-manager": "npm run dev --workspace=apps/media-manager",
     "dev:blocks": "npm run dev --workspace=apps/blocks",
-    "dev:templates": "npm run dev --workspace=apps/templates"
+    "dev:templates": "npm run dev --workspace=apps/templates",
+    "dev:toolbar": "npm run dev --workspace=apps/toolbar"
   }
 }
