@@ -9,7 +9,7 @@ $pagesObj = new Pages;
 $docPages = $pagesObj->getPages(['parent_id' => 3, 'active_only' => true, 'display_in_sitemap_only' => false]);
 
 // add parent "Documentation" page to beginning of array for nav
-$docPage = array_unshift($docPages, $pagesObj->find(3));
+$docPage = array_unshift($docPages, $pagesObj->find_one(3));
 
 $navHtml = $pagesObj->drawMenu_UL($docPages, [
     'thisID'           => (int)$page->id,
