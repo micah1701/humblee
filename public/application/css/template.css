@@ -56,9 +56,28 @@ figure.homepage.image {
 .docs-layout {
   align-items: flex-start;
 }
-.docs-layout .docs-sidebar .menu {
+.docs-layout .docs-sidebar {
   position: sticky;
   top: 1.5rem;
+  max-height: calc(100vh - 3rem);
+  display: flex;
+  flex-direction: column;
+}
+.docs-layout .docs-sidebar .docs-back-link {
+  flex-shrink: 0;
+  display: block;
+  font-size: 0.8rem;
+  color: #bfbfbf;
+  margin-bottom: 1rem;
+  padding: 0.2rem 0;
+}
+.docs-layout .docs-sidebar .docs-back-link:hover {
+  color: #3F51B5;
+}
+.docs-layout .docs-sidebar .menu {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
 }
 .docs-layout .docs-sidebar .menu-label {
   color: #3F51B5;

@@ -73,9 +73,29 @@ figure.homepage.image {
     align-items: flex-start;
 
     .docs-sidebar {
+        position: sticky;
+        top: 1.5rem;
+        max-height: calc(100vh - 3rem);
+        display: flex;
+        flex-direction: column;
+
+        .docs-back-link {
+            flex-shrink: 0;
+            display: block;
+            font-size: 0.8rem;
+            color: $color-gray-dark;
+            margin-bottom: 1rem;
+            padding: 0.2rem 0;
+
+            &:hover {
+                color: $color-primary;
+            }
+        }
+
         .menu {
-            position: sticky;
-            top: 1.5rem;
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow-y: auto;
         }
 
         .menu-label {

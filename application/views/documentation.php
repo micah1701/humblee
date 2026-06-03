@@ -9,16 +9,17 @@ $uriParts    = Core::getURIparts();
 $currentSlug = $uriParts[1] ?? '';
 
 $navItems = [
-    'introduction' => 'Introduction',
-    'install'      => 'Installation',
+    'introduction' => '',
+    'installation'      => 'Installation',
     'architecture' => 'System Architecture',
-    'pages'        => 'Create Pages',
+    'pages'        => 'Creating Pages',
 ];
 ?>
 
 <div class="columns docs-layout">
 
     <aside class="column is-3-desktop is-4-tablet docs-sidebar">
+        <a href="<?php echo _app_path ?>" class="docs-back-link">&larr; Back to homepage</a>
         <nav class="menu">
             <p class="menu-label">Documentation</p>
             <ul class="menu-list">
