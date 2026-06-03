@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use Humblee\Foundation\Core;
@@ -22,12 +23,12 @@ $navItems = [
             <p class="menu-label">Documentation</p>
             <ul class="menu-list">
                 <?php foreach ($navItems as $slug => $label): ?>
-                <li>
-                    <a href="<?php echo _app_path ?>docs/<?php echo $slug ?>"
-                       <?php if ($currentSlug === $slug): ?>class="is-active"<?php endif; ?>>
-                        <?php echo htmlspecialchars($label) ?>
-                    </a>
-                </li>
+                    <li>
+                        <a href="<?php echo _app_path ?>docs/<?php echo $slug ?>"
+                            <?php if ($currentSlug === $slug): ?>class="is-active" <?php endif; ?>>
+                            <?php echo htmlspecialchars($label) ?>
+                        </a>
+                    </li>
                 <?php endforeach; ?>
             </ul>
         </nav>
@@ -35,6 +36,7 @@ $navItems = [
 
     <div class="column docs-content content">
         <?php Draw::content($content, 'pagebody') ?>
+        <?php Draw::content($content, 'markdown') ?>
     </div>
 
 </div>
