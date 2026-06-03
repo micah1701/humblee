@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-use Humblee\Foundation\Core;
 use Humblee\Foundation\Draw;
+use Humblee\Model\Pages;
 
-$uriParts    = Core::getURIparts();
-$currentSlug = $uriParts[1] ?? '';
+$pagesObj = new Pages;
+$docPages = $pagesObj->getPages(['parent_id' => 3, 'active_only' => true, 'display_in_sitemap_only' => false]);
 
-$navItems = [
-    '' => 'Introduction',
-    'installation'      => 'Installation',
-    'architecture' => 'System Architecture',
-    'pages'          => 'Creating Pages',
-    'media-manager'  => 'Media Manager',
-];
+$navHtml = $pagesObj->drawMenu_UL($docPages, [
+    'thisID'           => (int)$page->id,
+    'currentPageClass' => 'is-active',
+    'li_format'        => fn($item, $slug, $class) => '<a href="' . _app_path . ltrim($slug, '/') . '" ' . $class . '>' . htmlspecialchars($item->label) . '</a>',
+]);
+
+$navHtml = preg_replace('/<ul>/', '<ul class="menu-list">', $navHtml, 1);
 ?>
 
 <div class="columns docs-layout">
@@ -23,18 +23,7 @@ $navItems = [
         <a href="<?php echo _app_path ?>" class="docs-back-link">&larr; Back to homepage</a>
         <nav class="menu">
             <p class="menu-label">Documentation</p>
-            <ul class="menu-list">
-                <?php foreach ($navItems as $slug => $label):
-                    $slug = ($slug === '') ? "docs" : "docs/{$slug}";
-                ?>
-                    <li>
-                        <a href="<?php echo _app_path . $slug ?>"
-                            <?php if (rtrim($currentSlug, '/') === ltrim($slug, 'docs/') || ($currentSlug === '' && $slug === 'docs')): ?>class="is-active" <?php endif; ?>>
-                            <?php echo htmlspecialchars($label) ?>
-                        </a>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
+            <?php echo $navHtml ?>
         </nav>
     </aside>
 
