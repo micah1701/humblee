@@ -23,10 +23,12 @@ $navItems = [
         <nav class="menu">
             <p class="menu-label">Documentation</p>
             <ul class="menu-list">
-                <?php foreach ($navItems as $slug => $label): ?>
+                <?php foreach ($navItems as $slug => $label):
+                    $slug = ($slug === '') ? "docs" : "docs/{$slug}";
+                ?>
                     <li>
                         <a href="<?php echo _app_path ?>docs/<?php echo $slug ?>"
-                            <?php if ($currentSlug === $slug): ?>class="is-active" <?php endif; ?>>
+                            <?php if (rtrim($currentSlug, '/') === $slug): ?>class="is-active" <?php endif; ?>>
                             <?php echo htmlspecialchars($label) ?>
                         </a>
                     </li>
