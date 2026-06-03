@@ -8,8 +8,13 @@ use Humblee\Model\Pages;
 $pagesObj = new Pages;
 $docPages = $pagesObj->getPages(['parent_id' => 3, 'active_only' => true, 'display_in_sitemap_only' => false]);
 
-// add parent "Documentation" page to beginning of array for nav
-$docPage = array_unshift($docPages, $pagesObj->find_one(3));
+$docParentPage = \ORM::for_table(_table_pages)->raw_query(
+    'SELECT id as thisid, slug, label, parent_id as thisparentid, 0 as children FROM ' . _table_pages . ' WHERE id = 3',
+    []
+)->find_one();
+$docPagesArray = (array)$docPages;
+array_unshift($docPagesArray, $docParentPage);
+$docPages = (object)$docPagesArray;
 
 $navHtml = $pagesObj->drawMenu_UL($docPages, [
     'thisID'           => (int)$page->id,
