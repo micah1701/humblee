@@ -9,7 +9,7 @@ $uriParts    = Core::getURIparts();
 $currentSlug = $uriParts[1] ?? '';
 
 $navItems = [
-    '/' => 'Introduction',
+    '' => 'Introduction',
     'installation'      => 'Installation',
     'architecture' => 'System Architecture',
     'pages'        => 'Creating Pages',
