@@ -9,6 +9,7 @@
     XHR_PATH: string;
     WEB_ROOT: string;
     appPath?: string;
+    tinyPngEnabled: boolean;
   } }).__MEDIA_CONFIG__;
 
   const hasMediaRole: boolean = config.hasMediaRole;
@@ -17,6 +18,7 @@
   const XHR_PATH: string = config.XHR_PATH;
   const WEB_ROOT: string = config.WEB_ROOT;
   const appPath: string = config.appPath ?? '/';
+  const tinyPngEnabled: boolean = config.tinyPngEnabled ?? false;
 </script>
 
 <MediaManager
@@ -26,4 +28,5 @@
   {XHR_PATH}
   {WEB_ROOT}
   {appPath}
+  {tinyPngEnabled}
 />
