@@ -12,7 +12,8 @@ $navItems = [
     '' => 'Introduction',
     'installation'      => 'Installation',
     'architecture' => 'System Architecture',
-    'pages'        => 'Creating Pages',
+    'pages'          => 'Creating Pages',
+    'media-manager'  => 'Media Manager',
 ];
 ?>
 
