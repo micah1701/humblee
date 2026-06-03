@@ -8,6 +8,9 @@ use Humblee\Model\Pages;
 $pagesObj = new Pages;
 $docPages = $pagesObj->getPages(['parent_id' => 3, 'active_only' => true, 'display_in_sitemap_only' => false]);
 
+// add parent "Documentation" page to beginning of array for nav
+$docPage = array_unshift($docPages, $pagesObj->find(3));
+
 $navHtml = $pagesObj->drawMenu_UL($docPages, [
     'thisID'           => (int)$page->id,
     'currentPageClass' => 'is-active',
@@ -23,6 +26,7 @@ $navHtml = preg_replace('/<ul>/', '<ul class="menu-list">', $navHtml, 1);
         <a href="<?php echo _app_path ?>" class="docs-back-link">&larr; Back to homepage</a>
         <nav class="menu">
             <p class="menu-label">Documentation</p>
+
             <?php echo $navHtml ?>
         </nav>
     </aside>
