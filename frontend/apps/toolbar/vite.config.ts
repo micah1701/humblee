@@ -1,16 +1,30 @@
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
+import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { resolve } from 'path'
+import { rmSync } from 'fs'
+
+function removeHtml(): Plugin {
+  return {
+    name: 'remove-html',
+    closeBundle() {
+      try {
+        rmSync(resolve(__dirname, '../../../public/humblee/js/admin/toolbar/index.html'))
+      } catch {}
+    }
+  }
+}
 
 export default defineConfig({
+  plugins: [svelte(), removeHtml()],
   build: {
-    // Output directly into the admin JS directory alongside other admin scripts
-    outDir: resolve(__dirname, '../../../public/humblee/js/admin'),
-    emptyOutDir: false,
+    // ../../../ = up from toolbar/ → apps/ → frontend/ → project root
+    outDir: resolve(__dirname, '../../../public/humblee/js/admin/toolbar'),
+    emptyOutDir: true,
     rollupOptions: {
-      input: resolve(__dirname, 'src/toolbar.ts'),
       output: {
-        format: 'iife',
-        entryFileNames: 'toolbar.js',
+        entryFileNames: 'index.js',
+        chunkFileNames: 'chunk-[name].js',
+        assetFileNames: 'index.[ext]',
       }
     }
   }
