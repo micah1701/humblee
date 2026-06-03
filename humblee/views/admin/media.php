@@ -25,7 +25,10 @@ $access_roles ??= [];
                         ))) ?>,
         XHR_PATH: "<?php echo _app_path ?>core-request/",
         WEB_ROOT: "<?php echo rtrim(_app_path, '/') ?>",
-        theme: "<?php echo $userTheme ?? 'light' ?>"
+        theme: "<?php echo $userTheme ?? 'light' ?>",
+        tinyPngEnabled: <?php echo json_encode(
+            !empty($_ENV['config']['TINYPNG_Enabled']) && !empty($_ENV['config']['TINYPNG_API_Key'])
+        ) ?>
     };
 </script>
 <div id="app"></div>
