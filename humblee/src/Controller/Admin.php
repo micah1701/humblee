@@ -193,8 +193,8 @@ class Admin
 
         if ($_ENV['config']['use_p13n']) {
             $p13nObj = new Personalization;
-            $this->allP13nVersions = $p13nObj->getAll();
-            array_unshift($this->allP13nVersions, (object)['id' => 0, 'name' => 'Default (No Personalization)']);
+            $this->allP13nVersions = $p13nObj->getAll();  // returns array of ORMS with p13n id as key
+            $this->allP13nVersions[0] = (object)['id' => 0, 'name' => 'Default (No Personalization)']; //overload a default option into the array for ease of use in the template
         }
 
         $this->template_view = Core::view(_app_server_path . 'humblee/views/admin/edit.php', get_object_vars($this));
