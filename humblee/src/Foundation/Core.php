@@ -40,16 +40,21 @@ class Core
 	 */
 	public static function getURIparts(bool $include_i18n_segment = false): array
 	{
-		$_uri_parts = explode("/", ltrim(Core::getURI(), "/"));
+		$_uri_parts = explode("/", ltrim(self::getURI(), "/"));
 		if ($_uri_parts[0] === "public") {
 			array_shift($_uri_parts);
 		}
 
-		return (!$include_i18n_segment && is_array($_ENV['config']['i18n_segments'])
-			&& preg_grep("/$_uri_parts[0]/i", $_ENV['config']['i18n_segments'])
-		) ? array_shift($_uri_parts) : $_uri_parts;
+		if (!$include_i18n_segment && self::getCurrentI18nSegment() !== '') {
+			array_shift($_uri_parts);
+		}
+
+		return $_uri_parts;
 	}
 
+	/**
+	 * Return the current i18n segment if it exists and is valid, otherwise return empty string
+	 */
 	public static function getCurrentI18nSegment(): string
 	{
 		if (!is_array($_ENV['config']['i18n_segments']) || empty($_ENV['config']['i18n_segments'])) {
@@ -122,7 +127,7 @@ class Core
 		}
 
 		if (!isset($_SESSION[session_key]['has_roles']) || !$_SESSION[session_key]['has_roles'] || !is_array($_SESSION[session_key]['has_roles'])) {
-			$has_roles = Core::cacheUserRoles();
+			$has_roles = self::cacheUserRoles();
 
 			if (!$has_roles) {
 				return false;
