@@ -277,7 +277,8 @@ class Admin
         $this->require_role('designer');
 
         if (!empty($_POST)) {
-            $_POST['active'] = $_POST['active'] ?? 0;
+            $_POST['active'] = (int)$_POST['active'] ?? 0;
+            $_POST['priority'] = (int)$_POST['priority'] ?? 0;
         }
 
         $params = [
