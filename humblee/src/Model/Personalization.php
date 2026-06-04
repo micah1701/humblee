@@ -6,7 +6,8 @@ namespace Humblee\Model;
 
 use Humblee\Foundation\Core;
 
-class Personalization {
+class Personalization
+{
 
     /**
      * Returns an array of p13n database table rows
@@ -18,41 +19,31 @@ class Personalization {
     {
         $p13n_versions = [];
 
-		if($test_results)
-		{
-    	    $p13n = \ORM::for_table(_table_content_p13n)->order_by_desc('priority')->find_many();
-		}
-		else
-		{
-	        $p13n = \ORM::for_table(_table_content_p13n)->order_by_asc('priority')->find_many();
-		}
+        if ($test_results) {
+            $p13n = \ORM::for_table(_table_content_p13n)->order_by_desc('priority')->find_many();
+        } else {
+            $p13n = \ORM::for_table(_table_content_p13n)->order_by_asc('priority')->find_many();
+        }
 
-		if(!$p13n)
-		{
-		    return $p13n_versions;
-		}
+        if (!$p13n) {
+            return $p13n_versions;
+        }
 
-		foreach($p13n as $criteria)
-		{
-		    if($test_results)
-		    {
-		        if($criteria->active == 0)
-		        {
-		            continue;
-		        }
+        foreach ($p13n as $criteria) {
+            if ($test_results) {
+                if ($criteria->active == 0) {
+                    continue;
+                }
 
-		        if($this->testCriteria($criteria->criteria))
-		        {
-    		        $p13n_versions[] = $id_only ? $criteria->id : $criteria;
-		        }
-		    }
-		    else
-		    {
-		        $p13n_versions[] = $id_only ? $criteria->id : $criteria;
-		    }
-		}
+                if ($this->testCriteria($criteria->criteria)) {
+                    $p13n_versions[$criteria->id] = $id_only ? $criteria->id : $criteria;
+                }
+            } else {
+                $p13n_versions[$criteria->id] = $id_only ? $criteria->id : $criteria;
+            }
+        }
 
-		return $p13n_versions;
+        return $p13n_versions;
     }
 
     /**
@@ -68,62 +59,47 @@ class Personalization {
     {
         $criteria = is_array($criteria) ? $criteria : json_decode($criteria);
 
-        if(!is_array($criteria))
-        {
+        if (!is_array($criteria)) {
             return false;
         }
 
-        foreach($criteria as $criterium_OR => $criterium_AND)
-        {
+        foreach ($criteria as $criterium_OR => $criterium_AND) {
             $pass_AND = 0;
-            foreach($criterium_AND as $criterium)
-            {
-                switch($criterium->type) {
+            foreach ($criterium_AND as $criterium) {
+                switch ($criterium->type) {
 
                     case 'required_role':
-                        if($criterium->operator === "=" && Core::auth($criterium->value))
-                        {
+                        if ($criterium->operator === "=" && Core::auth($criterium->value)) {
+                            $pass_AND++;
+                        } elseif ($criterium->operator === "!=" && !Core::auth($criterium->value)) {
                             $pass_AND++;
                         }
-                        elseif($criterium->operator === "!=" && !Core::auth($criterium->value))
-                        {
-                            $pass_AND++;
-                        }
-                    break;
+                        break;
 
                     case 'i18n':
                         $uri_parts = Core::getURIparts(true);
-                        if($criterium->operator === "=" && strtolower($uri_parts[0]) === strtolower($criterium->value))
-                        {
+                        if ($criterium->operator === "=" && strtolower($uri_parts[0]) === strtolower($criterium->value)) {
+                            $pass_AND++;
+                        } elseif ($criterium->operator === "!=" && strtolower($uri_parts[0]) !== strtolower($criterium->value)) {
                             $pass_AND++;
                         }
-                        elseif($criterium->operator === "!=" && strtolower($uri_parts[0]) !== strtolower($criterium->value))
-                        {
-                            $pass_AND++;
-                        }
-                    break;
+                        break;
 
                     case 'time_of_day':
-                        if($criterium->operator === "<" && strtotime(date("H:i")) < strtotime($criterium->value))
-                        {
+                        if ($criterium->operator === "<" && strtotime(date("H:i")) < strtotime($criterium->value)) {
+                            $pass_AND++;
+                        } elseif ($criterium->operator === ">" && strtotime(date("H:i")) > strtotime($criterium->value)) {
                             $pass_AND++;
                         }
-                        elseif($criterium->operator === ">" && strtotime(date("H:i")) > strtotime($criterium->value))
-                        {
-                            $pass_AND++;
-                        }
-                    break;
-
+                        break;
                 }
             }
 
-            if($pass_AND === count($criterium_AND))
-            {
+            if ($pass_AND === count($criterium_AND)) {
                 return true;
             }
         }
 
         return false;
     }
-
 }
