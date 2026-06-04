@@ -14,6 +14,7 @@ use Humblee\Controller\Requests\MediaFiles;
 use Humblee\Controller\Requests\Users as UsersGroup;
 use Humblee\Controller\Requests\Pages;
 use Humblee\Controller\Requests\Content;
+use Humblee\Controller\Requests\Personalization;
 
 /**
  * Core AJAX/XHR request controller
@@ -98,6 +99,17 @@ class Request extends Xhr
 			'latest-revision-date'   => Content::latestRevisionDate($this),
 			'p13n-order-priorities'  => Content::p13nOrderPriorities($this),
 			default                  => $this->json(['error' => 'Not found'], 404),
+		};
+	}
+
+	public function personalization(): void
+	{
+		$action = Core::getURIparts()[2] ?? '';
+		match ($action) {
+			'list'   => Personalization::list($this),
+			'save'   => Personalization::save($this),
+			'delete' => Personalization::delete($this),
+			default  => $this->json(['error' => 'Not found'], 404),
 		};
 	}
 

@@ -276,33 +276,9 @@ class Admin
     {
         $this->require_role('designer');
 
-        if (!empty($_POST)) {
-            $_POST['active'] = (int)$_POST['active'] ?? 0;
-            $_POST['priority'] = (int)$_POST['priority'] ?? 0;
-        }
-
-        $params = [
-            'id'    => $this->_uri_parts[2] ?? false,
-            'table' => _table_content_p13n,
-            'view'  => _app_server_path . 'humblee/views/admin/personalization.php',
-            'post'  => !empty($_POST) ? $_POST : false,
-            'allow_html' => true,
-            'validate' => [
-                'name'      => ['if' => fn($val) => $val !== '', 'error_message' => 'Name field cannot be blank'],
-                'objectkey' => ['if' => fn($val) => $val !== '', 'error_message' => 'objectKey field cannot be blank']
-            ],
-            'post_ignore'       => ['submit'],
-            'crud_all_order_by' => 'name'
-        ];
-
-        $this->extra_head_code = '<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>';
-        $this->extra_head_code .= '<link rel="stylesheet" href="https://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">';
-        $this->extra_head_code .= '<script type="text/javascript" src="' . _app_path . 'humblee/js/admin/personalization.js"></script>';
-        $this->extra_head_code .= '<link rel="stylesheet" type="text/css" href="' . _app_path . 'humblee/css/admin/personalization.css">';
-
-        $p13nObj = new Personalization;
-        $this->allP13nVersions = $p13nObj->getAll();
-
-        $this->tools->CRUD($params, $this);
+        $this->template_view = Core::view(_app_server_path . 'humblee/views/admin/personalization.php', get_object_vars($this));
+        $this->extra_head_code  = '<link rel="stylesheet" href="' . _app_path . 'humblee/js/admin/personalization/index.css">';
+        $this->extra_head_code .= '<script type="module" src="' . _app_path . 'humblee/js/admin/personalization/index.js"></script>';
+        echo Core::view(_app_server_path . 'humblee/views/admin/templates/template.php', get_object_vars($this));
     }
 }

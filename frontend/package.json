@@ -12,10 +12,12 @@
     "build:templates": "npm run build --workspace=apps/templates",
     "build:toolbar": "npm run build --workspace=apps/toolbar",
     "build:session-monitor": "npm run build --workspace=apps/session-monitor",
+    "build:personalization": "npm run build --workspace=apps/personalization",
     "dev:media-manager": "npm run dev --workspace=apps/media-manager",
     "dev:blocks": "npm run dev --workspace=apps/blocks",
     "dev:templates": "npm run dev --workspace=apps/templates",
     "dev:toolbar": "npm run dev --workspace=apps/toolbar",
-    "dev:session-monitor": "npm run dev --workspace=apps/session-monitor"
+    "dev:session-monitor": "npm run dev --workspace=apps/session-monitor",
+    "dev:personalization": "npm run dev --workspace=apps/personalization"
   }
 }
