@@ -16,10 +16,13 @@ $docPagesArray = (array)$docPages;
 array_unshift($docPagesArray, $docParentPage);
 $docPages = (object)$docPagesArray;
 
+$i18nSegment = \Humblee\Foundation\Core::getCurrentI18nSegment();
+$i18nPrefix  = $i18nSegment !== '' ? $i18nSegment . '/' : '';
+
 $navHtml = $pagesObj->drawMenu_UL($docPages, [
     'thisID'           => (int)$page->id,
     'currentPageClass' => 'is-active',
-    'li_format'        => fn($item, $slug, $class) => '<a href="' . _app_path . ltrim($slug, '/') . '" ' . $class . '>' . htmlspecialchars($item->label) . '</a>',
+    'li_format'        => fn($item, $slug, $class) => '<a href="' . _app_path . $i18nPrefix . ltrim($slug, '/') . '" ' . $class . '>' . htmlspecialchars($item->label) . '</a>',
 ]);
 
 $navHtml = preg_replace('/<ul>/', '<ul class="menu-list">', $navHtml, 1);
