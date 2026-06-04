@@ -50,6 +50,15 @@ class Core
 		) ? array_shift($_uri_parts) : $_uri_parts;
 	}
 
+	public static function getCurrentI18nSegment(): string
+	{
+		if (!is_array($_ENV['config']['i18n_segments']) || empty($_ENV['config']['i18n_segments'])) {
+			return '';
+		}
+		$parts = self::getURIparts(true);
+		return (!empty($parts[0]) && preg_grep("/$parts[0]/i", $_ENV['config']['i18n_segments'])) ? $parts[0] : '';
+	}
+
 	/**
 	 * Return the contents of a view file
 	 *
