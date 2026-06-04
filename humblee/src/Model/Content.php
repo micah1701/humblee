@@ -140,7 +140,21 @@ class Content
 	{
 		if ($_ENV['config']['use_p13n']) {
 			$p13nObj = new Personalization();
-			$p13n_versions = $p13nObj->getAll(true, true);
+			$p13n_matching = $p13nObj->getAll(true, true);
+
+			if (!empty($p13n_matching)) {
+				$published = \ORM::for_table(_table_content)
+					->where('page_id', $page_id)
+					->where_not_null('publish_date')
+					->where_in('p13n_id', $p13n_matching)
+					->select('p13n_id')
+					->find_many();
+				$published_ids = array_unique(array_map(fn($r) => (int)$r->p13n_id, $published));
+				$p13n_versions = array_values(array_filter($p13n_matching, fn($id) => in_array((int)$id, $published_ids, true)));
+			} else {
+				$p13n_versions = [];
+			}
+
 			$p13n_versions[] = 0;
 		} else {
 			$p13n_versions = [0];
