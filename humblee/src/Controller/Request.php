@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Humblee\Controller;
 
 use Humblee\Foundation\Core;
+use Humblee\Model\Crypto;
 use Humblee\Model\Users;
 use Humblee\Model\Tools;
 use Humblee\Controller\Requests\Blocks;
@@ -316,6 +317,53 @@ class Request extends Xhr
 			"js_load" => _app_path . "humblee/js/admin/toolbar.js?time=" . time(),
 			"name" => $user->name
 		]);
+	}
+
+	/**
+	 * Check whether the current request has an authenticated session.
+	 * Returns a fresh HMAC pair (only when logged out) so the re-login form can POST safely.
+	 * No HMAC required — safe for unauthenticated GET requests.
+	 */
+	public function session_check(): void
+	{
+		$loggedIn = isset($_SESSION[session_key]['user_id']);
+		$response = ['loggedIn' => $loggedIn];
+		if (!$loggedIn) {
+			$crypto   = new Crypto();
+			$pair     = $crypto->get_hmac_pair();
+			$response['hmacKey']   = $pair['hmac'];
+			$response['hmacToken'] = $pair['message'];
+		}
+		$this->json($response);
+	}
+
+	/**
+	 * Re-authenticate an expired session via username + password.
+	 * Optionally sets a persistent remember-me cookie when remember=1 is posted.
+	 */
+	public function session_login(): void
+	{
+		$this->require_hmac();
+
+		if (!isset($_POST['username']) || !isset($_POST['password'])) {
+			$this->json(['success' => false, 'message' => 'Missing credentials'], 400);
+		}
+
+		$users = new Users();
+		$login = $users->logIn(trim($_POST['username']), $_POST['password']);
+
+		if ($login['access_granted'] !== true) {
+			if (($login['error'] ?? '') === 'use_twofactor_auth') {
+				$this->json(['success' => false, 'message' => 'Two-factor authentication is required. Please use the login page.']);
+			}
+			$this->json(['success' => false, 'message' => $login['error'] ?? 'Login failed']);
+		}
+
+		if (!empty($_POST['remember'])) {
+			Core::setRememberToken((int) $_SESSION[session_key]['user_id']);
+		}
+
+		$this->json(['success' => true]);
 	}
 
 	/**

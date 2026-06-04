@@ -52,6 +52,7 @@ class User
 
 	public function logout(): void
 	{
+		Core::clearRememberToken();
 		if ($this->users->logOut()) {
 			Core::forward();
 		}

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Humblee\Foundation;
 
+use Humblee\Model\Crypto;
+
 class Core {
 
 	/**
@@ -163,6 +165,91 @@ class Core {
 		header("Location: ".rtrim(_app_path, "/") . "/" . ltrim($uri, "/"));
 		ob_flush();
 		exit();
+	}
+
+	/**
+	 * Store an arbitrary value in the session namespace
+	 */
+	public static function setSessionData(string $key, mixed $value): void
+	{
+		if (!isset($_SESSION[session_key])) {
+			$_SESSION[session_key] = [];
+		}
+		$_SESSION[session_key][$key] = $value;
+	}
+
+	/**
+	 * Retrieve a value from the session namespace
+	 */
+	public static function getSessionData(string $key, mixed $default = null): mixed
+	{
+		return $_SESSION[session_key][$key] ?? $default;
+	}
+
+	/**
+	 * Set an encrypted remember-me cookie so the session can be restored after timeout
+	 * Cookie payload: "$user_id|$expiry_timestamp" encrypted with the site key
+	 */
+	public static function setRememberToken(int $user_id, int $days = 30): void
+	{
+		$expiry    = time() + ($days * 86400);
+		$crypto    = new Crypto();
+		$encrypted = $crypto->encrypt($user_id . '|' . $expiry);
+		if ($encrypted === false) {
+			return;
+		}
+		$secure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+		setcookie('humblee_remember', base64_encode($encrypted), [
+			'expires'  => $expiry,
+			'path'     => '/',
+			'secure'   => $secure,
+			'httponly' => true,
+			'samesite' => 'Strict',
+		]);
+	}
+
+	/**
+	 * Validate the remember-me cookie and return the stored user_id, or false if invalid/expired
+	 */
+	public static function checkRememberToken(): int|false
+	{
+		if (empty($_COOKIE['humblee_remember'])) {
+			return false;
+		}
+		$encrypted = base64_decode($_COOKIE['humblee_remember'], true);
+		if ($encrypted === false) {
+			return false;
+		}
+		$crypto  = new Crypto();
+		$payload = $crypto->decrypt($encrypted);
+		if ($payload === false) {
+			return false;
+		}
+		$parts = explode('|', $payload, 2);
+		if (count($parts) !== 2 || !is_numeric($parts[0]) || !is_numeric($parts[1])) {
+			return false;
+		}
+		if (time() > (int) $parts[1]) {
+			static::clearRememberToken();
+			return false;
+		}
+		return (int) $parts[0];
+	}
+
+	/**
+	 * Delete the remember-me cookie
+	 */
+	public static function clearRememberToken(): void
+	{
+		$secure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+		setcookie('humblee_remember', '', [
+			'expires'  => time() - 3600,
+			'path'     => '/',
+			'secure'   => $secure,
+			'httponly' => true,
+			'samesite' => 'Strict',
+		]);
+		unset($_COOKIE['humblee_remember']);
 	}
 
 }
