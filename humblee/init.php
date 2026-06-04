@@ -26,6 +26,17 @@ if ($_rdbms === 'pgsql') {
 ORM::configure('username', $_ENV['config']['db_username']);
 ORM::configure('password', $_ENV['config']['db_password']);
 
+// Restore session from remember-me cookie when no active login
+if (!isset($_SESSION[session_key]['user_id'])) {
+    $remembered_uid = Core::checkRememberToken();
+    if ($remembered_uid !== false) {
+        $remembered_users = new \Humblee\Model\Users();
+        $remembered_users->logInSession($remembered_uid);
+        Core::setRememberToken($remembered_uid); // slide the expiry window forward
+    }
+    unset($remembered_uid, $remembered_users);
+}
+
 /**
  * Route to a specified controller based on URI.
  * If the URI matches a pre-defined route, use its corresponding controller;

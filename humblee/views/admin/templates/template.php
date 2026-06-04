@@ -141,6 +141,15 @@ $hmac_pair = $crypto->get_hmac_pair();
         </div>
     </footer>
 
+    <script>
+    window.__SESSION_MONITOR_CONFIG__ = {
+        XHR_PATH: "<?php echo _app_path ?>core-request/",
+        checkIntervalMs: 60000
+    };
+    </script>
+    <div id="session-monitor-app"></div>
+    <script type="module" src="<?php echo _app_path ?>humblee/js/admin/session-monitor/index.js"></script>
+
     <div id="confirmationBox" class="modal">
         <div class="modal-background"></div>
         <div class="modal-card">
