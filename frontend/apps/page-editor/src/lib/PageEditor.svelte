@@ -18,7 +18,7 @@
 
   // Feed widget path detection
   const FEED_WIDGET_PATH = 'contentWidgets/feed/edit.php';
-  const SEO_WIDGET_PATH = 'contentWidgets/seo/edit.php';
+  const SEO_WIDGET_PATH = 'seo';
 
   $: isFeedWidget = contentType.inputType === 'customform' && contentType.inputParameters.includes(FEED_WIDGET_PATH);
   $: isSeoWidget = contentType.inputType === 'customform' && contentType.inputParameters.includes(SEO_WIDGET_PATH);
