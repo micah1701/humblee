@@ -176,6 +176,100 @@ npm run build:css
 
 This delegates to `npm --prefix public run build:css`, which runs `sass` on each admin SCSS file and outputs the compiled `.css` alongside it.
 
+## Running tests
+
+Humblee uses [PHPUnit](https://phpunit.de) for unit testing. Tests live in `humblee/tests/` and cover core PHP functionality that has no database dependency (encryption, CSRF/HMAC tokens, and similar pure-logic classes).
+
+### Requirements
+
+PHPUnit is a **dev-only** dependency — it is installed automatically when you run `composer install` (or `composer update`) without the `--no-dev` flag. Production deployments that use `composer install --no-dev` will not include it.
+
+Your PHP CLI version determines which PHPUnit major version is used:
+
+| PHP CLI version | PHPUnit version installed |
+|-----------------|--------------------------|
+| 8.3.x           | `^12.0` (current config) |
+| 8.4.1+          | bump to `^13.0` in `require-dev` |
+
+### Running the test suite
+
+From the `humblee/` directory:
+
+```bash
+cd humblee
+vendor/bin/phpunit
+```
+
+On Windows (PowerShell):
+
+```powershell
+cd humblee
+vendor\bin\phpunit
+```
+
+A passing run looks like:
+
+```
+PHPUnit 12.5.x by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.3.x
+Configuration: C:\...\humblee\phpunit.xml
+
+................                                                  16 / 16 (100%)
+
+Time: 00:00.029, Memory: 16.00 MB
+
+OK (16 tests, 19 assertions)
+```
+
+### Code coverage report
+
+If you have Xdebug installed (the project already includes it in this environment), you can generate a coverage report in the terminal:
+
+```bash
+vendor/bin/phpunit --coverage-text
+```
+
+Or as an HTML report you can browse:
+
+```bash
+vendor/bin/phpunit --coverage-html coverage/
+```
+
+### Test structure
+
+```
+humblee/
+├── phpunit.xml               # PHPUnit configuration
+└── tests/
+    ├── bootstrap.php         # Defines constants/env before any test runs
+    ├── fixtures/
+    │   └── crypto/
+    │       └── key.php       # Test-only encryption key (safe to commit)
+    └── Model/
+        └── CryptoTest.php    # Tests for Humblee\Model\Crypto
+```
+
+Tests mirror the `src/` directory layout. To add tests for a new class:
+
+1. Create `tests/<Namespace>/<ClassName>Test.php`
+2. Extend `PHPUnit\Framework\TestCase`
+3. Name test methods starting with `test_` (snake_case is fine)
+
+Classes that require a database connection should use PHPUnit's dependency injection or a dedicated test database. The current suite deliberately avoids database tests so they run without any server setup.
+
+### Upgrading to PHPUnit 13
+
+Once your PHP CLI is updated to 8.4.1 or later, change one line in `humblee/composer.json`:
+
+```json
+"require-dev": {
+    "phpunit/phpunit": "^13.0"
+}
+```
+
+Then run `composer update phpunit/phpunit` — no test changes required.
+
 ## Documentation
 
 Full documentation can be found at <https://humblee.app>
