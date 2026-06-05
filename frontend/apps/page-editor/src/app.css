@@ -1,0 +1,100 @@
+/* Page Editor global styles */
+#app {
+  padding: 1.5rem;
+}
+
+.editor-box {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.editor-section-header {
+  border-bottom: 1px solid #ededed;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+/* Char counter */
+.char-counter {
+  font-size: 0.75rem;
+  color: #888;
+  text-align: right;
+  margin-top: 0.25rem;
+}
+.char-counter.is-near-limit {
+  color: #e67e22;
+}
+.char-counter.is-at-limit {
+  color: #e74c3c;
+}
+
+/* Revision history */
+.revision-history-panel {
+  border: 1px solid #dbdbdb;
+  border-radius: 4px;
+  padding: 0.75rem;
+  background: #fafafa;
+}
+
+/* Collapsible sections */
+.collapse-trigger {
+  cursor: pointer;
+  user-select: none;
+}
+.collapse-trigger:hover {
+  color: #3273dc;
+}
+
+/* Feed preview card */
+.feed-preview-card {
+  min-height: 300px;
+  max-height: 750px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 486px;
+  margin: 1rem auto;
+}
+
+.feed-preview-card .card-content {
+  width: 100%;
+  max-width: 486px;
+}
+
+/* Tooltip utility */
+.tooltip {
+  position: relative;
+}
+.tooltip[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.75);
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 10;
+}
+.tooltip[data-tooltip]:hover::after {
+  opacity: 1;
+}
+
+/* Dark theme */
+:global(.theme-dark) #app {
+  background: #1a1a1a;
+  color: #e0e0e0;
+}
+:global(.theme-dark) .editor-box {
+  background: #2a2a2a;
+  border-color: #444;
+}
