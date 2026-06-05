@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS humblee_content_types (
 
 INSERT INTO humblee_content_types (id, name, objectkey, description, output_type, input_type, input_parameters, required_role_id) VALUES
 (1, 'Page Body', 'pagebody', 'Main content area of page', 'content', 'wysiwyg', '<textarea name="content" id="edit_content">{content}</textarea>', 1),
-(2, 'SEO & Meta Tags', 'meta_tags', 'SEO and Meta tags read by search engines and social media sites', 'meta', 'customform', 'admin/contentWidgets/seo/edit.php', 0),
+(2, 'SEO & Meta Tags', 'meta_tags', 'SEO and Meta tags read by search engines and social media sites', 'meta', 'customform', 'seo', 0),
 (3, 'Extra Header Code', 'extraHeadCode', 'Additional hidden HTML code to be place in the header', 'meta', 'textarea', '<textarea name="content" class="textarea" id="edit_content">{content}</textarea>', 0);
 
 SELECT setval(pg_get_serial_sequence('humblee_content_types', 'id'), MAX(id)) FROM humblee_content_types;
