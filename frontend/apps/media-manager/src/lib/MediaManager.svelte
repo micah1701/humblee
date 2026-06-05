@@ -369,9 +369,7 @@
   function selectFileForParent() {
     if (!selectedFile || typeof window === 'undefined') return;
 
-    (window.parent as any).closeMediamanager?.();
-    (window.parent as any).unsetEscEvent?.('mediaManager');
-    (window.parent as any).handleMediaManagerSelect?.(selectedFile);
+    window.parent.postMessage({ type: 'media-selected', url: selectedFile.url }, '*');
   }
 
   function openUploadModal() {
