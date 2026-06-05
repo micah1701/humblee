@@ -162,7 +162,8 @@ CREATE TABLE IF NOT EXISTS `humblee_users` (
   `username` varchar(127) NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT '0',
   `logins` int(10) unsigned NOT NULL DEFAULT '0',
-  `last_login` datetime NOT NULL
+  `last_login` datetime NOT NULL,
+  `theme_preference` varchar(20) NOT NULL DEFAULT 'light'
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
