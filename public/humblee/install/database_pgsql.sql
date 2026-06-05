@@ -114,7 +114,8 @@ CREATE TABLE IF NOT EXISTS humblee_users (
   username VARCHAR(127) NOT NULL,
   active SMALLINT NOT NULL DEFAULT 0,
   logins INTEGER NOT NULL DEFAULT 0,
-  last_login TIMESTAMP NOT NULL DEFAULT NOW()
+  last_login TIMESTAMP NOT NULL DEFAULT NOW(),
+  theme_preference VARCHAR(20) NOT NULL DEFAULT 'light'
 );
 
 CREATE TABLE IF NOT EXISTS humblee_user_roles (
