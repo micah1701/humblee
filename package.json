@@ -10,6 +10,8 @@
     "build:templates": "npm --prefix frontend run build:templates",
     "dev:media-manager": "npm --prefix frontend run dev:media-manager",
     "dev:blocks": "npm --prefix frontend run dev:blocks",
-    "dev:templates": "npm --prefix frontend run dev:templates"
+    "dev:templates": "npm --prefix frontend run dev:templates",
+    "build:page-editor": "npm --prefix frontend run build:page-editor",
+    "dev:page-editor": "npm --prefix frontend run dev:page-editor"
   }
 }

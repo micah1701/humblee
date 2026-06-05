@@ -197,11 +197,104 @@ class Admin
             $this->allP13nVersions[0] = (object)['id' => 0, 'name' => 'Default (No Personalization)']; //overload a default option into the array for ease of use in the template
         }
 
+        // Gather updated_by user name for display
+        $updatedByUser = false;
+        if ($this->content->updated_by != 0) {
+            $updatedByUser = \ORM::for_table(_table_users)->find_one($this->content->updated_by);
+        }
+
+        // Build serialisable arrays from ORM collections
+        $allContentTypesArray = [];
+        foreach ($this->allContentTypes as $ct) {
+            $allContentTypesArray[] = ['id' => (int)$ct->id, 'name' => $ct->name];
+        }
+
+        $allP13nVersionsArray = [];
+        if ($_ENV['config']['use_p13n']) {
+            foreach ($this->allP13nVersions as $p) {
+                $allP13nVersionsArray[] = [
+                    'id'          => (int)$p->id,
+                    'name'        => $p->name,
+                    'description' => $p->description ?? '',
+                ];
+            }
+        }
+
+        $revisionsArray = [];
+        foreach ($this->revisions as $rev) {
+            $revisionsArray[] = [
+                'id'           => (int)$rev->id,
+                'revisionDate' => $rev->revision_date,
+                'publishDate'  => $rev->publish_date,
+                'live'         => (bool)$rev->live,
+            ];
+        }
+
+        // Detect feed widget and generate a fresh HMAC pair for its REST API
+        $feedHmac = null;
+        $isFeedWidget = $this->content_type->input_type === 'customform'
+            && str_contains((string)$this->content_type->input_parameters, 'contentWidgets/feed/edit.php');
+        if ($isFeedWidget) {
+            $crypto   = new \Humblee\Model\Crypto();
+            $hmacPair = $crypto->get_hmac_pair();
+            $feedHmac = ['token' => $hmacPair['message'], 'key' => $hmacPair['hmac']];
+        }
+
+        $editorConfig = [
+            'xhrPath'         => _app_path . 'core-request/',
+            'appPath'         => _app_path,
+            'isInIframe'      => $this->is_in_iframe,
+            'userTheme'       => $this->userTheme,
+            'useP13n'         => (bool)$_ENV['config']['use_p13n'],
+            'domain'          => $_ENV['config']['domain'] ?? $_SERVER['HTTP_HOST'],
+            'content'         => [
+                'id'            => (int)$this->content->id,
+                'pageId'        => (int)$this->content->page_id,
+                'typeId'        => (int)$this->content->type_id,
+                'p13nId'        => (int)$this->content->p13n_id,
+                'content'       => $this->content->content,
+                'revisionDate'  => $this->content->revision_date,
+                'publishDate'   => $this->content->publish_date,
+                'live'          => (bool)$this->content->live,
+                'updatedBy'     => (int)$this->content->updated_by,
+                'updatedByName' => $updatedByUser ? ($updatedByUser->name ?? 'Unknown') : '',
+            ],
+            'contentType'     => [
+                'id'              => (int)$this->content_type->id,
+                'name'            => $this->content_type->name,
+                'description'     => $this->content_type->description ?? '',
+                'inputType'       => $this->content_type->input_type,
+                'inputParameters' => $this->content_type->input_parameters,
+            ],
+            'pageData'        => [
+                'id'     => (int)$this->page_data->id,
+                'label'  => $this->page_data->label,
+                'active' => (bool)$this->page_data->active,
+                'url'    => $this->page_data->url,
+            ],
+            'revisions'       => $revisionsArray,
+            'allContentTypes' => $allContentTypesArray,
+            'allP13nVersions' => $allP13nVersionsArray,
+            'feedHmac'        => $feedHmac,
+        ];
+
         $this->template_view = Core::view(_app_server_path . 'humblee/views/admin/edit.php', get_object_vars($this));
 
-        $this->extra_head_code = '<script type="text/javascript" src="' . _app_path . 'humblee/js/tools/dateformat.js"></script>';
-        $this->extra_head_code .= '<script type="text/javascript" src="' . _app_path . 'humblee/js/admin/edit.js"></script>';
-        $this->extra_head_code .= '<link rel="stylesheet" type="text/css" href="' . _app_path . 'humblee/css/admin/edit.css">';
+        $this->extra_head_code  = '<link rel="stylesheet" href="' . _app_path . 'humblee/js/admin/page-editor/index.css">';
+        $this->extra_head_code .= '<script>window.__PAGE_EDITOR_CONFIG__ = ' . json_encode($editorConfig, JSON_HEX_TAG | JSON_HEX_APOS) . ';</script>';
+        $this->extra_head_code .= '<script type="module" src="' . _app_path . 'humblee/js/admin/page-editor/index.js"></script>';
+
+        // Summernote WYSIWYG — load only when needed
+        if ($this->content_type->input_type === 'wysiwyg') {
+            $this->extra_head_code .= '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css">';
+            $this->extra_head_code .= '<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>';
+            $this->extra_head_code .= '<script src="' . _app_path . 'humblee/js/tools/summernote.js"></script>';
+        }
+
+        // Showdown markdown — load only for the feed widget
+        if ($isFeedWidget) {
+            $this->extra_head_code .= '<script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>';
+        }
 
         $outter_template = $this->is_in_iframe ? 'blank.php' : 'template.php';
         echo Core::view(_app_server_path . 'humblee/views/admin/templates/' . $outter_template, get_object_vars($this));
