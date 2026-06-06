@@ -191,6 +191,23 @@ Your PHP CLI version determines which PHPUnit major version is used:
 | 8.3.x           | `^12.0` (current config) |
 | 8.4.1+          | bump to `^13.0` in `require-dev` |
 
+Tests for database-backed models (e.g. `ContentTest`) use an **in-memory SQLite database** so they run without a MySQL server. This requires the `pdo_sqlite` and `sqlite3` PHP extensions to be enabled in your CLI `php.ini`. They ship with PHP 8.3+ on all platforms but are often disabled by default.
+
+To check whether they are active:
+
+```bash
+php -r "print_r(PDO::getAvailableDrivers());"
+```
+
+`sqlite` should appear in the output. If it does not, open your CLI `php.ini` (find its path with `php --ini`) and uncomment these two lines:
+
+```ini
+extension=pdo_sqlite
+extension=sqlite3
+```
+
+On Windows, the corresponding DLLs (`php_pdo_sqlite.dll` and `php_sqlite3.dll`) are included in the standard PHP distribution and just need to be un-commented — no separate install is required.
+
 ### Running the test suite
 
 From the `humblee/` directory:
