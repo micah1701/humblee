@@ -145,6 +145,23 @@ Humblee supports optional at-rest encryption for media files stored in the `/sto
 
 **Database:** The `humblee_media` table tracks encryption state via the `encrypted` column (`0` = plaintext on disk, `1` = encrypted on disk). When a file is served through `/media/{id}/`, the CMS detects the flag, decrypts the payload in memory, and streams the plaintext to the browser — the file on disk is never written back as plaintext during a read.
 
+## Content block slots
+
+Templates can include **multiple instances of the same content block type** on a single page using named slots managed through the `humblee_template_blocks` table.
+
+Each slot has a `label` (shown to editors in the page editor) and an auto-generated `slot_key` (used to retrieve content in view templates). The first slot of a given type inherits the block's `objectkey` directly (e.g. `rich_text`); additional slots append a counter (`rich_text_2`, `rich_text_3`, …).
+
+**In view templates**, all live content for a page is returned by `Content::findContent()` as an associative array keyed by `slot_key`:
+
+```php
+// e.g. two rich_text blocks and a hero block on the same page:
+$content['rich_text']->content   // first rich text slot
+$content['rich_text_2']->content // second rich text slot
+$content['hero']->content        // hero block
+```
+
+Slots are managed in the **Templates** section of the admin UI. Adding a block type to a template creates a slot row; removing it deletes the slot (any content saved to that slot is orphaned rather than deleted). The `slot_key` is immutable after a slot is first saved — renaming uses the `label` field, not the key.
+
 ## Admin UI — Bulma CSS framework
 
 The CMS admin interface uses [Bulma 1.0.4](https://bulma.io) as its CSS framework. Bulma is installed as an npm dependency in `public/` and served directly from `node_modules/` — no build step is needed for Bulma itself.
@@ -227,16 +244,16 @@ vendor\bin\phpunit
 A passing run looks like:
 
 ```
-PHPUnit 12.5.x by Sebastian Bergmann and contributors.
+PHPUnit 12.x.x by Sebastian Bergmann and contributors.
 
 Runtime:       PHP 8.3.x
 Configuration: C:\...\humblee\phpunit.xml
 
-................                                                  16 / 16 (100%)
+........................................                          40 / 40 (100%)
 
-Time: 00:00.029, Memory: 16.00 MB
+Time: 00:00.195, Memory: 16.00 MB
 
-OK (16 tests, 19 assertions)
+OK (40 tests, 59 assertions)
 ```
 
 ### Code coverage report
@@ -264,6 +281,7 @@ humblee/
     │   └── crypto/
     │       └── key.php       # Test-only encryption key (safe to commit)
     └── Model/
+        ├── ContentTest.php   # Tests for Humblee\Model\Content (uses in-memory SQLite)
         └── CryptoTest.php    # Tests for Humblee\Model\Crypto
 ```
 
@@ -273,7 +291,7 @@ Tests mirror the `src/` directory layout. To add tests for a new class:
 2. Extend `PHPUnit\Framework\TestCase`
 3. Name test methods starting with `test_` (snake_case is fine)
 
-Classes that require a database connection should use PHPUnit's dependency injection or a dedicated test database. The current suite deliberately avoids database tests so they run without any server setup.
+Database-backed model tests (like `ContentTest`) use an in-memory SQLite database so they run without a MySQL server. Pure-logic tests (like `CryptoTest`) have no database dependency at all.
 
 ### Upgrading to PHPUnit 13
 

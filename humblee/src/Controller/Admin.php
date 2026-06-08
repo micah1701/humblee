@@ -192,6 +192,9 @@ class Admin
         $currentTemplateBlockId = (int)($this->content->template_block_id ?? 0);
         $this->revisions = $contentObj->listRevisions($this->content->page_id, $this->content->type_id, $this->content->p13n_id, 10, $currentTemplateBlockId);
         $this->content_type = \ORM::for_table(_table_content_types)->find_one($this->content->type_id);
+        if (!$this->content_type) {
+            exit("<h1>ERROR: content type not found</h1>");
+        }
         $this->page_data = \ORM::for_table(_table_pages)->find_one($this->content->page_id);
         if (!$this->page_data) {
             exit("<h1>ERROR: page not found</h1>");
@@ -250,10 +253,11 @@ class Admin
                 ];
             }
         } else {
-            // Legacy: synthesize slots from allContentTypes with templateBlockId = 0
+            // Legacy: encode typeId as negative so the Svelte onSlotChange can recover it
+            // with Math.abs() and navigate to ?content_type=<typeId> (positive tbId = template block).
             foreach ($this->allContentTypes as $ct) {
                 $allSlotsArray[] = [
-                    'templateBlockId' => 0,
+                    'templateBlockId' => -(int)$ct->id,
                     'slotKey'         => $ct->objectkey,
                     'label'           => '',
                     'contentTypeId'   => (int)$ct->id,
@@ -329,7 +333,9 @@ class Admin
             'revisions'              => $revisionsArray,
             'allContentTypes'        => $allContentTypesArray,
             'allSlots'               => $allSlotsArray,
-            'currentTemplateBlockId' => $currentTemplateBlockId,
+            // For legacy content (template_block_id = 0) use the negated type_id to match
+            // the negative values used in the legacy slot synthesis above.
+            'currentTemplateBlockId' => $currentTemplateBlockId > 0 ? $currentTemplateBlockId : -(int)$this->content->type_id,
             'allP13nVersions'        => $allP13nVersionsArray,
             'feedHmac'               => $feedHmac,
         ];
