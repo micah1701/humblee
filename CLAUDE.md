@@ -19,13 +19,14 @@ Humblee is a PHP/MySQL CMS and framework. The backend PHP lives in `/humblee/`, 
 │
 ├── frontend/                     # Frontend tool source (NOT web-accessible)
 │   ├── package.json              # npm workspace root — "workspaces": ["apps/*"]
-│   └── apps/
-│       └── media-manager/        # Svelte + Vite + TypeScript media manager SPA
-│           ├── vite.config.ts    # Builds to /public/humblee/js/admin/media-manager/
-│           └── src/
-│               ├── main.ts       # Reads PHP config from window.__MEDIA_CONFIG__
-│               ├── App.svelte    # Root component
-│               └── lib/          # MediaManager component, types, API service, utils
+│   └── apps/                     # One Vite (Svelte + TS) project per admin SPA tool
+│       ├── media-manager/        # Media library browser
+│       ├── page-editor/          # Page content editor (block slots, revisions, p13n)
+│       ├── templates/            # Template & template-block slot manager
+│       ├── blocks/               # Content-type (block) manager
+│       ├── personalization/      # Personalization audience manager
+│       ├── session-monitor/      # Active session monitor
+│       └── toolbar/              # Admin toolbar overlay
 │
 ├── humblee/                      # CMS core
 │   ├── src/                      # PSR-4 source — Humblee\ namespace
@@ -41,8 +42,8 @@ Humblee is a PHP/MySQL CMS and framework. The backend PHP lives in `/humblee/`, 
 ├── public/                       # Web root (Apache points here)
 │   ├── humblee/                  # CMS frontend assets (JS, CSS, images)
 │   │   └── js/admin/
-│   │       ├── pages.js          # Admin page-ordering UI
-│   │       └── media-manager/    # Built Svelte output (index.js + index.css — committed)
+│   │       ├── pages.js          # Admin page-ordering UI (vanilla JS)
+│   │       └── [app-name]/       # Built Svelte output per app (index.js + index.css — committed)
 │   └── application/              # App frontend assets
 │
 └── storage/                      # User-uploaded media files (must be web-server writable)
@@ -74,7 +75,7 @@ The second URI segment becomes the method name called on the controller.
 ## Key patterns
 
 ### ORM
-All database access uses Idiorm (`j4mie/idiorm`). Always prefix with `\ORM::`. Table name constants are defined in the configuration (`_table_users`, `_table_pages`, `_table_content`, etc.).
+All database access uses Idiorm (`j4mie/idiorm`). Always prefix with `\ORM::`. Table name constants are defined in the configuration (`_table_users`, `_table_pages`, `_table_content`, `_table_template_blocks`, etc.).
 
 ### Auth / RBAC
 Session-based. `Core::auth(int|string|array $role)` checks `$_SESSION[session_key]['has_roles']`. Roles are cached in session on first check. The `session_key` constant is defined in configuration.
@@ -97,6 +98,27 @@ The 32-byte symmetric key is stored in `humblee/configuration/crypto/key.php` (g
 ### Personalization (p13n)
 `Humblee\Model\Personalization` manages audience-segmented content variants. Content rows have a `p13n_id` foreign key; `0` means default (no personalization).
 
+### Template blocks (content slots)
+`humblee_template_blocks` maps named slots to a template + content-type pair, enabling **multiple instances of the same content type on a single page**.
+
+| Column             | Description |
+|--------------------|-------------|
+| `template_id`      | FK → `humblee_templates.id` |
+| `content_type_id`  | FK → `humblee_content_types.id` |
+| `label`            | Human-readable name shown in the page editor |
+| `slot_key`         | Auto-generated, immutable after first save. Derived from the content type's `objectkey` — first slot keeps the base key (e.g. `rich_text`), subsequent slots append a counter (`rich_text_2`, `rich_text_3`, …) |
+| `sort_order`       | Display order within the editor |
+
+**`humblee_content.template_block_id`** (default `0`):
+- `0` = legacy row — `Content::findContent()` keys it by the content type's `objectkey`.
+- `> 0` = slotted row — `Content::findContent()` keys it by the slot's `slot_key`.
+
+This lets multiple content rows of the same type coexist on one page without key collision. Both `p13n_id` and `template_block_id` are required to uniquely identify a content record.
+
+`Humblee\Controller\Requests\Templates` upserts slots when a template is saved. `slot_key` is immutable after creation; only `label` and `sort_order` can be updated. Removing a slot from the posted list deletes it (and orphans any content rows referencing that slot).
+
+Table constant: `_table_template_blocks`.
+
 ## Frontend build system
 
 Admin UI tools that need a modern component framework live in `frontend/apps/`. Each app is a self-contained Vite project (Svelte, React, etc.) with its own `package.json` and `vite.config.*`. All apps share a workspace root at `frontend/package.json`.
@@ -104,10 +126,12 @@ Admin UI tools that need a modern component framework live in `frontend/apps/`. 
 ### Build commands (run from the project root `/`)
 
 ```bash
-npm run setup             # install all dependencies (public/ and frontend/)
-npm run build             # build all frontend tool apps
-npm run build:media-manager  # build one app
-npm run dev:media-manager    # Vite dev server for the media manager
+npm run setup                 # install all dependencies (public/ and frontend/)
+npm run build                 # build all frontend tool apps
+npm run build:media-manager   # build one app (substitute any app name)
+npm run dev:media-manager     # Vite dev server for the media manager
+npm run dev:page-editor       # Vite dev server for the page editor
+npm run dev:templates         # Vite dev server for the templates manager
 ```
 
 `public/node_modules/` (Bulma/CSS) and `frontend/node_modules/` (Vite/Svelte) are kept separate on purpose — npm workspace hoisting would pull Bulma out of `public/node_modules/` and break the PHP template's direct reference to it. The root `package.json` delegates to each without merging them.
