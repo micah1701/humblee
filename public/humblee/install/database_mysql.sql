@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS `humblee_content` (
   `type_id` int(11) NOT NULL,
   `p13n_id` int(11) NOT NULL,
   `page_id` int(11) NOT NULL,
+  `template_block_id` int(11) NOT NULL DEFAULT 0,
   `content` text NOT NULL,
   `revision_date` datetime NOT NULL,
   `publish_date` datetime DEFAULT NULL,
@@ -147,6 +148,23 @@ INSERT INTO `humblee_templates` (`id`, `name`, `description`, `page_type`, `page
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `humblee_template_blocks`
+--
+
+CREATE TABLE IF NOT EXISTS `humblee_template_blocks` (
+  `id`              int(11)      NOT NULL AUTO_INCREMENT,
+  `template_id`     int(11)      NOT NULL,
+  `content_type_id` int(11)      NOT NULL,
+  `label`           varchar(255) NOT NULL DEFAULT '',
+  `slot_key`        varchar(100) NOT NULL DEFAULT '',
+  `sort_order`      int(11)      NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `template_id` (`template_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `humblee_users`
 --
 
@@ -252,7 +270,7 @@ INSERT INTO `humblee_media_folders` (`id`, `parent_id`, `name`) VALUES
 -- Indexes for table `humblee_content`
 --
 ALTER TABLE `humblee_content`
-  ADD PRIMARY KEY (`id`), ADD KEY `page_id` (`page_id`);
+  ADD PRIMARY KEY (`id`), ADD KEY `page_id` (`page_id`), ADD KEY `template_block_id` (`template_block_id`);
 
 --
 -- Indexes for table `humblee_content_types`
@@ -341,6 +359,11 @@ ALTER TABLE `humblee_pages`
 --
 ALTER TABLE `humblee_roles`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=10;
+--
+-- AUTO_INCREMENT for table `humblee_template_blocks`
+--
+ALTER TABLE `humblee_template_blocks`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1;
 --
 -- AUTO_INCREMENT for table `humblee_templates`
 --

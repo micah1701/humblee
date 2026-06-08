@@ -2,7 +2,7 @@
   import CrudShell from '@crud-shared/CrudShell.svelte';
   import { createCrudApi } from '@crud-shared/crudApi';
   import { quickNotice, confirmation } from '@crud-shared/crudUtils';
-  import type { Template, Block } from './types';
+  import type { Template, Block, TemplateBlock } from './types';
 
   export let xhrPath: string;
 
@@ -25,7 +25,8 @@
   let default_view = '';
   let dynamic_uri = false;
   let available = true;
-  let selectedBlocks: Set<number> = new Set();
+  let slotList: TemplateBlock[] = [];
+  let blockToAdd = 0;
 
   // ── Init ──────────────────────────────────────────────────────────────
   async function loadAll() {
@@ -56,25 +57,43 @@
     default_view = '';
     dynamic_uri = false;
     available = true;
-    selectedBlocks = new Set();
+    slotList = [];
+    blockToAdd = 0;
     errors = [];
   }
 
   function populateForm(t: Template) {
-    name             = t.name;
-    description      = t.description;
-    page_type        = t.page_type || 'view';
-    controller       = t.controller;
+    name              = t.name;
+    description       = t.description;
+    page_type         = t.page_type || 'view';
+    controller        = t.controller;
     controller_action = t.controller_action;
-    default_view     = t.default_view;
-    dynamic_uri      = t.dynamic_uri === 1;
-    available        = t.available === 1;
-    selectedBlocks   = new Set(
-      t.blocks
-        ? t.blocks.split(',').map(Number).filter(n => !isNaN(n) && n > 0)
-        : []
-    );
-    errors = [];
+    default_view      = t.default_view;
+    dynamic_uri       = t.dynamic_uri === 1;
+    available         = t.available === 1;
+    errors            = [];
+
+    if (t.templateBlocks && t.templateBlocks.length > 0) {
+      // New-style: use slot list from server
+      slotList = t.templateBlocks.map(tb => ({ ...tb }));
+    } else if (t.blocks) {
+      // Legacy fallback: synthesize display list from comma-string (null IDs = will be created on save)
+      slotList = t.blocks
+        .split(',')
+        .map(Number)
+        .filter(n => !isNaN(n) && n > 0)
+        .map((ctId, i) => ({
+          id:            null,
+          contentTypeId: ctId,
+          label:         '',
+          slotKey:       '',
+          sortOrder:     i,
+        }));
+    } else {
+      slotList = [];
+    }
+
+    blockToAdd = 0;
   }
 
   function handleSelect(id: number) {
@@ -88,14 +107,23 @@
     clearForm();
   }
 
-  function toggleBlock(blockId: number) {
-    const next = new Set(selectedBlocks);
-    if (next.has(blockId)) {
-      next.delete(blockId);
-    } else {
-      next.add(blockId);
-    }
-    selectedBlocks = next;
+  function addSlot(blockId: number) {
+    slotList = [
+      ...slotList,
+      { id: null, contentTypeId: blockId, label: '', slotKey: '', sortOrder: slotList.length },
+    ];
+  }
+
+  function removeSlot(index: number) {
+    slotList = slotList.filter((_, i) => i !== index);
+  }
+
+  function moveSlot(index: number, direction: -1 | 1) {
+    const next = [...slotList];
+    const swap = index + direction;
+    if (swap < 0 || swap >= next.length) return;
+    [next[index], next[swap]] = [next[swap], next[index]];
+    slotList = next.map((s, i) => ({ ...s, sortOrder: i }));
   }
 
   async function handleSave() {
@@ -106,8 +134,16 @@
         name,
         description,
         page_type,
-        available:   available ? '1' : '0',
-        blocks:      Array.from(selectedBlocks),
+        available:      available ? '1' : '0',
+        templateBlocks: JSON.stringify(
+          slotList.map((s, i) => ({
+            id:            s.id ?? null,
+            contentTypeId: s.contentTypeId,
+            label:         s.label,
+            slotKey:       s.slotKey,
+            sortOrder:     i,
+          }))
+        ),
       };
 
       if (page_type === 'controller') {
@@ -298,69 +334,135 @@
     </p>
   </div>
 
-  <!-- Content blocks -->
+  <!-- Content block slots -->
   <div class="field">
     <!-- svelte-ignore a11y-label-has-associated-control -->
-    <label class="label">Included Content Blocks</label>
-    {#if allBlocks.length === 0}
-      <p class="has-text-grey is-size-7">No content blocks defined yet.</p>
+    <label class="label">Content Block Slots</label>
+
+    {#if slotList.length === 0}
+      <p class="has-text-grey is-size-7 mb-3">No slots defined. Add blocks below.</p>
     {:else}
-      <div class="blocks-grid">
-        {#each allBlocks as block (block.id)}
-          <label
-            class="block-checkbox-label"
-            class:is-checked={selectedBlocks.has(block.id)}
-            title={block.description}
-          >
-            <input
-              type="checkbox"
-              checked={selectedBlocks.has(block.id)}
-              on:change={() => toggleBlock(block.id)}
-            />
-            <span>{block.name}</span>
-          </label>
+      <div class="slot-list mb-3">
+        {#each slotList as slot, index (slot.id !== null ? slot.id : `new_${index}`)}
+          <div class="slot-row box p-3 mb-2">
+            <div class="columns is-vcentered is-mobile is-multiline">
+
+              <!-- Sort controls -->
+              <div class="column is-narrow">
+                <div class="sort-buttons">
+                  <button
+                    class="button is-small"
+                    type="button"
+                    on:click={() => moveSlot(index, -1)}
+                    disabled={index === 0}
+                    title="Move up"
+                  >↑</button>
+                  <button
+                    class="button is-small"
+                    type="button"
+                    on:click={() => moveSlot(index, 1)}
+                    disabled={index === slotList.length - 1}
+                    title="Move down"
+                  >↓</button>
+                </div>
+              </div>
+
+              <!-- Block type name -->
+              <div class="column">
+                <p class="is-size-7 has-text-grey mb-1">Block type</p>
+                <strong>{allBlocks.find(b => b.id === slot.contentTypeId)?.name ?? 'Unknown'}</strong>
+              </div>
+
+              <!-- Label input -->
+              <div class="column">
+                <div class="field mb-0">
+                  <label class="label is-small" for="slot-label-{index}">Label</label>
+                  <div class="control">
+                    <input
+                      class="input is-small"
+                      type="text"
+                      id="slot-label-{index}"
+                      placeholder="e.g. Main Content"
+                      bind:value={slot.label}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Slot key (read-only) -->
+              <div class="column">
+                <p class="is-size-7 has-text-grey mb-1">Slot key</p>
+                {#if slot.slotKey}
+                  <code class="is-size-7">{slot.slotKey}</code>
+                {:else}
+                  <span class="has-text-grey is-size-7 is-italic">auto-generated on save</span>
+                {/if}
+              </div>
+
+              <!-- Remove button -->
+              <div class="column is-narrow">
+                <button
+                  class="button is-danger is-small is-outlined"
+                  type="button"
+                  on:click={() => removeSlot(index)}
+                  title="Remove slot"
+                >✕</button>
+              </div>
+
+            </div>
+          </div>
         {/each}
       </div>
     {/if}
-    <p class="help mt-2">
-      Unchecking a block removes it from the editor for this template, but existing content
-      may still appear on the site if the view renders it.
+
+    <!-- Add block row -->
+    <div class="level">
+      <div class="level-left">
+        <div class="level-item">
+          <div class="select is-small">
+            <select bind:value={blockToAdd}>
+              <option value={0}>— select a block to add —</option>
+              {#each allBlocks as block (block.id)}
+                <option value={block.id}>{block.name}</option>
+              {/each}
+            </select>
+          </div>
+        </div>
+        <div class="level-item">
+          <button
+            class="button is-small is-info is-outlined"
+            type="button"
+            disabled={blockToAdd === 0}
+            on:click={() => { addSlot(blockToAdd); blockToAdd = 0; }}
+          >
+            + Add Block
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <p class="help mt-1">
+      The same block type can appear multiple times. Labels appear in the content editor.
+      Slot keys are used in PHP view files: <code>Draw::content($content, 'slot_key')</code>
     </p>
   </div>
 </CrudShell>
 
 <style>
-  .blocks-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    padding: 0.5rem 0;
-  }
-
-  .block-checkbox-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.3rem 0.65rem;
+  .slot-list {
     border: 1px solid #dbdbdb;
     border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.875rem;
-    transition: border-color 0.1s, background 0.1s;
+    padding: 0.5rem;
+    background: #fafafa;
+  }
+
+  .slot-row {
     background: #fff;
   }
 
-  .block-checkbox-label:hover {
-    border-color: #3273dc;
-  }
-
-  .block-checkbox-label.is-checked {
-    border-color: #3273dc;
-    background: #ebf3ff;
-    color: #1e62cc;
-  }
-
-  .block-checkbox-label input[type="checkbox"] {
-    accent-color: #3273dc;
+  .sort-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
   }
 </style>

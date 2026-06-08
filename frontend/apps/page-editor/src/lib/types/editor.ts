@@ -5,6 +5,7 @@ export interface ContentRecord {
   pageId: number;
   typeId: number;
   p13nId: number;
+  templateBlockId: number;
   content: string;
   revisionDate: string;
   publishDate: string | null;
@@ -46,6 +47,14 @@ export interface ContentTypeOption {
   name: string;
 }
 
+export interface TemplateSlot {
+  templateBlockId: number;
+  slotKey: string;
+  label: string;
+  contentTypeId: number;
+  contentTypeName: string;
+}
+
 export interface FeedHmac {
   token: string;
   key: string;
@@ -63,6 +72,8 @@ export interface PageEditorConfig {
   pageData: PageData;
   revisions: Revision[];
   allContentTypes: ContentTypeOption[];
+  allSlots: TemplateSlot[];
+  currentTemplateBlockId: number;
   allP13nVersions: P13nVersion[];
   feedHmac: FeedHmac | null;
 }
