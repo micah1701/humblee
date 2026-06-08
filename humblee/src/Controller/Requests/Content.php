@@ -15,8 +15,11 @@ final class Content
         if (!isset($_POST['content_type']) || !is_numeric($_POST['content_type']) || !isset($_POST['page_id']) || !is_numeric($_POST['page_id'])) {
             $ctrl->json(['error' => 'Missing required parameters']);
         }
+        $template_block_id = (isset($_POST['template_block_id']) && is_numeric($_POST['template_block_id']))
+            ? (int)$_POST['template_block_id']
+            : 0;
         $contentObj = new ContentModel;
-        $content = $contentObj->listRevisions((int)$_POST['page_id'], (int)$_POST['content_type'], (int)$_POST['p13n_id'], 1);
+        $content = $contentObj->listRevisions((int)$_POST['page_id'], (int)$_POST['content_type'], (int)$_POST['p13n_id'], 1, $template_block_id);
 
         if (!$content) {
             $ctrl->json(['error' => 'could not confirm previously saved content']);

@@ -141,23 +141,36 @@ class Admin
         }
 
         if (!is_numeric($this->_uri_parts[2] ?? null) && isset($_GET['page_id']) && is_numeric($_GET['page_id'])) {
-            $content_type = (isset($_GET['content_type']) && is_numeric($_GET['content_type'])) ? $_GET['content_type'] : 1;
-            $p13n_id = (isset($_GET['p13n_id']) && is_numeric($_GET['p13n_id'])) ? $_GET['p13n_id'] : 0;
+            $p13n_id           = (isset($_GET['p13n_id']) && is_numeric($_GET['p13n_id'])) ? (int)$_GET['p13n_id'] : 0;
+            $template_block_id = (isset($_GET['template_block_id']) && is_numeric($_GET['template_block_id'])) ? (int)$_GET['template_block_id'] : 0;
+
+            if ($template_block_id > 0) {
+                $tb = \ORM::for_table(_table_template_blocks)->find_one($template_block_id);
+                if (!$tb) {
+                    exit('<h1>ERROR: template block not found</h1>');
+                }
+                $content_type = (int)$tb->content_type_id;
+            } else {
+                $content_type = (isset($_GET['content_type']) && is_numeric($_GET['content_type'])) ? (int)$_GET['content_type'] : 1;
+            }
+
             $content = \ORM::for_table(_table_content)
                 ->where('page_id', $_GET['page_id'])
                 ->where('type_id', $content_type)
                 ->where('p13n_id', $p13n_id)
+                ->where('template_block_id', $template_block_id)
                 ->order_by_desc('revision_date')
                 ->find_one();
             if (!$content) {
                 $content = \ORM::for_table(_table_content)->create();
-                $content->page_id = $_GET['page_id'];
-                $content->type_id = $content_type;
-                $content->p13n_id = $p13n_id;
-                $content->content = '';
-                $content->revision_date = gmdate("Y-m-d H:i:s");
-                $content->live = 1;
-                $content->updated_by = $_SESSION[session_key]['user_id'];
+                $content->page_id           = $_GET['page_id'];
+                $content->type_id           = $content_type;
+                $content->p13n_id           = $p13n_id;
+                $content->template_block_id = $template_block_id;
+                $content->content           = '';
+                $content->revision_date     = gmdate("Y-m-d H:i:s");
+                $content->live              = 1;
+                $content->updated_by        = $_SESSION[session_key]['user_id'];
                 $content->save();
             }
             $frameStatus = isset($_GET['iframe']) ? "?iframe" : "";
@@ -176,7 +189,8 @@ class Admin
         $pageObj = new Pages;
         $contentObj = new Content;
 
-        $this->revisions = $contentObj->listRevisions($this->content->page_id, $this->content->type_id, $this->content->p13n_id);
+        $currentTemplateBlockId = (int)($this->content->template_block_id ?? 0);
+        $this->revisions = $contentObj->listRevisions($this->content->page_id, $this->content->type_id, $this->content->p13n_id, 10, $currentTemplateBlockId);
         $this->content_type = \ORM::for_table(_table_content_types)->find_one($this->content->type_id);
         $this->page_data = \ORM::for_table(_table_pages)->find_one($this->content->page_id);
         if (!$this->page_data) {
@@ -188,7 +202,21 @@ class Admin
             exit("<h1>ERROR: template not found</h1>");
         }
 
-        $this->allContentTypes = \ORM::for_table(_table_content_types)->where_in('id', explode(',', $this->template_data->blocks))->order_by_asc('name')->find_many();
+        // Load template slots; fall back to legacy blocks string for unmigrated templates
+        $templateBlockRows = \ORM::for_table(_table_template_blocks)
+            ->where('template_id', $this->page_data->template_id)
+            ->order_by_asc('sort_order')
+            ->find_many();
+
+        if (!empty($templateBlockRows)) {
+            $this->allContentTypes = [];
+        } else {
+            $this->allContentTypes = \ORM::for_table(_table_content_types)
+                ->where_in('id', explode(',', $this->template_data->blocks))
+                ->order_by_asc('name')
+                ->find_many();
+        }
+
         $this->is_in_iframe = isset($_GET['iframe']);
 
         if ($_ENV['config']['use_p13n']) {
@@ -207,6 +235,31 @@ class Admin
         $allContentTypesArray = [];
         foreach ($this->allContentTypes as $ct) {
             $allContentTypesArray[] = ['id' => (int)$ct->id, 'name' => $ct->name];
+        }
+
+        $allSlotsArray = [];
+        if (!empty($templateBlockRows)) {
+            foreach ($templateBlockRows as $tb) {
+                $ct = \ORM::for_table(_table_content_types)->find_one($tb->content_type_id);
+                $allSlotsArray[] = [
+                    'templateBlockId' => (int)$tb->id,
+                    'slotKey'         => $tb->slot_key,
+                    'label'           => $tb->label,
+                    'contentTypeId'   => (int)$tb->content_type_id,
+                    'contentTypeName' => $ct ? $ct->name : '',
+                ];
+            }
+        } else {
+            // Legacy: synthesize slots from allContentTypes with templateBlockId = 0
+            foreach ($this->allContentTypes as $ct) {
+                $allSlotsArray[] = [
+                    'templateBlockId' => 0,
+                    'slotKey'         => $ct->objectkey,
+                    'label'           => '',
+                    'contentTypeId'   => (int)$ct->id,
+                    'contentTypeName' => $ct->name,
+                ];
+            }
         }
 
         $allP13nVersionsArray = [];
@@ -248,16 +301,17 @@ class Admin
             'useP13n'         => (bool)$_ENV['config']['use_p13n'],
             'domain'          => $_ENV['config']['domain'] ?? $_SERVER['HTTP_HOST'],
             'content'         => [
-                'id'            => (int)$this->content->id,
-                'pageId'        => (int)$this->content->page_id,
-                'typeId'        => (int)$this->content->type_id,
-                'p13nId'        => (int)$this->content->p13n_id,
-                'content'       => $this->content->content,
-                'revisionDate'  => $this->content->revision_date,
-                'publishDate'   => $this->content->publish_date,
-                'live'          => (bool)$this->content->live,
-                'updatedBy'     => (int)$this->content->updated_by,
-                'updatedByName' => $updatedByUser ? ($updatedByUser->name ?? 'Unknown') : '',
+                'id'              => (int)$this->content->id,
+                'pageId'          => (int)$this->content->page_id,
+                'typeId'          => (int)$this->content->type_id,
+                'p13nId'          => (int)$this->content->p13n_id,
+                'templateBlockId' => $currentTemplateBlockId,
+                'content'         => $this->content->content,
+                'revisionDate'    => $this->content->revision_date,
+                'publishDate'     => $this->content->publish_date,
+                'live'            => (bool)$this->content->live,
+                'updatedBy'       => (int)$this->content->updated_by,
+                'updatedByName'   => $updatedByUser ? ($updatedByUser->name ?? 'Unknown') : '',
             ],
             'contentType'     => [
                 'id'              => (int)$this->content_type->id,
@@ -272,10 +326,12 @@ class Admin
                 'active' => (bool)$this->page_data->active,
                 'url'    => $this->page_data->url,
             ],
-            'revisions'       => $revisionsArray,
-            'allContentTypes' => $allContentTypesArray,
-            'allP13nVersions' => $allP13nVersionsArray,
-            'feedHmac'        => $feedHmac,
+            'revisions'              => $revisionsArray,
+            'allContentTypes'        => $allContentTypesArray,
+            'allSlots'               => $allSlotsArray,
+            'currentTemplateBlockId' => $currentTemplateBlockId,
+            'allP13nVersions'        => $allP13nVersionsArray,
+            'feedHmac'               => $feedHmac,
         ];
 
         $this->template_view = Core::view(_app_server_path . 'humblee/views/admin/edit.php', get_object_vars($this));

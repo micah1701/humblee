@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS humblee_content (
   type_id INTEGER NOT NULL,
   p13n_id INTEGER NOT NULL,
   page_id INTEGER NOT NULL,
+  template_block_id INTEGER NOT NULL DEFAULT 0,
   content TEXT NOT NULL,
   revision_date TIMESTAMP NOT NULL DEFAULT NOW(),
   publish_date TIMESTAMP DEFAULT NULL,
@@ -102,6 +103,17 @@ INSERT INTO humblee_templates (id, name, description, page_type, page_meta, dyna
 
 SELECT setval(pg_get_serial_sequence('humblee_templates', 'id'), MAX(id)) FROM humblee_templates;
 
+CREATE TABLE IF NOT EXISTS humblee_template_blocks (
+  id SERIAL PRIMARY KEY,
+  template_id INTEGER NOT NULL,
+  content_type_id INTEGER NOT NULL,
+  label VARCHAR(255) NOT NULL DEFAULT '',
+  slot_key VARCHAR(100) NOT NULL DEFAULT '',
+  sort_order INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE INDEX humblee_template_blocks_template_id ON humblee_template_blocks (template_id);
+
 CREATE TABLE IF NOT EXISTS humblee_users (
   id SERIAL PRIMARY KEY,
   email VARCHAR(127) NOT NULL,
@@ -173,6 +185,7 @@ INSERT INTO humblee_media_folders (id, parent_id, name) VALUES
 SELECT setval(pg_get_serial_sequence('humblee_media_folders', 'id'), MAX(id)) FROM humblee_media_folders;
 
 CREATE INDEX humblee_content_page_id ON humblee_content (page_id);
+CREATE INDEX humblee_content_template_block_id ON humblee_content (template_block_id);
 CREATE INDEX humblee_content_types_name ON humblee_content_types (name);
 CREATE INDEX humblee_pages_slug ON humblee_pages (slug);
 CREATE INDEX humblee_roles_name ON humblee_roles (name);

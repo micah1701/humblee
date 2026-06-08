@@ -20,12 +20,13 @@ class Content
 	 * Return all Content revisions for a given page's content type
 	 * Includes name of user who saved content
 	 *
-	 * $page_id        integer REQUIRED
-	 * $content_type   integer REQUIRED
-	 * $p13n_id        integer optional personalization version ID (0 = default)
-	 * $max            integer Maximum number of recent revisions to display (0 = all, up to 9999)
+	 * $page_id            integer REQUIRED
+	 * $content_type       integer REQUIRED
+	 * $p13n_id            integer optional personalization version ID (0 = default)
+	 * $max                integer Maximum number of recent revisions to display (0 = all, up to 9999)
+	 * $template_block_id  integer optional slot ID (0 = legacy)
 	 */
-	public function listRevisions(int $page_id, int $content_type, int $p13n_id = 0, int $max = 10): mixed
+	public function listRevisions(int $page_id, int $content_type, int $p13n_id = 0, int $max = 10, int $template_block_id = 0): mixed
 	{
 		$this->requireContentRoles();
 
@@ -37,6 +38,7 @@ class Content
 			->where('page_id', $page_id)
 			->where('type_id', $content_type)
 			->where('p13n_id', $p13n_id)
+			->where('template_block_id', $template_block_id)
 			->order_by_desc('revision_date')
 			->limit($limit)
 			->find_many();
@@ -52,6 +54,7 @@ class Content
 	 *          content (new content)
 	 *        optional:
 	 *          serialize_fields (comma-separated list of field names to JSON-encode into content)
+	 *          template_block_id (slot ID, 0 = legacy)
 	 *          arbitrary fields (listed in serialize_fields)
 	 *
 	 * Returns the new content object or FALSE if nothing changed
@@ -66,6 +69,10 @@ class Content
 		if (!isset($post['p13n_id'])) {
 			$post['p13n_id'] = 0;
 		}
+
+		$template_block_id = (isset($post['template_block_id']) && is_numeric($post['template_block_id']))
+			? (int)$post['template_block_id']
+			: 0;
 
 		if (isset($post['serialize_fields'])) {
 			$fields = explode(",", $post['serialize_fields']);
@@ -83,20 +90,22 @@ class Content
 			->where('page_id', $post['page_id'])
 			->where('type_id', $post['content_type_id'])
 			->where('p13n_id', $post['p13n_id'])
+			->where('template_block_id', $template_block_id)
 			->count();
 
 		if ($current_content && $current_content->content !== $content) {
 			// If there is only 1 revision and it is blank, this is the initial save — reuse the same row
 			$new_content = ($previous_revisions == 1 && trim($current_content->content) === "") ? $current_content : \ORM::for_table(_table_content)->create();
 
-			$new_content->type_id = $post['content_type_id'];
-			$new_content->page_id = $post['page_id'];
-			$new_content->p13n_id = $post['p13n_id'];
-			$new_content->content = $content;
-			$new_content->live = 0;
-			$new_content->publish_date = null;
-			$new_content->revision_date = gmdate("Y-m-d H:i:s");
-			$new_content->updated_by = $_SESSION[session_key]['user_id'];
+			$new_content->type_id           = $post['content_type_id'];
+			$new_content->page_id           = $post['page_id'];
+			$new_content->p13n_id           = $post['p13n_id'];
+			$new_content->template_block_id = $template_block_id;
+			$new_content->content           = $content;
+			$new_content->live              = 0;
+			$new_content->publish_date      = null;
+			$new_content->revision_date     = gmdate("Y-m-d H:i:s");
+			$new_content->updated_by        = $_SESSION[session_key]['user_id'];
 			$new_content->save();
 		} else {
 			$new_content = false;
@@ -107,6 +116,7 @@ class Content
 				->where('page_id', $post['page_id'])
 				->where('type_id', $post['content_type_id'])
 				->where('p13n_id', $post['p13n_id'])
+				->where('template_block_id', $template_block_id)
 				->where('live', 1)
 				->find_one();
 			if ($old_live) {
@@ -117,13 +127,13 @@ class Content
 			if (!$new_content) {
 				if ($current_content && $current_content->live == 0) {
 					$current_content->publish_date = gmdate("Y-m-d H:i:s");
-					$current_content->updated_by = $_SESSION[session_key]['user_id'];
-					$current_content->live = 1;
+					$current_content->updated_by   = $_SESSION[session_key]['user_id'];
+					$current_content->live         = 1;
 					$current_content->save();
 				}
 			} else {
 				$new_content->publish_date = gmdate("Y-m-d H:i:s");
-				$new_content->live = 1;
+				$new_content->live         = 1;
 				$new_content->save();
 			}
 		}
@@ -134,7 +144,9 @@ class Content
 
 	/**
 	 * Find all live content for a given page
-	 * Returns associative array of content objects keyed by content type objectkey
+	 * Returns associative array of content objects keyed by:
+	 *   - objectkey  (legacy rows where template_block_id = 0)
+	 *   - slot_key   (slotted rows where template_block_id > 0)
 	 */
 	public function findContent(int $page_id): array
 	{
@@ -160,7 +172,8 @@ class Content
 			$p13n_versions = [0];
 		}
 
-		$getContent = \ORM::for_table(_table_content)
+		// Legacy path: rows with template_block_id = 0, keyed by objectkey
+		$legacyContent = \ORM::for_table(_table_content)
 			->select(_table_content . '.*')
 			->select(_table_content . '.id', 'content_id')
 			->select(_table_content_types . '.*')
@@ -169,17 +182,46 @@ class Content
 			->join(_table_content_types, [_table_content . ".type_id", "=", _table_content_types . ".id"])
 			->left_outer_join(_table_content_p13n, [_table_content . ".p13n_id", "=", _table_content_p13n . ".id"])
 			->where('page_id', $page_id)
+			->where(_table_content . '.template_block_id', 0)
+			->where_in(_table_content . '.p13n_id', $p13n_versions)
+			->where('live', 1)
+			->find_many();
+
+		// Slot path: rows with template_block_id > 0, keyed by slot_key
+		$slottedContent = \ORM::for_table(_table_content)
+			->select(_table_content . '.*')
+			->select(_table_content . '.id', 'content_id')
+			->select(_table_content_types . '.*')
+			->select(_table_content_types . '.id', 'block_id')
+			->select(_table_content_p13n . '.id', 'p13n_id')
+			->select(_table_template_blocks . '.slot_key', 'slot_key')
+			->select(_table_template_blocks . '.label', 'slot_label')
+			->select(_table_template_blocks . '.id', 'template_block_id')
+			->join(_table_content_types, [_table_content . ".type_id", "=", _table_content_types . ".id"])
+			->join(_table_template_blocks, [_table_content . ".template_block_id", "=", _table_template_blocks . ".id"])
+			->left_outer_join(_table_content_p13n, [_table_content . ".p13n_id", "=", _table_content_p13n . ".id"])
+			->where('page_id', $page_id)
+			->where_gt(_table_content . '.template_block_id', 0)
 			->where_in(_table_content . '.p13n_id', $p13n_versions)
 			->where('live', 1)
 			->find_many();
 
 		$contents = [];
-		foreach ($getContent as $content) {
-			$contents[$content->objectkey] = $content;
 
+		foreach ($legacyContent as $content) {
+			$contents[$content->objectkey] = $content;
 			if ($content->input_type === "markdown") {
 				$Parsedown = new \Parsedown();
 				$contents[$content->objectkey]['content'] = $Parsedown->instance()->text($contents[$content->objectkey]['content']);
+			}
+		}
+
+		foreach ($slottedContent as $content) {
+			$key = $content->slot_key;
+			$contents[$key] = $content;
+			if ($content->input_type === "markdown") {
+				$Parsedown = new \Parsedown();
+				$contents[$key]['content'] = $Parsedown->instance()->text($contents[$key]['content']);
 			}
 		}
 

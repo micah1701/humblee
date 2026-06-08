@@ -11,8 +11,8 @@
 
   export let config: PageEditorConfig;
 
-  const { content, contentType, pageData, revisions, allContentTypes, allP13nVersions,
-          isInIframe, useP13n, xhrPath, appPath, feedHmac, domain } = config;
+  const { content, contentType, pageData, revisions, allContentTypes, allSlots, currentTemplateBlockId,
+          allP13nVersions, isInIframe, useP13n, xhrPath, appPath, feedHmac, domain } = config;
 
   const contentApi = createContentApi(xhrPath);
 
@@ -50,7 +50,21 @@
     mediaManagerCallback = null;
   }
 
-  // Content type selector navigation
+  // Slot selector navigation (new-style: template_block_id; legacy: content_type)
+  function onSlotChange(e: Event) {
+    const select = e.target as HTMLSelectElement;
+    const tbId = Number(select.value);
+    const frameParam = isInIframe ? '&iframe' : '';
+    if (tbId > 0) {
+      window.location.href = `${appPath}admin/edit/?page_id=${content.pageId}&template_block_id=${tbId}&p13n_id=${content.p13nId}${frameParam}`;
+    } else {
+      // Legacy: value encodes typeId as negative to distinguish from template_block_ids
+      const typeId = Math.abs(tbId);
+      window.location.href = `${appPath}admin/edit/?page_id=${content.pageId}&content_type=${typeId}&p13n_id=${content.p13nId}${frameParam}`;
+    }
+  }
+
+  // Content type selector navigation (legacy fallback)
   function onContentTypeChange(e: Event) {
     const select = e.target as HTMLSelectElement;
     const frameParam = isInIframe ? '&iframe' : '';
@@ -61,7 +75,11 @@
   function onP13nChange(e: Event) {
     const select = e.target as HTMLSelectElement;
     const frameParam = isInIframe ? '&iframe' : '';
-    window.location.href = `${appPath}admin/edit/?page_id=${content.pageId}&content_type=${content.typeId}&p13n_id=${select.value}${frameParam}`;
+    if (content.templateBlockId > 0) {
+      window.location.href = `${appPath}admin/edit/?page_id=${content.pageId}&template_block_id=${content.templateBlockId}&p13n_id=${select.value}${frameParam}`;
+    } else {
+      window.location.href = `${appPath}admin/edit/?page_id=${content.pageId}&content_type=${content.typeId}&p13n_id=${select.value}${frameParam}`;
+    }
   }
 
   // Revision selector navigation
@@ -84,7 +102,7 @@
     saving = true;
 
     try {
-      const result = await contentApi.checkLatestRevision(content.pageId, content.typeId, content.p13nId);
+      const result = await contentApi.checkLatestRevision(content.pageId, content.typeId, content.p13nId, content.templateBlockId);
 
       if (result.error) {
         quickNotice(result.error, 'is-danger');
@@ -134,13 +152,14 @@
     form.action = `${appPath}admin/edit/${content.id}`;
 
     const fields: Record<string, string> = {
-      content_id: String(content.id),
-      page_id: String(content.pageId),
-      p13n_id: String(content.p13nId),
-      content_type_id: String(content.typeId),
-      content_type: contentType.inputType,
-      content: getSerializedContent(),
-      live: publish ? '1' : '0',
+      content_id:        String(content.id),
+      page_id:           String(content.pageId),
+      p13n_id:           String(content.p13nId),
+      content_type_id:   String(content.typeId),
+      template_block_id: String(content.templateBlockId),
+      content_type:      contentType.inputType,
+      content:           getSerializedContent(),
+      live:              publish ? '1' : '0',
     };
 
     // For customform/multifield PHP uses serialize_fields; we already built JSON above.
@@ -192,7 +211,24 @@
   </div>
 
   <div class="level-right">
-    {#if !isInIframe && allContentTypes.length > 1}
+    {#if !isInIframe && allSlots.length > 1}
+      <div class="level-item">
+        <span class="tooltip" data-tooltip="Select another content block for this page">
+          <div class="select is-small">
+            <select on:change={onSlotChange}>
+              {#each allSlots as slot}
+                <option
+                  value={slot.templateBlockId}
+                  selected={slot.templateBlockId === currentTemplateBlockId && (slot.templateBlockId > 0 || slot.contentTypeId === content.typeId)}
+                >
+                  {slot.label ? `${slot.label} (${slot.contentTypeName})` : slot.contentTypeName}
+                </option>
+              {/each}
+            </select>
+          </div>
+        </span>
+      </div>
+    {:else if !isInIframe && allContentTypes.length > 1}
       <div class="level-item">
         <span class="tooltip" data-tooltip="Select another content block for this page">
           <div class="select is-small">

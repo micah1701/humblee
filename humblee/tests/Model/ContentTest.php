@@ -27,15 +27,25 @@ class ContentTest extends TestCase
         $db = \ORM::get_db();
 
         $db->exec('CREATE TABLE humblee_content (
-            id            INTEGER PRIMARY KEY AUTOINCREMENT,
-            type_id       INTEGER NOT NULL,
-            page_id       INTEGER NOT NULL,
-            p13n_id       INTEGER NOT NULL DEFAULT 0,
-            content       TEXT    NOT NULL DEFAULT \'\',
-            live          INTEGER NOT NULL DEFAULT 0,
-            publish_date  TEXT,
-            revision_date TEXT    NOT NULL,
-            updated_by    INTEGER NOT NULL
+            id                INTEGER PRIMARY KEY AUTOINCREMENT,
+            type_id           INTEGER NOT NULL,
+            page_id           INTEGER NOT NULL,
+            p13n_id           INTEGER NOT NULL DEFAULT 0,
+            template_block_id INTEGER NOT NULL DEFAULT 0,
+            content           TEXT    NOT NULL DEFAULT \'\',
+            live              INTEGER NOT NULL DEFAULT 0,
+            publish_date      TEXT,
+            revision_date     TEXT    NOT NULL,
+            updated_by        INTEGER NOT NULL
+        )');
+
+        $db->exec('CREATE TABLE humblee_template_blocks (
+            id              INTEGER PRIMARY KEY AUTOINCREMENT,
+            template_id     INTEGER NOT NULL,
+            content_type_id INTEGER NOT NULL,
+            label           TEXT    NOT NULL DEFAULT \'\',
+            slot_key        TEXT    NOT NULL DEFAULT \'\',
+            sort_order      INTEGER NOT NULL DEFAULT 0
         )');
 
         $db->exec('CREATE TABLE humblee_users (
@@ -68,8 +78,9 @@ class ContentTest extends TestCase
 
     protected function setUp(): void
     {
-        // Wipe content rows before every test so tests are fully isolated
+        // Wipe content and slot rows before every test so tests are fully isolated
         \ORM::get_db()->exec('DELETE FROM humblee_content');
+        \ORM::get_db()->exec('DELETE FROM humblee_template_blocks');
         $this->content = new Content();
     }
 
@@ -270,6 +281,61 @@ class ContentTest extends TestCase
     }
 
     // =========================================================================
+    // saveContent — template_block_id slot isolation
+    // =========================================================================
+
+    public function test_save_content_stores_template_block_id_on_new_row(): void
+    {
+        $row = $this->insertContentRow(page_id: 30, type_id: 1, content: 'original', template_block_id: 5);
+
+        $result = $this->content->saveContent([
+            'content_id'        => $row->id(),
+            'page_id'           => 30,
+            'content_type_id'   => 1,
+            'template_block_id' => '5',
+            'content'           => 'updated slot content',
+            'live'              => '0',
+        ]);
+
+        $this->assertNotFalse($result);
+        $this->assertSame(5, (int) $result->template_block_id);
+    }
+
+    public function test_save_content_two_slots_same_type_are_independent(): void
+    {
+        // Slot 1 is live; slot 2 is also live — publishing a new revision in slot 1
+        // must not clear the live flag in slot 2.
+        $slotA_live = $this->insertContentRow(page_id: 31, type_id: 1, content: 'slot A live', live: 1, template_block_id: 1);
+        $slotA_draft = $this->insertContentRow(page_id: 31, type_id: 1, content: 'slot A draft', live: 0, template_block_id: 1);
+        $this->insertContentRow(page_id: 31, type_id: 1, content: 'slot B live', live: 1, template_block_id: 2);
+
+        $this->content->saveContent([
+            'content_id'        => $slotA_draft->id(),
+            'page_id'           => 31,
+            'content_type_id'   => 1,
+            'template_block_id' => '1',
+            'content'           => 'slot A new published',
+            'live'              => '1',
+        ]);
+
+        // Slot B's live row should be untouched
+        $slotBLiveCount = \ORM::for_table(_table_content)
+            ->where('page_id', 31)
+            ->where('template_block_id', 2)
+            ->where('live', 1)
+            ->count();
+        $this->assertSame(1, $slotBLiveCount, 'Publishing slot A must not affect slot B live flag');
+
+        // Slot A should also have exactly one live row (the new one)
+        $slotALiveCount = \ORM::for_table(_table_content)
+            ->where('page_id', 31)
+            ->where('template_block_id', 1)
+            ->where('live', 1)
+            ->count();
+        $this->assertSame(1, $slotALiveCount, 'Only one revision in slot A should be live');
+    }
+
+    // =========================================================================
     // listRevisions
     // =========================================================================
 
@@ -311,6 +377,18 @@ class ContentTest extends TestCase
         $this->assertCount(1, $result);
     }
 
+    public function test_list_revisions_scoped_to_template_block_id(): void
+    {
+        // Two revisions for the same page and type but different template_block_ids
+        $this->insertContentRow(page_id: 40, type_id: 1, content: 'slot 1 rev', template_block_id: 1);
+        $this->insertContentRow(page_id: 40, type_id: 1, content: 'slot 2 rev', template_block_id: 2);
+
+        $result = $this->content->listRevisions(page_id: 40, content_type: 1, template_block_id: 1);
+
+        $this->assertCount(1, $result);
+        $this->assertSame('slot 1 rev', $result[0]->content);
+    }
+
     // =========================================================================
     // findContent
     // =========================================================================
@@ -334,8 +412,8 @@ class ContentTest extends TestCase
     public function test_find_content_returns_live_content_keyed_by_objectkey(): void
     {
         \ORM::get_db()->exec("INSERT INTO humblee_content
-            (type_id, page_id, p13n_id, content, live, revision_date, updated_by)
-            VALUES (1, 21, 0, 'live content', 1, '2024-01-01 00:00:00', 1)");
+            (type_id, page_id, p13n_id, template_block_id, content, live, revision_date, updated_by)
+            VALUES (1, 21, 0, 0, 'live content', 1, '2024-01-01 00:00:00', 1)");
 
         $result = $this->content->findContent(21);
 
@@ -346,12 +424,55 @@ class ContentTest extends TestCase
     public function test_find_content_does_not_return_other_pages_content(): void
     {
         \ORM::get_db()->exec("INSERT INTO humblee_content
-            (type_id, page_id, p13n_id, content, live, revision_date, updated_by)
-            VALUES (1, 22, 0, 'page 22 live', 1, '2024-01-01 00:00:00', 1)");
+            (type_id, page_id, p13n_id, template_block_id, content, live, revision_date, updated_by)
+            VALUES (1, 22, 0, 0, 'page 22 live', 1, '2024-01-01 00:00:00', 1)");
 
         $result = $this->content->findContent(23); // different page
 
         $this->assertSame([], $result);
+    }
+
+    public function test_find_content_returns_slotted_content_keyed_by_slot_key(): void
+    {
+        // Insert a template block slot
+        \ORM::get_db()->exec("INSERT INTO humblee_template_blocks
+            (id, template_id, content_type_id, label, slot_key, sort_order)
+            VALUES (10, 1, 1, 'Sidebar', 'main_content_2', 1)");
+
+        // Insert live content referencing that slot
+        \ORM::get_db()->exec("INSERT INTO humblee_content
+            (type_id, page_id, p13n_id, template_block_id, content, live, revision_date, updated_by)
+            VALUES (1, 50, 0, 10, 'sidebar content', 1, '2024-01-01 00:00:00', 1)");
+
+        $result = $this->content->findContent(50);
+
+        $this->assertArrayHasKey('main_content_2', $result);
+        $this->assertSame('sidebar content', $result['main_content_2']->content);
+    }
+
+    public function test_find_content_legacy_and_slotted_rows_coexist(): void
+    {
+        // Insert a template block slot
+        \ORM::get_db()->exec("INSERT INTO humblee_template_blocks
+            (id, template_id, content_type_id, label, slot_key, sort_order)
+            VALUES (20, 1, 1, 'Secondary', 'main_content_2', 1)");
+
+        // Legacy row (template_block_id = 0)
+        \ORM::get_db()->exec("INSERT INTO humblee_content
+            (type_id, page_id, p13n_id, template_block_id, content, live, revision_date, updated_by)
+            VALUES (1, 51, 0, 0, 'legacy content', 1, '2024-01-01 00:00:00', 1)");
+
+        // Slotted row (template_block_id = 20)
+        \ORM::get_db()->exec("INSERT INTO humblee_content
+            (type_id, page_id, p13n_id, template_block_id, content, live, revision_date, updated_by)
+            VALUES (1, 51, 0, 20, 'slotted content', 1, '2024-01-01 00:00:00', 1)");
+
+        $result = $this->content->findContent(51);
+
+        $this->assertArrayHasKey('main_content', $result, 'Legacy content should be keyed by objectkey');
+        $this->assertArrayHasKey('main_content_2', $result, 'Slotted content should be keyed by slot_key');
+        $this->assertSame('legacy content', $result['main_content']->content);
+        $this->assertSame('slotted content', $result['main_content_2']->content);
     }
 
     // =========================================================================
@@ -361,19 +482,21 @@ class ContentTest extends TestCase
     private function insertContentRow(
         int    $page_id,
         int    $type_id,
-        string $content       = '',
-        int    $live          = 0,
-        string $revision_date = '2024-01-01 00:00:00'
+        string $content           = '',
+        int    $live              = 0,
+        string $revision_date     = '2024-01-01 00:00:00',
+        int    $template_block_id = 0
     ): \ORM {
-        $row                = \ORM::for_table(_table_content)->create();
-        $row->type_id       = $type_id;
-        $row->page_id       = $page_id;
-        $row->p13n_id       = 0;
-        $row->content       = $content;
-        $row->live          = $live;
-        $row->publish_date  = null;
-        $row->revision_date = $revision_date;
-        $row->updated_by    = 1;
+        $row                    = \ORM::for_table(_table_content)->create();
+        $row->type_id           = $type_id;
+        $row->page_id           = $page_id;
+        $row->p13n_id           = 0;
+        $row->template_block_id = $template_block_id;
+        $row->content           = $content;
+        $row->live              = $live;
+        $row->publish_date      = null;
+        $row->revision_date     = $revision_date;
+        $row->updated_by        = 1;
         $row->save();
         return $row;
     }

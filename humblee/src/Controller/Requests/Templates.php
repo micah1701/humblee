@@ -37,6 +37,24 @@ final class Templates
             } elseif ($row->page_type === 'view') {
                 $entry['default_view'] = $row->page_meta;
             }
+
+            // Include template block slots
+            $tbRows = \ORM::for_table(_table_template_blocks)
+                ->where('template_id', $row->id)
+                ->order_by_asc('sort_order')
+                ->find_many();
+            $templateBlocks = [];
+            foreach ($tbRows as $tb) {
+                $templateBlocks[] = [
+                    'id'            => (int)$tb->id,
+                    'contentTypeId' => (int)$tb->content_type_id,
+                    'label'         => $tb->label,
+                    'slotKey'       => $tb->slot_key,
+                    'sortOrder'     => (int)$tb->sort_order,
+                ];
+            }
+            $entry['templateBlocks'] = $templateBlocks;
+
             $result[] = $entry;
         }
         $ctrl->json($result);
@@ -61,7 +79,14 @@ final class Templates
             $ctrl->json(['success' => false, 'errors' => ['Record not found']]);
         }
 
-        $blocks_raw  = $_POST['blocks'] ?? [];
+        $postedBlocks = [];
+        if (isset($_POST['templateBlocks']) && is_string($_POST['templateBlocks'])) {
+            $decoded = json_decode($_POST['templateBlocks'], true);
+            if (is_array($decoded)) {
+                $postedBlocks = $decoded;
+            }
+        }
+
         $page_type   = trim($_POST['page_type'] ?? '');
         $dynamic_uri = isset($_POST['dynamic_uri']) ? 1 : 0;
         $available   = isset($_POST['available'])   ? 1 : 0;
@@ -81,16 +106,71 @@ final class Templates
                 $page_meta = 'tierpage';
         }
 
+        // Derive the legacy `blocks` string from the posted slot list for backward compat
+        $typeIds = array_unique(array_filter(
+            array_map(fn($s) => isset($s['contentTypeId']) && is_numeric($s['contentTypeId']) ? (int)$s['contentTypeId'] : 0, $postedBlocks),
+            fn($id) => $id > 0
+        ));
+
         $row->name        = htmlspecialchars($name);
         $row->description = htmlspecialchars(trim($_POST['description'] ?? ''));
         $row->page_type   = $page_type;
         $row->page_meta   = $page_meta;
         $row->dynamic_uri = $dynamic_uri;
         $row->available   = $available;
-        $row->blocks      = is_array($blocks_raw) ? implode(',', array_filter($blocks_raw, 'is_numeric')) : '';
+        $row->blocks      = implode(',', $typeIds);
         $row->save();
+        $templateId = (int)$row->id;
 
-        $ctrl->json(['success' => true, 'id' => (int)$row->id]);
+        // Upsert template block slots
+        $postedIds = [];
+        foreach ($postedBlocks as $sortOrder => $slot) {
+            $ctId   = isset($slot['contentTypeId']) && is_numeric($slot['contentTypeId']) ? (int)$slot['contentTypeId'] : 0;
+            $slotId = isset($slot['id']) && is_numeric($slot['id']) ? (int)$slot['id'] : null;
+
+            if ($ctId === 0) {
+                continue;
+            }
+
+            if ($slotId !== null) {
+                // Update existing slot — label and sort_order only; slot_key is immutable
+                $tb = \ORM::for_table(_table_template_blocks)->find_one($slotId);
+                if ($tb && (int)$tb->template_id === $templateId) {
+                    $tb->label      = htmlspecialchars(trim($slot['label'] ?? ''));
+                    $tb->sort_order = $sortOrder;
+                    $tb->save();
+                    $postedIds[] = $slotId;
+                }
+            } else {
+                // New slot — auto-generate slot_key and insert
+                $existingCount = \ORM::for_table(_table_template_blocks)
+                    ->where('template_id', $templateId)
+                    ->where('content_type_id', $ctId)
+                    ->count();
+                $slotKey = self::generateSlotKey($ctId, $existingCount);
+
+                $tb = \ORM::for_table(_table_template_blocks)->create();
+                $tb->template_id     = $templateId;
+                $tb->content_type_id = $ctId;
+                $tb->label           = htmlspecialchars(trim($slot['label'] ?? ''));
+                $tb->slot_key        = $slotKey;
+                $tb->sort_order      = $sortOrder;
+                $tb->save();
+                $postedIds[] = (int)$tb->id;
+            }
+        }
+
+        // Delete removed slots (any slot for this template whose id was not in the posted list)
+        $allExisting = \ORM::for_table(_table_template_blocks)
+            ->where('template_id', $templateId)
+            ->find_many();
+        foreach ($allExisting as $tb) {
+            if (!in_array((int)$tb->id, $postedIds, true)) {
+                $tb->delete();
+            }
+        }
+
+        $ctrl->json(['success' => true, 'id' => $templateId]);
     }
 
     public static function delete(Request $ctrl): void
@@ -106,7 +186,19 @@ final class Templates
             $ctrl->json(['success' => false, 'errors' => ['Record not found']]);
         }
 
+        // Remove associated template block slots
+        \ORM::for_table(_table_template_blocks)
+            ->where('template_id', (int)$_POST['id'])
+            ->delete_many();
+
         $row->delete();
         $ctrl->json(['success' => true]);
+    }
+
+    private static function generateSlotKey(int $contentTypeId, int $existingCount): string
+    {
+        $ct = \ORM::for_table(_table_content_types)->find_one($contentTypeId);
+        $base = $ct ? preg_replace('/[^a-z0-9_]/', '_', strtolower((string)$ct->objectkey)) : 'block';
+        return $existingCount === 0 ? $base : $base . '_' . ($existingCount + 1);
     }
 }
