@@ -12,6 +12,8 @@
     "dev:blocks": "npm --prefix frontend run dev:blocks",
     "dev:templates": "npm --prefix frontend run dev:templates",
     "build:page-editor": "npm --prefix frontend run build:page-editor",
-    "dev:page-editor": "npm --prefix frontend run dev:page-editor"
+    "dev:page-editor": "npm --prefix frontend run dev:page-editor",
+    "build:user-manager": "npm --prefix frontend run build:user-manager",
+    "dev:user-manager": "npm --prefix frontend run dev:user-manager"
   }
 }

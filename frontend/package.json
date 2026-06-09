@@ -20,6 +20,8 @@
     "dev:session-monitor": "npm run dev --workspace=apps/session-monitor",
     "dev:personalization": "npm run dev --workspace=apps/personalization",
     "build:page-editor": "npm run build --workspace=apps/page-editor",
-    "dev:page-editor": "npm run dev --workspace=apps/page-editor"
+    "dev:page-editor": "npm run dev --workspace=apps/page-editor",
+    "build:user-manager": "npm run build --workspace=apps/user-manager",
+    "dev:user-manager": "npm run dev --workspace=apps/user-manager"
   }
 }

@@ -71,6 +71,7 @@ class Request extends Xhr
 	{
 		$action = Core::getURIparts()[2] ?? '';
 		match ($action) {
+			'list'      => UsersGroup::list($this),
 			'remove'    => UsersGroup::remove($this),
 			'set-roles' => UsersGroup::setRoles($this),
 			default     => $this->json(['error' => 'Not found'], 404),
