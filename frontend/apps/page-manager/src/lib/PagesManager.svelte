@@ -113,13 +113,13 @@
     return result;
   }
 
-  function serializeOrder(nodes: PageNode[], depth = 0): Record<string, number> {
-    const result: Record<string, number> = {};
-    for (const node of nodes) {
-      result[`pageID_${node.id}`] = depth;
-      Object.assign(result, serializeOrder(node.children, depth + 1));
-    }
-    return result;
+  interface OrderEntry { id: number; parentId: number; displayOrder: number; }
+
+  function serializeOrder(nodes: PageNode[], parentId = 0): OrderEntry[] {
+    return nodes.flatMap((node, i) => [
+      { id: node.id, parentId, displayOrder: i },
+      ...serializeOrder(node.children, node.id),
+    ]);
   }
 
   // ── Flat display list ──────────────────────────────────────────────────
