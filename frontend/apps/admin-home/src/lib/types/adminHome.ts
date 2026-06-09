@@ -27,5 +27,4 @@ export interface PageFlat {
 
 export interface PageNode extends PageFlat {
   children: PageNode[];
-  depth: number;
 }
