@@ -17,7 +17,6 @@ final class Blocks
             $result[] = [
                 'id'               => (int)$row->id,
                 'name'             => $row->name,
-                'objectkey'        => $row->objectkey,
                 'description'      => $row->description,
                 'output_type'      => $row->output_type,
                 'input_type'       => $row->input_type,
@@ -34,13 +33,9 @@ final class Blocks
 
         $id   = isset($_POST['id']) && is_numeric($_POST['id']) ? (int)$_POST['id'] : null;
         $name = trim($_POST['name'] ?? '');
-        $key  = trim($_POST['objectkey'] ?? '');
 
         if ($name === '') {
             $ctrl->json(['success' => false, 'errors' => ['Name field cannot be blank']]);
-        }
-        if ($key === '') {
-            $ctrl->json(['success' => false, 'errors' => ['objectKey field cannot be blank']]);
         }
 
         $row = ($id !== null)
@@ -52,7 +47,6 @@ final class Blocks
         }
 
         $row->name             = htmlspecialchars($name);
-        $row->objectkey        = htmlspecialchars($key);
         $row->description      = htmlspecialchars(trim($_POST['description'] ?? ''));
         $row->output_type      = htmlspecialchars(trim($_POST['output_type'] ?? ''));
         $row->input_type       = htmlspecialchars(trim($_POST['input_type'] ?? ''));

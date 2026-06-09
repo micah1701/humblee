@@ -55,7 +55,6 @@ class ContentTest extends TestCase
 
         $db->exec('CREATE TABLE humblee_content_types (
             id         INTEGER PRIMARY KEY,
-            objectkey  TEXT NOT NULL,
             input_type TEXT NOT NULL DEFAULT \'text\'
         )');
 
@@ -67,7 +66,7 @@ class ContentTest extends TestCase
         $db->exec("INSERT INTO humblee_users (id, name) VALUES (1, 'Test User')");
 
         // Seed a content type — required because findContent() does an INNER JOIN with content_types
-        $db->exec("INSERT INTO humblee_content_types (id, objectkey, input_type) VALUES (1, 'main_content', 'text')");
+        $db->exec("INSERT INTO humblee_content_types (id, input_type) VALUES (1, 'text')");
 
         // Pre-seed session so Core::auth() finds has_roles and skips the DB lookup
         $_SESSION[session_key] = [
@@ -409,11 +408,15 @@ class ContentTest extends TestCase
         $this->assertSame([], $result);
     }
 
-    public function test_find_content_returns_live_content_keyed_by_objectkey(): void
+    public function test_find_content_returns_live_content_keyed_by_slot_key(): void
     {
+        \ORM::get_db()->exec("INSERT INTO humblee_template_blocks
+            (id, template_id, content_type_id, label, slot_key, sort_order)
+            VALUES (1, 1, 1, 'Main', 'main_content', 0)");
+
         \ORM::get_db()->exec("INSERT INTO humblee_content
             (type_id, page_id, p13n_id, template_block_id, content, live, revision_date, updated_by)
-            VALUES (1, 21, 0, 0, 'live content', 1, '2024-01-01 00:00:00', 1)");
+            VALUES (1, 21, 0, 1, 'live content', 1, '2024-01-01 00:00:00', 1)");
 
         $result = $this->content->findContent(21);
 
@@ -423,9 +426,13 @@ class ContentTest extends TestCase
 
     public function test_find_content_does_not_return_other_pages_content(): void
     {
+        \ORM::get_db()->exec("INSERT INTO humblee_template_blocks
+            (id, template_id, content_type_id, label, slot_key, sort_order)
+            VALUES (2, 1, 1, 'Main', 'main_content', 0)");
+
         \ORM::get_db()->exec("INSERT INTO humblee_content
             (type_id, page_id, p13n_id, template_block_id, content, live, revision_date, updated_by)
-            VALUES (1, 22, 0, 0, 'page 22 live', 1, '2024-01-01 00:00:00', 1)");
+            VALUES (1, 22, 0, 2, 'page 22 live', 1, '2024-01-01 00:00:00', 1)");
 
         $result = $this->content->findContent(23); // different page
 
@@ -448,31 +455,6 @@ class ContentTest extends TestCase
 
         $this->assertArrayHasKey('main_content_2', $result);
         $this->assertSame('sidebar content', $result['main_content_2']->content);
-    }
-
-    public function test_find_content_legacy_and_slotted_rows_coexist(): void
-    {
-        // Insert a template block slot
-        \ORM::get_db()->exec("INSERT INTO humblee_template_blocks
-            (id, template_id, content_type_id, label, slot_key, sort_order)
-            VALUES (20, 1, 1, 'Secondary', 'main_content_2', 1)");
-
-        // Legacy row (template_block_id = 0)
-        \ORM::get_db()->exec("INSERT INTO humblee_content
-            (type_id, page_id, p13n_id, template_block_id, content, live, revision_date, updated_by)
-            VALUES (1, 51, 0, 0, 'legacy content', 1, '2024-01-01 00:00:00', 1)");
-
-        // Slotted row (template_block_id = 20)
-        \ORM::get_db()->exec("INSERT INTO humblee_content
-            (type_id, page_id, p13n_id, template_block_id, content, live, revision_date, updated_by)
-            VALUES (1, 51, 0, 20, 'slotted content', 1, '2024-01-01 00:00:00', 1)");
-
-        $result = $this->content->findContent(51);
-
-        $this->assertArrayHasKey('main_content', $result, 'Legacy content should be keyed by objectkey');
-        $this->assertArrayHasKey('main_content_2', $result, 'Slotted content should be keyed by slot_key');
-        $this->assertSame('legacy content', $result['main_content']->content);
-        $this->assertSame('slotted content', $result['main_content_2']->content);
     }
 
     // =========================================================================
