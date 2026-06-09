@@ -126,6 +126,23 @@ final class Pages
         $ctrl->json(['error' => $deletePage]);
     }
 
+    public static function contentList(Request $ctrl): void
+    {
+        $ctrl->require_role(['content', 'developer']);
+        $rows = \ORM::for_table(_table_pages)->order_by_asc('display_order')->find_many();
+        $result = [];
+        foreach ($rows as $page) {
+            $result[] = [
+                'id'           => (int)$page->id,
+                'label'        => (string)$page->label,
+                'parentId'     => (int)$page->parent_id,
+                'displayOrder' => (int)$page->display_order,
+                'active'       => (bool)$page->active,
+            ];
+        }
+        $ctrl->json($result);
+    }
+
     public static function order(Request $ctrl): void
     {
         $ctrl->require_role('pages');

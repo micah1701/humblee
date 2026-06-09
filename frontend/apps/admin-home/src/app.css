@@ -1,0 +1,60 @@
+/* Admin Home SPA styles */
+
+.page-tree-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0;
+}
+
+.page-tree-item button.toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 0.2rem;
+  color: #aaa;
+  font-size: 0.75rem;
+  width: 1.2rem;
+  flex-shrink: 0;
+}
+
+.page-tree-item button.page-label {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  text-align: left;
+  font-size: 0.9rem;
+  color: inherit;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.page-tree-item button.page-label:hover {
+  background-color: #00d1b2;
+  color: #fff;
+}
+
+.page-tree-item .inactive-badge {
+  font-size: 0.65rem;
+  color: #aaa;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  padding: 0 0.3rem;
+  line-height: 1.4;
+}
+
+.recent_content_live {
+  color: #257942;
+  font-weight: 600;
+}
+
+.recent_content_draft {
+  color: #b45309;
+  font-weight: 600;
+}
+
+.recent_content_previsoulyLive {
+  color: #888;
+  font-style: italic;
+}
