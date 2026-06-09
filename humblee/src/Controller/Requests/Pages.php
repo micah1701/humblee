@@ -129,49 +129,26 @@ final class Pages
     public static function order(Request $ctrl): void
     {
         $ctrl->require_role('pages');
-        if (!isset($_POST['list_order']) || $_POST['list_order'] == "") {
-            exit("Missing list order post data");
+        if (!isset($_POST['list_order']) || $_POST['list_order'] === '') {
+            $ctrl->json(['error' => 'Missing list order data']);
         }
 
-        $list_order = json_decode(urldecode($_POST['list_order']), true);
-        if (!is_array($list_order)) {
-            exit("Invalid list order data");
+        $entries = json_decode($_POST['list_order'], true);
+        if (!is_array($entries)) {
+            $ctrl->json(['error' => 'Invalid list order data']);
         }
 
-        $page_id = [];
-        foreach ($list_order as $domId => $level) {
-            $id = (int) str_replace('pageID_', '', $domId);
-            if ($id > 0) {
-                $page_id[$id] = (int) $level;
-            }
-        }
+        foreach ($entries as $entry) {
+            $id           = (int)($entry['id']           ?? 0);
+            $parent_id    = (int)($entry['parentId']     ?? 0);
+            $display_order = (int)($entry['displayOrder'] ?? 0);
+            if ($id <= 0) continue;
 
-        $current_parent = 0;
-        $last_level = 0;
-        $last_id = 0;
-        $parent_level = [];
-        $order_pointer = [];
-        foreach ($page_id as $id => $level) {
-            if ($level > $last_level) {
-                $parent_level[$last_level] = $current_parent;
-                $current_parent = $last_id;
-            }
-            if ($level < $last_level) {
-                $current_parent = $parent_level[$level];
-            }
-            if ($level == 0) {
-                $current_parent = 0;
-            }
-
-            $order_pointer[$level] = (isset($order_pointer[$level])) ? $order_pointer[$level] + 1 : 0;
-
-            $orderpage = \ORM::for_table(_table_pages)->find_one($id);
-            $orderpage->parent_id = $current_parent;
-            $orderpage->display_order = $order_pointer[$current_parent];
-            $orderpage->save();
-
-            $last_id = $id;
-            $last_level = $level;
+            $page = \ORM::for_table(_table_pages)->find_one($id);
+            if (!$page) continue;
+            $page->parent_id    = $parent_id;
+            $page->display_order = $display_order;
+            $page->save();
         }
 
         $ctrl->json(['success' => true]);
