@@ -17,7 +17,7 @@ use Humblee\Model\Content;
  * Pre-sets the following properties:
  *   $this->page      Object with data about the page
  *   $this->template  Object with data about the template this page uses
- *   $this->content   Associative Array of Objects with live content (keyed by content type objectkey)
+ *   $this->content   Associative Array of Objects with live content (keyed by slot_key)
  */
 class Template
 {
@@ -57,15 +57,20 @@ class Template
 			}
 			$preview_ids = explode(",", $_GET['preview']);
 			$getPreviewContent = \ORM::for_table(_table_content)
+				->select(_table_content . '.*')
+				->select(_table_content_types . '.input_type', 'input_type')
+				->select(_table_template_blocks . '.slot_key', 'slot_key')
 				->join(_table_content_types, [_table_content . ".type_id", "=", _table_content_types . ".id"])
+				->join(_table_template_blocks, [_table_content . ".template_block_id", "=", _table_template_blocks . ".id"])
 				->where_in(_table_content . '.id', $preview_ids)
 				->find_many();
 			foreach ($getPreviewContent as $prevContent) {
-				$contents[$prevContent->objectkey] = $prevContent;
+				$key = $prevContent->slot_key;
+				$contents[$key] = $prevContent;
 
 				if ($prevContent->input_type === "markdown") {
 					$Parsedown = new \Parsedown();
-					$contents[$prevContent->objectkey]['content'] = $Parsedown->instance()->text($prevContent->content);
+					$contents[$key]['content'] = $Parsedown->instance()->text($prevContent->content);
 				}
 			}
 		}

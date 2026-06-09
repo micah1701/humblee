@@ -33,7 +33,6 @@ class Admin
     public object|false $content_type    = false;
     public object|false $page_data       = false;
     public object|false $template_data   = false;
-    public array        $allContentTypes = [];
     public bool         $is_in_iframe    = false;
     public bool         $isDeveloper     = false;
     public array        $allP13nVersions = [];
@@ -248,20 +247,10 @@ class Admin
             exit("<h1>ERROR: template not found</h1>");
         }
 
-        // Load template slots; fall back to legacy blocks string for unmigrated templates
         $templateBlockRows = \ORM::for_table(_table_template_blocks)
             ->where('template_id', $this->page_data->template_id)
             ->order_by_asc('sort_order')
             ->find_many();
-
-        if (!empty($templateBlockRows)) {
-            $this->allContentTypes = [];
-        } else {
-            $this->allContentTypes = \ORM::for_table(_table_content_types)
-                ->where_in('id', explode(',', $this->template_data->blocks))
-                ->order_by_asc('name')
-                ->find_many();
-        }
 
         $this->is_in_iframe = isset($_GET['iframe']);
 
@@ -277,36 +266,16 @@ class Admin
             $updatedByUser = \ORM::for_table(_table_users)->find_one($this->content->updated_by);
         }
 
-        // Build serialisable arrays from ORM collections
-        $allContentTypesArray = [];
-        foreach ($this->allContentTypes as $ct) {
-            $allContentTypesArray[] = ['id' => (int)$ct->id, 'name' => $ct->name];
-        }
-
         $allSlotsArray = [];
-        if (!empty($templateBlockRows)) {
-            foreach ($templateBlockRows as $tb) {
-                $ct = \ORM::for_table(_table_content_types)->find_one($tb->content_type_id);
-                $allSlotsArray[] = [
-                    'templateBlockId' => (int)$tb->id,
-                    'slotKey'         => $tb->slot_key,
-                    'label'           => $tb->label,
-                    'contentTypeId'   => (int)$tb->content_type_id,
-                    'contentTypeName' => $ct ? $ct->name : '',
-                ];
-            }
-        } else {
-            // Legacy: encode typeId as negative so the Svelte onSlotChange can recover it
-            // with Math.abs() and navigate to ?content_type=<typeId> (positive tbId = template block).
-            foreach ($this->allContentTypes as $ct) {
-                $allSlotsArray[] = [
-                    'templateBlockId' => -(int)$ct->id,
-                    'slotKey'         => $ct->objectkey,
-                    'label'           => '',
-                    'contentTypeId'   => (int)$ct->id,
-                    'contentTypeName' => $ct->name,
-                ];
-            }
+        foreach ($templateBlockRows as $tb) {
+            $ct = \ORM::for_table(_table_content_types)->find_one($tb->content_type_id);
+            $allSlotsArray[] = [
+                'templateBlockId' => (int)$tb->id,
+                'slotKey'         => $tb->slot_key,
+                'label'           => $tb->label,
+                'contentTypeId'   => (int)$tb->content_type_id,
+                'contentTypeName' => $ct ? $ct->name : '',
+            ];
         }
 
         $allP13nVersionsArray = [];
@@ -374,11 +343,8 @@ class Admin
                 'url'    => $this->page_data->url,
             ],
             'revisions'              => $revisionsArray,
-            'allContentTypes'        => $allContentTypesArray,
             'allSlots'               => $allSlotsArray,
-            // For legacy content (template_block_id = 0) use the negated type_id to match
-            // the negative values used in the legacy slot synthesis above.
-            'currentTemplateBlockId' => $currentTemplateBlockId > 0 ? $currentTemplateBlockId : -(int)$this->content->type_id,
+            'currentTemplateBlockId' => $currentTemplateBlockId,
             'allP13nVersions'        => $allP13nVersionsArray,
             'feedHmac'               => $feedHmac,
         ];

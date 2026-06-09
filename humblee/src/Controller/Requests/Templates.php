@@ -198,7 +198,7 @@ final class Templates
     private static function generateSlotKey(int $contentTypeId, int $existingCount): string
     {
         $ct = \ORM::for_table(_table_content_types)->find_one($contentTypeId);
-        $base = $ct ? preg_replace('/[^a-z0-9_]/', '_', strtolower((string)$ct->objectkey)) : 'block';
+        $base = $ct ? trim(preg_replace('/[^a-z0-9]+/', '_', strtolower((string)$ct->name)), '_') : 'block';
         return $existingCount === 0 ? $base : $base . '_' . ($existingCount + 1);
     }
 }

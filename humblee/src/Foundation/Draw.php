@@ -11,7 +11,7 @@ class Draw {
      * If admin with content role is logged in, wrap the output in div for inline editing.
      *
      * $contentArray    (Array) Passed from the controller to the view
-     * $block_key       (Mixed) String  - The "object_key" name of the content block to output
+     * $block_key       (Mixed) String  - The slot_key of the content block to output
      *                  or      Array   - Contains "block_key", optional "field_key", and optional "plaintext" bool
      */
     public static function content(array $contentArray, string|array $block_key = ''): void
@@ -22,15 +22,15 @@ class Draw {
             return;
         }
 
-        $objectKey = (is_array($block_key) && isset($block_key['block_key'])) ? $block_key['block_key'] : $block_key;
+        $blockKey = (is_array($block_key) && isset($block_key['block_key'])) ? $block_key['block_key'] : $block_key;
 
-        if(!isset($contentArray[$objectKey]))
+        if(!isset($contentArray[$blockKey]))
         {
             echo "";
             return;
         }
 
-        $content = $contentArray[$objectKey]->content;
+        $content = $contentArray[$blockKey]->content;
 
         $contentJson = json_decode($content);
         $isJson = (json_last_error() === 0);
@@ -47,18 +47,17 @@ class Draw {
             }
         }
 
-        if($contentArray[$objectKey]->output_type === "content" && (!isset($block_key['plaintext']) || !$block_key['plaintext']))
+        if($contentArray[$blockKey]->output_type === "content" && (!isset($block_key['plaintext']) || !$block_key['plaintext']))
         {
             if(Core::auth(['admin', 'content', 'publish', 'developer']))
             {
-                $templateBlockId = $contentArray[$objectKey]->template_block_id ?? 0;
-                echo '<div class="cms_block" data-block-key="'.$objectKey.'" data-block-id="'. $contentArray[$objectKey]->block_id .'" data-content-id="'. $contentArray[$objectKey]->content_id .'" data-p13-id="'. $contentArray[$objectKey]->p13n_id .'" data-block-name="'.$contentArray[$objectKey]->name .'" data-block-description="'. $contentArray[$objectKey]->description .'" data-cmstype="'. $contentArray[$objectKey]->input_type .'" data-template-block-id="'.$templateBlockId.'">';
+                echo '<div class="cms_block" data-block-key="'.$blockKey.'" data-block-id="'. $contentArray[$blockKey]->block_id .'" data-content-id="'. $contentArray[$blockKey]->content_id .'" data-p13-id="'. $contentArray[$blockKey]->p13n_id .'" data-block-name="'.$contentArray[$blockKey]->name .'" data-block-description="'. $contentArray[$blockKey]->description .'" data-cmstype="'. $contentArray[$blockKey]->input_type .'" data-template-block-id="'. $contentArray[$blockKey]->template_block_id .'">';
                 echo $content;
-                echo '</div><!-- end cms block '.$objectKey .' -->';
+                echo '</div><!-- end cms block '.$blockKey .' -->';
             }
             else
             {
-               echo '<div>'.$content.'</div><!-- end cms block '.$objectKey .' -->';
+               echo '<div>'.$content.'</div><!-- end cms block '.$blockKey .' -->';
             }
         }
         else

@@ -144,9 +144,7 @@ class Content
 
 	/**
 	 * Find all live content for a given page
-	 * Returns associative array of content objects keyed by:
-	 *   - objectkey  (legacy rows where template_block_id = 0)
-	 *   - slot_key   (slotted rows where template_block_id > 0)
+	 * Returns associative array of content objects keyed by slot_key
 	 */
 	public function findContent(int $page_id): array
 	{
@@ -172,23 +170,7 @@ class Content
 			$p13n_versions = [0];
 		}
 
-		// Legacy path: rows with template_block_id = 0, keyed by objectkey
-		$legacyContent = \ORM::for_table(_table_content)
-			->select(_table_content . '.*')
-			->select(_table_content . '.id', 'content_id')
-			->select(_table_content_types . '.*')
-			->select(_table_content_types . '.id', 'block_id')
-			->select(_table_content_p13n . '.id', 'p13n_id')
-			->join(_table_content_types, [_table_content . ".type_id", "=", _table_content_types . ".id"])
-			->left_outer_join(_table_content_p13n, [_table_content . ".p13n_id", "=", _table_content_p13n . ".id"])
-			->where('page_id', $page_id)
-			->where(_table_content . '.template_block_id', 0)
-			->where_in(_table_content . '.p13n_id', $p13n_versions)
-			->where('live', 1)
-			->find_many();
-
-		// Slot path: rows with template_block_id > 0, keyed by slot_key
-		$slottedContent = \ORM::for_table(_table_content)
+		$rows = \ORM::for_table(_table_content)
 			->select(_table_content . '.*')
 			->select(_table_content . '.id', 'content_id')
 			->select(_table_content_types . '.*')
@@ -201,22 +183,13 @@ class Content
 			->join(_table_template_blocks, [_table_content . ".template_block_id", "=", _table_template_blocks . ".id"])
 			->left_outer_join(_table_content_p13n, [_table_content . ".p13n_id", "=", _table_content_p13n . ".id"])
 			->where('page_id', $page_id)
-			->where_gt(_table_content . '.template_block_id', 0)
 			->where_in(_table_content . '.p13n_id', $p13n_versions)
 			->where('live', 1)
 			->find_many();
 
 		$contents = [];
 
-		foreach ($legacyContent as $content) {
-			$contents[$content->objectkey] = $content;
-			if ($content->input_type === "markdown") {
-				$Parsedown = new \Parsedown();
-				$contents[$content->objectkey]['content'] = $Parsedown->instance()->text($contents[$content->objectkey]['content']);
-			}
-		}
-
-		foreach ($slottedContent as $content) {
+		foreach ($rows as $content) {
 			$key = $content->slot_key;
 			$contents[$key] = $content;
 			if ($content->input_type === "markdown") {

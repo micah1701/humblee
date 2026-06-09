@@ -13,9 +13,9 @@ CREATE TABLE IF NOT EXISTS humblee_content (
   live SMALLINT NOT NULL
 );
 
-INSERT INTO humblee_content (id, type_id, p13n_id, page_id, content, publish_date, updated_by, live) VALUES
-(1, 1, 0, 1, '<h1>Welcome to your Humblee powered website</h1>', '1970-01-01 00:00:00', 1, 1),
-(2, 2, 0, 1, '{"page_title":"Welcome to Humblee!","meta_description":"","og_title":"","og_description":"","og_image":""}', '1970-01-01 00:00:00', 1, 1);
+INSERT INTO humblee_content (id, type_id, p13n_id, page_id, template_block_id, content, publish_date, updated_by, live) VALUES
+(1, 1, 0, 1, 4, '<h1>Welcome to your Humblee powered website</h1>', '1970-01-01 00:00:00', 1, 1),
+(2, 2, 0, 1, 5, '{"page_title":"Welcome to Humblee!","meta_description":"","og_title":"","og_description":"","og_image":""}', '1970-01-01 00:00:00', 1, 1);
 
 SELECT setval(pg_get_serial_sequence('humblee_content', 'id'), MAX(id)) FROM humblee_content;
 
@@ -31,7 +31,6 @@ CREATE TABLE IF NOT EXISTS humblee_content_p13n (
 CREATE TABLE IF NOT EXISTS humblee_content_types (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
-  objectkey VARCHAR(50) NOT NULL,
   description VARCHAR(255) NOT NULL,
   output_type VARCHAR(10) NOT NULL CHECK (output_type IN ('meta', 'content')),
   input_type VARCHAR(20) NOT NULL CHECK (input_type IN ('wysiwyg', 'markdown', 'textfield', 'filemanager', 'textarea', 'multifield', 'customform')),
@@ -39,10 +38,10 @@ CREATE TABLE IF NOT EXISTS humblee_content_types (
   required_role_id INTEGER NOT NULL
 );
 
-INSERT INTO humblee_content_types (id, name, objectkey, description, output_type, input_type, input_parameters, required_role_id) VALUES
-(1, 'Page Body', 'pagebody', 'Main content area of page', 'content', 'wysiwyg', '<textarea name="content" id="edit_content">{content}</textarea>', 1),
-(2, 'SEO & Meta Tags', 'meta_tags', 'SEO and Meta tags read by search engines and social media sites', 'meta', 'customform', 'seo', 0),
-(3, 'Extra Header Code', 'extraHeadCode', 'Additional hidden HTML code to be place in the header', 'meta', 'textarea', '<textarea name="content" class="textarea" id="edit_content">{content}</textarea>', 0);
+INSERT INTO humblee_content_types (id, name, description, output_type, input_type, input_parameters, required_role_id) VALUES
+(1, 'Page Body', 'Main content area of page', 'content', 'wysiwyg', '<textarea name="content" id="edit_content">{content}</textarea>', 1),
+(2, 'SEO & Meta Tags', 'SEO and Meta tags read by search engines and social media sites', 'meta', 'customform', 'seo', 0),
+(3, 'Extra Header Code', 'Additional hidden HTML code to be place in the header', 'meta', 'textarea', '<textarea name="content" class="textarea" id="edit_content">{content}</textarea>', 0);
 
 SELECT setval(pg_get_serial_sequence('humblee_content_types', 'id'), MAX(id)) FROM humblee_content_types;
 
@@ -113,6 +112,16 @@ CREATE TABLE IF NOT EXISTS humblee_template_blocks (
 );
 
 CREATE INDEX humblee_template_blocks_template_id ON humblee_template_blocks (template_id);
+
+INSERT INTO humblee_template_blocks (id, template_id, content_type_id, label, slot_key, sort_order) VALUES
+(1, 1, 1, 'Page Body', 'pagebody', 0),
+(2, 1, 2, 'SEO & Meta Tags', 'meta_tags', 1),
+(3, 1, 3, 'Extra Header Code', 'extra_header_code', 2),
+(4, 2, 1, 'Page Body', 'pagebody', 0),
+(5, 2, 2, 'SEO & Meta Tags', 'meta_tags', 1),
+(6, 2, 3, 'Extra Header Code', 'extra_header_code', 2);
+
+SELECT setval(pg_get_serial_sequence('humblee_template_blocks', 'id'), MAX(id)) FROM humblee_template_blocks;
 
 CREATE TABLE IF NOT EXISTS humblee_users (
   id SERIAL PRIMARY KEY,

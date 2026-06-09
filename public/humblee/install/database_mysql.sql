@@ -19,9 +19,9 @@ CREATE TABLE IF NOT EXISTS `humblee_content` (
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
-INSERT INTO `humblee_content` (`id`,`type_id`,`p13n_id`,`page_id`,`content`,`publish_date`,`updated_by`,`live`) VALUES
-(1,1,0,1,'<h1>Welcome to your Humblee powered website</h1>','1970-01-01 00:00:00',1,1),
-(2,2,0,1,'{"page_title":"Welcome to Humblee!","meta_description":"","og_title":"","og_description":"","og_image":""}','1970-01-01 00:00:00',1,1);
+INSERT INTO `humblee_content` (`id`,`type_id`,`p13n_id`,`page_id`,`template_block_id`,`content`,`publish_date`,`updated_by`,`live`) VALUES
+(1,1,0,1,4,'<h1>Welcome to your Humblee powered website</h1>','1970-01-01 00:00:00',1,1),
+(2,2,0,1,5,'{"page_title":"Welcome to Humblee!","meta_description":"","og_title":"","og_description":"","og_image":""}','1970-01-01 00:00:00',1,1);
 
 -- --------------------------------------------------------
 
@@ -47,7 +47,6 @@ CREATE TABLE `humblee_content_p13n` (
 CREATE TABLE IF NOT EXISTS `humblee_content_types` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `objectkey` varchar(50) NOT NULL,
   `description` varchar(255) NOT NULL,
   `output_type` enum('meta','content') NOT NULL,
   `input_type` enum('wysiwyg','markdown','textfield','filemanager','textarea','multifield','customform') NOT NULL,
@@ -59,10 +58,10 @@ CREATE TABLE IF NOT EXISTS `humblee_content_types` (
 -- Dumping data for table `humblee_content_types`
 --
 
-INSERT INTO `humblee_content_types` (`id`, `name`, `objectkey`, `description`, `output_type`, `input_type`, `input_parameters`, `required_role_id`) VALUES
-(1, 'Page Body', 'pagebody', 'Main content area of page', 'content', 'wysiwyg', '<textarea name="content" id="edit_content">{content}</textarea>', 1),
-(2, 'SEO & Meta Tags', 'meta_tags', 'SEO and Meta tags read by search engines and social media sites', 'meta', 'customform', 'seo', 0),
-(3, 'Extra Header Code', 'extraHeadCode', 'Additional hidden HTML code to be place in the header', 'meta', 'textarea', '<textarea name="content" class="textarea" id="edit_content">{content}</textarea>', 0);
+INSERT INTO `humblee_content_types` (`id`, `name`, `description`, `output_type`, `input_type`, `input_parameters`, `required_role_id`) VALUES
+(1, 'Page Body', 'Main content area of page', 'content', 'wysiwyg', '<textarea name="content" id="edit_content">{content}</textarea>', 1),
+(2, 'SEO & Meta Tags', 'SEO and Meta tags read by search engines and social media sites', 'meta', 'customform', 'seo', 0),
+(3, 'Extra Header Code', 'Additional hidden HTML code to be place in the header', 'meta', 'textarea', '<textarea name="content" class="textarea" id="edit_content">{content}</textarea>', 0);
 
 -- --------------------------------------------------------
 
@@ -161,6 +160,18 @@ CREATE TABLE IF NOT EXISTS `humblee_template_blocks` (
   PRIMARY KEY (`id`),
   KEY `template_id` (`template_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `humblee_template_blocks`
+--
+
+INSERT INTO `humblee_template_blocks` (`id`, `template_id`, `content_type_id`, `label`, `slot_key`, `sort_order`) VALUES
+(1, 1, 1, 'Page Body', 'pagebody', 0),
+(2, 1, 2, 'SEO & Meta Tags', 'meta_tags', 1),
+(3, 1, 3, 'Extra Header Code', 'extra_header_code', 2),
+(4, 2, 1, 'Page Body', 'pagebody', 0),
+(5, 2, 2, 'SEO & Meta Tags', 'meta_tags', 1),
+(6, 2, 3, 'Extra Header Code', 'extra_header_code', 2);
 
 -- --------------------------------------------------------
 
@@ -363,7 +374,7 @@ ALTER TABLE `humblee_roles`
 -- AUTO_INCREMENT for table `humblee_template_blocks`
 --
 ALTER TABLE `humblee_template_blocks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `humblee_templates`
 --

@@ -17,7 +17,6 @@
 
   // Form fields
   let name = '';
-  let objectkey = '';
   let description = '';
   let output_type = '';
   let input_type = '';
@@ -53,7 +52,6 @@
   // ── Helpers ───────────────────────────────────────────────────────────
   function clearForm() {
     name = '';
-    objectkey = '';
     description = '';
     output_type = '';
     input_type = '';
@@ -64,7 +62,6 @@
 
   function populateForm(block: Block) {
     name             = block.name;
-    objectkey        = block.objectkey;
     description      = block.description;
     output_type      = block.output_type;
     input_type       = block.input_type;
@@ -111,7 +108,6 @@
     try {
       const payload: Record<string, unknown> = {
         name,
-        objectkey,
         description,
         output_type,
         input_type,
@@ -191,22 +187,6 @@
         bind:value={name}
       />
     </div>
-  </div>
-
-  <div class="field">
-    <label class="label" for="block-objectkey">
-      Object Key <span class="has-text-danger">*</span>
-    </label>
-    <div class="control">
-      <input
-        class="input"
-        type="text"
-        id="block-objectkey"
-        placeholder="e.g. page_title"
-        bind:value={objectkey}
-      />
-    </div>
-    <p class="help">Machine-readable key used in templates (no spaces)</p>
   </div>
 
   <div class="field">
