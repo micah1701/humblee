@@ -335,7 +335,7 @@
       </button>
     {/if}
 
-    {#if showRevisions}
+    {#if showRevisions || isOldVersion}
       <div class="revision-history-panel mt-2">
         <div class="select is-small">
           <select on:change={onRevisionChange}>
