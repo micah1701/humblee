@@ -10,6 +10,27 @@ use Humblee\Model\Pages as PagesModel;
 
 final class Pages
 {
+    public static function list(Request $ctrl): void
+    {
+        $ctrl->require_role('pages');
+        $rows = \ORM::for_table(_table_pages)->order_by_asc('display_order')->find_many();
+        $result = [];
+        foreach ($rows as $page) {
+            $result[] = [
+                'id'               => (int)$page->id,
+                'label'            => (string)$page->label,
+                'slug'             => (string)$page->slug,
+                'parentId'         => (int)$page->parent_id,
+                'displayOrder'     => (int)$page->display_order,
+                'active'           => (bool)$page->active,
+                'displayInSitemap' => (bool)$page->display_in_sitemap,
+                'templateId'       => (int)$page->template_id,
+                'requiredRole'     => (int)$page->required_role,
+            ];
+        }
+        $ctrl->json($result);
+    }
+
     public static function loadContentMenu(Request $ctrl): void
     {
         $ctrl->require_role('content');

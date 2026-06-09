@@ -82,6 +82,7 @@ class Request extends Xhr
 	{
 		$action = Core::getURIparts()[2] ?? '';
 		match ($action) {
+			'list'              => Pages::list($this),
 			'load-content-menu' => Pages::loadContentMenu($this),
 			'load-table'        => Pages::loadTable($this),
 			'get-properties'    => Pages::getProperties($this),
