@@ -123,7 +123,7 @@
   }
 
   // ── Flat display list ──────────────────────────────────────────────────
-  function flattenTree(nodes: PageNode[], level = 0): FlatItem[] {
+  function flattenTree(nodes: PageNode[], expandedSet: Set<number>, level = 0): FlatItem[] {
     const result: FlatItem[] = [];
     for (const node of nodes) {
       result.push({
@@ -136,14 +136,15 @@
         hasChildren: node.children.length > 0,
         parentId: node.parentId,
       });
-      if (expanded.has(node.id)) {
-        result.push(...flattenTree(node.children, level + 1));
+      if (expandedSet.has(node.id)) {
+        result.push(...flattenTree(node.children, expandedSet, level + 1));
       }
     }
     return result;
   }
 
-  $: flatItems = flattenTree(pages);
+  // Both `pages` and `expanded` are listed explicitly so Svelte tracks both as dependencies.
+  $: flatItems = flattenTree(pages, expanded);
 
   // ── Data loading ───────────────────────────────────────────────────────
   async function loadPages() {
