@@ -22,6 +22,8 @@
     "build:page-editor": "npm run build --workspace=apps/page-editor",
     "dev:page-editor": "npm run dev --workspace=apps/page-editor",
     "build:user-manager": "npm run build --workspace=apps/user-manager",
-    "dev:user-manager": "npm run dev --workspace=apps/user-manager"
+    "dev:user-manager": "npm run dev --workspace=apps/user-manager",
+    "build:page-manager": "npm run build --workspace=apps/page-manager",
+    "dev:page-manager": "npm run dev --workspace=apps/page-manager"
   }
 }

@@ -118,13 +118,29 @@ class Admin
     {
         $this->require_role('pages');
 
-        $this->extra_head_code = '<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>';
-        $this->extra_head_code .= '<link rel="stylesheet" href="https://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">';
-        $this->extra_head_code .= '<script src="' . _app_path . 'node_modules/nestedSortable/jquery.mjs.nestedSortable.js"></script>';
-        $this->extra_head_code .= '<link rel="stylesheet" type="text/css" href="' . _app_path . 'humblee/css/admin/pages.css">';
-        $this->extra_head_code .= '<script type="text/javascript" src="' . _app_path . 'humblee/js/admin/pages.js"></script>';
+        $templateRows = \ORM::for_table(_table_templates)->order_by_asc('name')->find_many();
+        $templatesArray = [];
+        foreach ($templateRows as $t) {
+            $templatesArray[] = ['id' => (int)$t->id, 'name' => $t->name, 'available' => (bool)$t->available];
+        }
 
-        $this->access_roles = \ORM::for_table(_table_roles)->where('role_type', 'access')->find_many();
+        $roleRows = \ORM::for_table(_table_roles)->where('role_type', 'access')->find_many();
+        $rolesArray = [];
+        foreach ($roleRows as $r) {
+            $rolesArray[] = ['id' => (int)$r->id, 'name' => $r->name];
+        }
+
+        $pagesConfig = [
+            'xhrPath'              => _app_path . 'core-request/',
+            'templates'            => $templatesArray,
+            'roles'                => $rolesArray,
+            'isDeveloperOrDesigner' => Core::auth('developer') || Core::auth('designer'),
+        ];
+
+        $this->extra_head_code  = '<link rel="stylesheet" href="' . _app_path . 'humblee/js/admin/page-manager/index.css">';
+        $this->extra_head_code .= '<script>window.__PAGES_CONFIG__ = ' . json_encode($pagesConfig, JSON_HEX_TAG | JSON_HEX_APOS) . ';</script>';
+        $this->extra_head_code .= '<script type="module" src="' . _app_path . 'humblee/js/admin/page-manager/index.js"></script>';
+
         $this->template_view = Core::view(_app_server_path . 'humblee/views/admin/pages.php', get_object_vars($this));
         echo Core::view(_app_server_path . 'humblee/views/admin/templates/template.php', get_object_vars($this));
     }
