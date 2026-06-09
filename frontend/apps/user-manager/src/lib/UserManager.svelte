@@ -10,13 +10,22 @@
 
   const api = createUsersApi(xhrPath);
 
-  // Declared ambient globals provided by the admin shell
   declare function quickNotice(msg: string, type?: string): void;
   declare function confirmation(msg: string, onConfirm: () => void): void;
 
-  // State
-  let users: User[] = [];
-  let total = 0;
+  // ── Cache ──────────────────────────────────────────────────────────────────
+  // Built by unfiltered page loads. Never touched by search/filter API calls.
+  let cachedUsers: User[] = [];
+  let totalCount = 0;              // unfiltered total from API
+  $: cacheComplete = totalCount > 0 && cachedUsers.length >= totalCount;
+
+  // ── Display ────────────────────────────────────────────────────────────────
+  // What the table renders. Either a local slice of cachedUsers or an API result.
+  let displayUsers: User[] = [];
+  let displayTotal = 0;            // total for current view (drives infinite scroll gate)
+  let inApiMode = false;           // true while showing API-fetched search results
+
+  // ── UI state ───────────────────────────────────────────────────────────────
   let isLoading = false;
   let isLoadingMore = false;
   let searchQuery = '';
@@ -27,21 +36,23 @@
   // Modal
   let modalUser: User | null = null;
 
-  // Infinite scroll sentinel
+  // Infinite scroll
   let sentinel: HTMLElement;
   let observer: IntersectionObserver;
   let debounceTimer: ReturnType<typeof setTimeout>;
 
   const LIMIT = 50;
 
+  // ── Utilities ──────────────────────────────────────────────────────────────
+
   function timeAgo(dateStr: string): string {
     if (!dateStr || dateStr === '0000-00-00 00:00:00') return 'Never';
     const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
-    if (diff < 60)     return `${diff}s ago`;
-    if (diff < 3600)   return `${Math.floor(diff / 60)}m ago`;
-    if (diff < 86400)  return `${Math.floor(diff / 3600)}h ago`;
-    if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
-    if (diff < 2592000) return `${Math.floor(diff / 604800)}w ago`;
+    if (diff < 60)       return `${diff}s ago`;
+    if (diff < 3600)     return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400)    return `${Math.floor(diff / 3600)}h ago`;
+    if (diff < 604800)   return `${Math.floor(diff / 86400)}d ago`;
+    if (diff < 2592000)  return `${Math.floor(diff / 604800)}w ago`;
     if (diff < 31536000) return `${Math.floor(diff / 2592000)}mo ago`;
     return `${Math.floor(diff / 31536000)}y ago`;
   }
@@ -54,21 +65,59 @@
     });
   }
 
-  async function loadUsers() {
+  // ── Local filtering ────────────────────────────────────────────────────────
+  // Always operates on cachedUsers. Instant — no API call.
+
+  function filterAndSortLocally(): void {
+    inApiMode = false;
+    let result = [...cachedUsers];
+
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(u =>
+        u.name.toLowerCase().includes(q) ||
+        u.username.toLowerCase().includes(q) ||
+        u.email.toLowerCase().includes(q)
+      );
+    }
+
+    if (selectedRoleId > 0) {
+      result = result.filter(u => u.roles.some(r => r.id === selectedRoleId));
+    }
+
+    result.sort((a, b) => {
+      const aVal = String(a[sortColumn as keyof User] ?? '');
+      const bVal = String(b[sortColumn as keyof User] ?? '');
+      const cmp  = aVal.localeCompare(bVal, undefined, { numeric: true });
+      return sortDirection === 'asc' ? cmp : -cmp;
+    });
+
+    displayUsers = result;
+    // When no filter is active and the cache is still growing, keep displayTotal
+    // equal to totalCount so the infinite scroll sentinel can trigger more loads.
+    const isFiltered = searchQuery.length > 0 || selectedRoleId > 0;
+    displayTotal = isFiltered ? result.length : totalCount;
+  }
+
+  // ── API fetching ───────────────────────────────────────────────────────────
+  // Used when the cache is incomplete and a precise filtered result is needed.
+
+  async function loadFromApi(): Promise<void> {
+    inApiMode = true;
     isLoading = true;
-    users = [];
-    total = 0;
+    displayUsers = [];
+    displayTotal = 0;
     try {
       const data = await api.listUsers({
-        search: searchQuery || undefined,
-        role_id: selectedRoleId || undefined,
-        offset: 0,
-        limit: LIMIT,
-        sort: sortColumn,
+        search:    searchQuery.length >= 3 ? searchQuery : undefined,
+        role_id:   selectedRoleId || undefined,
+        offset:    0,
+        limit:     LIMIT,
+        sort:      sortColumn,
         direction: sortDirection,
       });
-      users = data.users;
-      total = data.total;
+      displayUsers = data.users;
+      displayTotal = data.total;
     } catch {
       quickNotice('Failed to load users.', 'danger');
     } finally {
@@ -76,20 +125,44 @@
     }
   }
 
-  async function loadMore() {
-    if (isLoadingMore || users.length >= total) return;
+  // Initial / cache-extension load — populates cachedUsers, never filtered.
+  async function loadCachePage(offset: number): Promise<void> {
+    try {
+      const data = await api.listUsers({ offset, limit: LIMIT, sort: 'name', direction: 'asc' });
+      if (offset === 0) {
+        cachedUsers = data.users;
+      } else {
+        cachedUsers = [...cachedUsers, ...data.users];
+      }
+      totalCount = data.total;
+      filterAndSortLocally();
+    } catch {
+      quickNotice('Failed to load users.', 'danger');
+    }
+  }
+
+  // ── Infinite scroll ────────────────────────────────────────────────────────
+
+  async function loadMore(): Promise<void> {
+    if (isLoadingMore || displayUsers.length >= displayTotal) return;
     isLoadingMore = true;
     try {
-      const data = await api.listUsers({
-        search: searchQuery || undefined,
-        role_id: selectedRoleId || undefined,
-        offset: users.length,
-        limit: LIMIT,
-        sort: sortColumn,
-        direction: sortDirection,
-      });
-      users = [...users, ...data.users];
-      total = data.total;
+      if (inApiMode) {
+        // Extend the API search result set
+        const data = await api.listUsers({
+          search:    searchQuery.length >= 3 ? searchQuery : undefined,
+          role_id:   selectedRoleId || undefined,
+          offset:    displayUsers.length,
+          limit:     LIMIT,
+          sort:      sortColumn,
+          direction: sortDirection,
+        });
+        displayUsers = [...displayUsers, ...data.users];
+        displayTotal = data.total;
+      } else {
+        // Extend the local cache with the next unfiltered page
+        await loadCachePage(cachedUsers.length);
+      }
     } catch {
       quickNotice('Failed to load more users.', 'danger');
     } finally {
@@ -97,31 +170,58 @@
     }
   }
 
-  function onSearchInput() {
+  // ── Input handlers ─────────────────────────────────────────────────────────
+
+  function onSearchInput(): void {
     clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(loadUsers, 300);
+
+    if (cacheComplete || searchQuery.length < 3) {
+      // Cache has everything (or search is too short to bother the API): filter locally.
+      filterAndSortLocally();
+      return;
+    }
+
+    // Cache is incomplete and the query is 3+ characters — call the API.
+    debounceTimer = setTimeout(loadFromApi, 300);
   }
 
-  function onRoleChange() {
-    loadUsers();
+  function onRoleChange(): void {
+    if (cacheComplete) {
+      filterAndSortLocally();
+    } else {
+      loadFromApi();
+    }
   }
 
-  function setSort(col: SortColumn) {
+  function setSort(col: SortColumn): void {
     if (sortColumn === col) {
       sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
       sortColumn = col;
       sortDirection = 'asc';
     }
-    loadUsers();
+
+    if (cacheComplete) {
+      filterAndSortLocally();
+    } else if (inApiMode) {
+      // Re-sort the active API search result
+      loadFromApi();
+    } else {
+      // Sort what's in the cache locally (may be an incomplete set, but instant)
+      filterAndSortLocally();
+    }
   }
 
-  function removeUser(user: User) {
+  // ── Mutations ──────────────────────────────────────────────────────────────
+
+  function removeUser(user: User): void {
     confirmation(`Remove ${user.name}? This cannot be undone.`, async () => {
       const result = await api.removeUser(user.id);
       if (result.success) {
-        users = users.filter(u => u.id !== user.id);
-        total = Math.max(0, total - 1);
+        cachedUsers  = cachedUsers.filter(u => u.id !== user.id);
+        displayUsers = displayUsers.filter(u => u.id !== user.id);
+        totalCount   = Math.max(0, totalCount - 1);
+        displayTotal = Math.max(0, displayTotal - 1);
         quickNotice(`${user.name} has been removed.`);
       } else {
         quickNotice(result.error ?? 'Could not remove user.', 'danger');
@@ -129,14 +229,14 @@
     });
   }
 
-  async function saveRoles(userId: number, roleIds: number[]) {
+  async function saveRoles(userId: number, roleIds: number[]): Promise<void> {
     const result = await api.setRoles(userId, roleIds);
     if (result.success) {
-      const roleMap = new Map(allRoles.map(r => [r.id, r]));
-      users = users.map(u => {
-        if (u.id !== userId) return u;
-        return { ...u, roles: roleIds.map(id => roleMap.get(id)!).filter(Boolean) };
-      });
+      const roleMap  = new Map(allRoles.map(r => [r.id, r]));
+      const newRoles = roleIds.map(id => roleMap.get(id)!).filter(Boolean);
+      const patch    = (u: User) => u.id === userId ? { ...u, roles: newRoles } : u;
+      cachedUsers  = cachedUsers.map(patch);
+      displayUsers = displayUsers.map(patch);
       quickNotice('Roles updated.');
       modalUser = null;
     } else {
@@ -144,8 +244,12 @@
     }
   }
 
-  onMount(() => {
-    loadUsers();
+  // ── Lifecycle ──────────────────────────────────────────────────────────────
+
+  onMount(async () => {
+    isLoading = true;
+    await loadCachePage(0);
+    isLoading = false;
 
     observer = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting) loadMore();
@@ -158,6 +262,8 @@
     observer?.disconnect();
     clearTimeout(debounceTimer);
   });
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
 
   const sortableColumns: Array<{ col: SortColumn; label: string }> = [
     { col: 'name',     label: 'Name' },
@@ -190,7 +296,13 @@
           <i class="fas fa-search"></i>
         </span>
       </p>
-      <p class="help">Filters the list as you type</p>
+      <p class="help">
+        {#if cacheComplete}
+          Filters instantly from cached list
+        {:else}
+          Type at least 3 characters to search
+        {/if}
+      </p>
     </div>
   </div>
 
@@ -213,7 +325,7 @@
 
 {#if isLoading}
   <p class="has-text-grey"><span class="icon"><i class="fas fa-spinner fa-spin"></i></span> Loading…</p>
-{:else if users.length === 0}
+{:else if displayUsers.length === 0}
   <p class="is-size-5">No results found.</p>
 {:else}
   <table class="table is-striped is-hoverable is-fullwidth">
@@ -238,7 +350,7 @@
       </tr>
     </thead>
     <tbody>
-      {#each users as user (user.id)}
+      {#each displayUsers as user (user.id)}
         <tr>
           <td>{user.name}</td>
           <td>{user.email}</td>
@@ -278,8 +390,8 @@
   <div class="level">
     <div class="level-left">
       <p class="level-item has-text-grey is-size-7">
-        Showing {users.length} of {total} user{total !== 1 ? 's' : ''}
-        {#if users.length < total}— scroll down to load more{/if}
+        Showing {displayUsers.length} of {displayTotal} user{displayTotal !== 1 ? 's' : ''}
+        {#if displayUsers.length < displayTotal}— scroll down to load more{/if}
       </p>
     </div>
   </div>
