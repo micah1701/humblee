@@ -429,24 +429,25 @@
             <!-- Actions -->
             <span class="page-actions">
               <button
-                class="button is-small is-white"
-                title="Add sub-page under {item.label}"
+                class="button is-small is-white tooltip is-tooltip-top edit-page-btn"
+                data-tooltip="Edit page properties"
+                disabled={saving}
+                on:click|stopPropagation={() => { editPageId = item.id; }}
+              >
+                <span class="icon is-small"><i class="fas fa-edit"></i></span>
+                <span>Edit</span>
+              </button>
+              <button
+                class="button is-small is-white tooltip is-tooltip-top"
+                data-tooltip="Add sub-page under {item.label}"
                 disabled={saving}
                 on:click|stopPropagation={() => addPage(item.id)}
               >
                 <span class="icon is-small"><i class="fas fa-plus"></i></span>
               </button>
               <button
-                class="button is-small is-white"
-                title="Edit page properties"
-                disabled={saving}
-                on:click|stopPropagation={() => { editPageId = item.id; }}
-              >
-                <span class="icon is-small"><i class="fas fa-edit"></i></span>
-              </button>
-              <button
-                class="button is-small is-white has-text-danger"
-                title="Delete this page"
+                class="button is-small is-white tooltip is-tooltip-top delete-page-btn"
+                data-tooltip="Delete this page and all its content"
                 disabled={saving}
                 on:click|stopPropagation={() => deletePage(item.id, item.label)}
               >
@@ -663,6 +664,22 @@
     width: 28px;
     height: 28px;
     padding: 0;
+  }
+
+  .page-actions .edit-page-btn {
+    width: auto;
+    padding: 0 10px;
+    gap: 0.25rem;
+  }
+
+  .page-actions .delete-page-btn {
+    color: #ccc;
+  }
+
+  .page-actions .delete-page-btn:hover,
+  .page-actions .delete-page-btn:focus {
+    color: #f14668;
+    background-color: #feecf0;
   }
 
   /* ── Drop indicator line ───────────────────────────────────────────── */
