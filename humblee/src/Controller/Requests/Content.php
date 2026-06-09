@@ -100,11 +100,29 @@ final class Content
             ->order_by_desc('revision_date')
             ->find_many();
 
+        // Reverse lookup: content_type_id → [templateBlockId, …] for modern slots only.
+        // Used to remap legacy rows (template_block_id=0) that were created before template
+        // blocks were added to the template — they still load fine on the public side via
+        // findContent()'s legacy path, but would otherwise never match a modern slot key.
+        $typeToModernSlots = [];
+        foreach ($slots as $slot) {
+            if ($slot['templateBlockId'] > 0) {
+                $typeToModernSlots[$slot['contentTypeId']][] = $slot['templateBlockId'];
+            }
+        }
+
         $contentMap = [];
         foreach ($contentRows as $row) {
             $tbId = (int)$row->template_block_id;
-            // Legacy rows (template_block_id=0) use negative type_id to match slot encoding above
-            $normalizedTbId = ($tbId === 0) ? -(int)$row->type_id : $tbId;
+            if ($tbId === 0) {
+                // Legacy row: remap to the modern slot when there is exactly one unambiguous match.
+                $matchingSlots = $typeToModernSlots[(int)$row->type_id] ?? [];
+                $normalizedTbId = (count($matchingSlots) === 1)
+                    ? $matchingSlots[0]
+                    : -(int)$row->type_id;
+            } else {
+                $normalizedTbId = $tbId;
+            }
             $key = $normalizedTbId . '_' . (int)$row->p13n_id;
             if (!isset($contentMap[$key])) {
                 $contentMap[$key] = [
