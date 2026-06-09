@@ -83,6 +83,7 @@ class Request extends Xhr
 		$action = Core::getURIparts()[2] ?? '';
 		match ($action) {
 			'list'              => Pages::list($this),
+			'content-list'      => Pages::contentList($this),
 			'load-content-menu' => Pages::loadContentMenu($this),
 			'load-table'        => Pages::loadTable($this),
 			'get-properties'    => Pages::getProperties($this),
@@ -100,6 +101,7 @@ class Request extends Xhr
 		match ($action) {
 			'latest-revision-date'   => Content::latestRevisionDate($this),
 			'p13n-order-priorities'  => Content::p13nOrderPriorities($this),
+			'page-map'               => Content::pageMap($this),
 			default                  => $this->json(['error' => 'Not found'], 404),
 		};
 	}

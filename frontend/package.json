@@ -24,6 +24,8 @@
     "build:user-manager": "npm run build --workspace=apps/user-manager",
     "dev:user-manager": "npm run dev --workspace=apps/user-manager",
     "build:page-manager": "npm run build --workspace=apps/page-manager",
-    "dev:page-manager": "npm run dev --workspace=apps/page-manager"
+    "dev:page-manager": "npm run dev --workspace=apps/page-manager",
+    "build:admin-home": "npm run build --workspace=apps/admin-home",
+    "dev:admin-home": "npm run dev --workspace=apps/admin-home"
   }
 }

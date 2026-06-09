@@ -79,36 +79,62 @@ class Admin
     public function index(): void
     {
         $this->user = $this->getUser();
+
         $_zero_date = (($_ENV['config']['RDBMS'] ?? 'mysql') === 'pgsql')
             ? '1970-01-01 00:00:00'
             : '0000-00-00 00:00:00';
-        $this->recent_contents = \ORM::for_table(_table_content)
-            ->raw_query("SELECT *
-                                                    FROM " . _table_content . " AS topTable
-                                                    WHERE revision_date != '" . $_zero_date . "'
-                                                    AND content != ''
-                                                    AND revision_date = (SELECT revision_date
-                                                                        FROM " . _table_content . "
-                                                                        WHERE page_id = topTable.page_id
-                                                                        AND type_id = topTable.type_id
-                                                                        ORDER BY revision_date DESC
-                                                                        LIMIT 1)
-                                                    ORDER BY revision_date DESC
-                                                    LIMIT 10")
+
+        $recentContentRows = \ORM::for_table(_table_content)
+            ->raw_query("SELECT * FROM " . _table_content . " AS topTable
+                         WHERE revision_date != '" . $_zero_date . "'
+                         AND content != ''
+                         AND revision_date = (SELECT revision_date FROM " . _table_content . "
+                                             WHERE page_id = topTable.page_id
+                                             AND type_id = topTable.type_id
+                                             ORDER BY revision_date DESC LIMIT 1)
+                         ORDER BY revision_date DESC LIMIT 10")
             ->find_many();
-        $getcontentTypes = \ORM::for_table(_table_content_types)->find_many();
-        foreach ($getcontentTypes as $getType) {
-            $this->contentTypes[$getType->id] = $getType->name;
+
+        $contentTypesMap = [];
+        foreach (\ORM::for_table(_table_content_types)->find_many() as $ct) {
+            $contentTypesMap[(int)$ct->id] = $ct->name;
         }
 
+        $p13nVersionsMap = [];
         if ($_ENV['config']['use_p13n']) {
-            $getP13nVersions = \ORM::for_table(_table_content_p13n)->find_many();
-            foreach ($getP13nVersions as $p13nVersion) {
-                $this->p13nVersions[$p13nVersion->id] = $p13nVersion->name;
+            foreach (\ORM::for_table(_table_content_p13n)->find_many() as $p) {
+                $p13nVersionsMap[(int)$p->id] = $p->name;
             }
         }
 
-        $this->extra_head_code = '<script type="text/javascript" src="' . _app_path . 'humblee/js/admin/index.js"></script>';
+        $recentContents = [];
+        foreach ($recentContentRows as $row) {
+            $recentPage = \ORM::for_table(_table_pages)->find_one($row->page_id);
+            $recentContents[] = [
+                'id'           => (int)$row->id,
+                'pageId'       => (int)$row->page_id,
+                'pageLabel'    => $recentPage ? $recentPage->label : 'Unknown',
+                'typeName'     => $contentTypesMap[(int)$row->type_id] ?? 'Unknown',
+                'p13nName'     => ($_ENV['config']['use_p13n'] && (int)$row->p13n_id !== 0)
+                                    ? ($p13nVersionsMap[(int)$row->p13n_id] ?? null)
+                                    : null,
+                'live'         => (bool)$row->live,
+                'publishDate'  => $row->publish_date,
+                'revisionDate' => $row->revision_date,
+            ];
+        }
+
+        $adminHomeConfig = [
+            'xhrPath'        => _app_path . 'core-request/',
+            'appPath'        => _app_path,
+            'userTheme'      => $this->userTheme,
+            'useP13n'        => (bool)$_ENV['config']['use_p13n'],
+            'recentContents' => $recentContents,
+        ];
+
+        $this->extra_head_code  = '<link rel="stylesheet" href="' . _app_path . 'humblee/js/admin/admin-home/index.css">';
+        $this->extra_head_code .= '<script>window.__ADMIN_HOME_CONFIG__ = ' . json_encode($adminHomeConfig, JSON_HEX_TAG | JSON_HEX_APOS) . ';</script>';
+        $this->extra_head_code .= '<script type="module" src="' . _app_path . 'humblee/js/admin/admin-home/index.js"></script>';
 
         $this->template_view = Core::view(_app_server_path . 'humblee/views/admin/index.php', get_object_vars($this));
         echo Core::view(_app_server_path . 'humblee/views/admin/templates/template.php', get_object_vars($this));
