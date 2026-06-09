@@ -40,7 +40,6 @@ $navHtml = preg_replace('/<ul>/', '<ul class="menu-list">', $navHtml, 1);
     </aside>
 
     <div class="column docs-content content">
-        <?php Draw::content($content, 'pagebody') ?>
         <?php Draw::content($content, 'markdown') ?>
     </div>
 
