@@ -35,6 +35,7 @@ class Admin
     public object|false $template_data   = false;
     public array        $allContentTypes = [];
     public bool         $is_in_iframe    = false;
+    public bool         $isDeveloper     = false;
     public array        $allP13nVersions = [];
     public bool         $hasMediaRole    = false;
     public string       $userTheme       = 'light';
