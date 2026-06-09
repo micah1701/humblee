@@ -389,22 +389,10 @@ class Admin
             $this->roles[$role->id] = $role->name;
         }
 
-        $this->hidden_users = ['joe@backdoor.dev'];
+        $this->isDeveloper = Core::auth('developer');
 
-        $searchCriteria = isset($_POST['user_search']) ? htmlspecialchars(trim($_POST['user_search'])) : '';
-        if (!empty($searchCriteria)) {
-            $this->users = \ORM::for_table(_table_users)
-                ->where_any_is([
-                    ['name' => '%' . $searchCriteria . '%'],
-                    ['username' => '%' . $searchCriteria . '%'],
-                    ['email' => '%' . $searchCriteria . '%']
-                ], 'LIKE')
-                ->find_many();
-        } else {
-            $this->users = \ORM::for_table(_table_users)->find_many();
-        }
-
-        $this->extra_head_code = '<script type="text/javascript" src="' . _app_path . 'humblee/js/admin/users.js"></script>';
+        $this->extra_head_code  = '<link rel="stylesheet" href="' . _app_path . 'humblee/js/admin/user-manager/index.css">';
+        $this->extra_head_code .= '<script type="module" src="' . _app_path . 'humblee/js/admin/user-manager/index.js"></script>';
         $this->template_view = Core::view(_app_server_path . 'humblee/views/admin/users.php', get_object_vars($this));
         echo Core::view(_app_server_path . 'humblee/views/admin/templates/template.php', get_object_vars($this));
     }
