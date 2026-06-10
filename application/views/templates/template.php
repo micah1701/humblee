@@ -5,6 +5,9 @@ declare(strict_types=1);
 use Humblee\Foundation\Core;
 use Humblee\Foundation\Draw;
 use Humblee\Model\Pages;
+
+/** @var array<string, mixed> $content */
+/** @var string|false $template_view */
 ?>
 <!DOCTYPE html>
 <html>

@@ -5,6 +5,9 @@ declare(strict_types=1);
 use Humblee\Foundation\Draw;
 use Humblee\Model\Pages;
 
+/** @var \ORM $page */
+/** @var array<string, mixed> $content */
+
 $pagesObj = new Pages;
 $docPages = $pagesObj->getPages(['parent_id' => 3, 'active_only' => true, 'display_in_sitemap_only' => false]);
 

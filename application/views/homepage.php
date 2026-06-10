@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use Humblee\Foundation\Draw;
 
+/** @var array<string, mixed> $content */
+
 Draw::content($content, "pagebody_hero");
 ?>
 <hr>
