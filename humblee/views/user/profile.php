@@ -3,6 +3,13 @@
 declare(strict_types=1);
 
 use Humblee\Model\Crypto;
+
+/** @var object|false $user */
+$user ??= false;
+/** @var iterable $userAccessLog */
+$userAccessLog ??= [];
+/** @var string[]|null $error */
+$error ??= null;
 ?>
 <section class="columns">
   <div class="column">

@@ -5,6 +5,10 @@ declare(strict_types=1);
 use Humblee\Foundation\Core;
 use Humblee\Model\Crypto;
 
+/** @var string $userTheme */
+/** @var string $extra_head_code */
+/** @var string|false $template_view */
+
 $is_dev = Core::auth('developer');
 
 // Generate HMAC tokens for AJAX requests

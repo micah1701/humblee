@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use Humblee\Model\Crypto;
+
+/** @var string|null $error */
 ?>
 <h1 class="title">Nice to see you again!</h1>
 <p class="subtitle">Now that you've verified your account, create a new password</p>

@@ -3,6 +3,11 @@
 declare(strict_types=1);
 
 use Humblee\Model\Crypto;
+
+/** @var string $name */
+$name ??= '';
+/** @var string $cellphone_lastfour */
+$cellphone_lastfour ??= '';
 ?>
 <h1 class="title">Almost There</h1>
 <p class="subtitle">Your account requires two factor authentication to complete the sign in process.</p>
