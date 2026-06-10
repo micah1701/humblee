@@ -12,7 +12,7 @@ $environment  = ($_SERVER['HTTP_HOST'] == "humblee.app") ? 'env_prod.php' : 'env
 
 
 // load the environment set above
-$_ENV['config'] = require_once $environment;
+$_ENV['config'] = (array)file_get_contents($environment);
 
 // all $_SESSION info used by the framework is in a sub array of $_SESSION
 // default value is "humblee", eg $_SESSION['humblee']['my_variable'];
