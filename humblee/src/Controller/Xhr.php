@@ -58,7 +58,7 @@ class Xhr
      * if outputting json_encode() data, call $this->json() to set this header
      * optionally pass a string or array to return
      */
-    public function json(array|string $package, int $status = 200)
+    public function json(array|string $package, int $status = 200): void
     {
         if (!is_array($package)) {
             $package = [$package];
@@ -113,7 +113,7 @@ class Xhr
     /**
      * Recursively Convert ALL strings in a nested array or object to UTF-8 encoding 
      */
-    public function encodeToUTF8(array|object $array_or_obect, $showOriginalStringOnError = false)
+    public function encodeToUTF8(array|object $array_or_obect, $showOriginalStringOnError = false): array|object
     {
         // $possibleEncodings = mb_list_encodings();
         $possibleEncodings =  ['ASCII', 'UTF-8', 'ISO-8859-1'];
