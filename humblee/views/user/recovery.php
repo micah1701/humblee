@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use Humblee\Model\Crypto;
+
+/** @var string[]|null $error */
 ?>
 <h1 class="title">Password Recovery</h1>
 <h2 class="subtitle">Enter your username or e-mail address</h2>

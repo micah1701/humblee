@@ -1,3 +1,17 @@
+<?php
+/** @var object|false $page_data */
+$page_data ??= false;
+/** @var object|false $content */
+$content ??= false;
+/** @var object|false $content_type */
+$content_type ??= false;
+/** @var array $revisions */
+$revisions ??= [];
+/** @var array $allP13nVersions */
+$allP13nVersions ??= [];
+/** @var bool $is_in_iframe */
+$is_in_iframe ??= false;
+?>
 <div class="columns">
     <div class="column">
         <h1 class="title">

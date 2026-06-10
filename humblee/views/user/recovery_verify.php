@@ -1,3 +1,11 @@
+<?php
+/** @var string|null $error */
+$error ??= null;
+/** @var string $cellphone_lastfour */
+$cellphone_lastfour ??= '';
+/** @var string $email_masked */
+$email_masked ??= '';
+?>
 <h1 class="title">Is this really you?</h1>
 <h2 class="subtitle">Verify your account</h2>
 

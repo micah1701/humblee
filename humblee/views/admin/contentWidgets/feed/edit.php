@@ -1,4 +1,6 @@
 <?php
+/** @var array $content_array */
+$content_array ??= [];
 $crypto = new Core_Model_Crypto;
 $hmac_pair = $crypto->get_hmac_pair();
 ?>

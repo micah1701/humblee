@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 use Humblee\Model\Crypto;
+
+/** @var string|null $error */
 ?>
 <h1 class="title">Knock Knock</h1>
 <h2 class="subtitle">Log in using your username and password</h2>

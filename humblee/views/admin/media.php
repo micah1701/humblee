@@ -8,6 +8,7 @@ declare(strict_types=1);
  * - $is_in_iframe: bool indicating if the view is rendered inside an iframe
  * - $access_roles: iterable of role objects with 'id' and 'name' properties
  */
+/** @var string $userTheme */
 /** @var bool $hasMediaRole */
 $hasMediaRole ??= false;
 /** @var bool $is_in_iframe */

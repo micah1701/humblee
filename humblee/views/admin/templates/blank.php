@@ -1,3 +1,11 @@
+<?php
+/** @var string $userTheme */
+$userTheme ??= 'light';
+/** @var string $extra_head_code */
+$extra_head_code ??= '';
+/** @var string|false $template_view */
+$template_view ??= false;
+?>
 <html>
 <head>
 <meta charset="utf-8">
