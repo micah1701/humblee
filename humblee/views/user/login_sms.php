@@ -55,7 +55,7 @@ $hmac_pair = $crypto->get_hmac_pair();
 ?>
 <input type="hidden" id="hmac_token" value="<?php echo $hmac_pair['message'] ?>">
 <input type="hidden" id="hmac_key" value="<?php echo $hmac_pair['hmac'] ?>">
-<input type="hidden" id="fwd" value="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user"; ?>">
+<input type="hidden" id="fwd" value="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) ? htmlspecialchars($_GET['fwd'], ENT_QUOTES, 'UTF-8') : "user"; ?>">
 
 <script defer src="https://use.fontawesome.com/releases/v5.0.0/js/all.js"></script>
 <script type="text/javascript">

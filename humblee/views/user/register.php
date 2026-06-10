@@ -23,7 +23,7 @@ use Humblee\Model\Crypto;
 
   <div class="column is-one-third">
 
-    <form action="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) ? "?fwd=" . $_GET['fwd'] : '' ?>" method="post">
+    <form action="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) ? "?fwd=" . htmlspecialchars($_GET['fwd'], ENT_QUOTES, 'UTF-8') : '' ?>" method="post">
 
       <?php if (isset($error)) { ?>
         <div class="field is-two-fifths">

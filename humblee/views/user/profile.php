@@ -46,7 +46,7 @@ $error ??= null;
 <section class="columns is-variable is-8">
 
   <div class="column">
-    <form action="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) ? "?fwd=" . $_GET['fwd'] : '' ?>" autocomplete="off" method="post">
+    <form action="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) ? "?fwd=" . htmlspecialchars($_GET['fwd'], ENT_QUOTES, 'UTF-8') : '' ?>" autocomplete="off" method="post">
 
       <div class="field">
         <label class="label" for="name">Full Name</label>
@@ -165,7 +165,7 @@ $error ??= null;
           <?php
           if (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) {
           ?>
-            <a href="<?php echo _app_path . ltrim($_GET['fwd'], "/") ?>" class="button is-secondary" title="Return to previous page without saving changes">Cancel</a>
+            <a href="<?php echo htmlspecialchars(_app_path . ltrim($_GET['fwd'], "/"), ENT_QUOTES, 'UTF-8') ?>" class="button is-secondary" title="Return to previous page without saving changes">Cancel</a>
           <?php
           }
           ?>

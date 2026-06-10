@@ -22,7 +22,7 @@ use Humblee\Model\Crypto;
         }
         ?>
 
-        <form action="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) ? "?fwd=" . $_GET['fwd'] : '' ?>" autocomplete="off" method="post">
+        <form action="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) ? "?fwd=" . htmlspecialchars($_GET['fwd'], ENT_QUOTES, 'UTF-8') : '' ?>" autocomplete="off" method="post">
 
             <div class="field">
                 <label class="label" for="name">New Password</label>

@@ -80,4 +80,4 @@ if (!$_SESSION[session_key]['recovery']['message_sent']) {
     var APP_PATH = '<?php echo _app_path ?>';
 </script>
 <script type="text/javascript" src="<?php echo _app_path ?>humblee/js/user/recover_verification.js"></script>
-<input type="hidden" id="fwd" value="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) ? $_GET['fwd'] : "user"; ?>">
+<input type="hidden" id="fwd" value="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) ? htmlspecialchars($_GET['fwd'], ENT_QUOTES, 'UTF-8') : "user"; ?>">
