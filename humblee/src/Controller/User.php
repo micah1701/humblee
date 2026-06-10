@@ -292,8 +292,7 @@ class User
 			$this->cellphone_lastfour = substr($this->user->cellphone, -4);
 
 			if (!isset($_SESSION[session_key]['recovery']['message_sent']) || !$_SESSION[session_key]['recovery']['message_sent']) {
-				$start_point = rand(0, 10);
-				$token = strtoupper(substr(md5((string)rand(10000, 999999)), $start_point, 5));
+				$token = strtoupper(substr(bin2hex(random_bytes(4)), 0, 5));
 				$_SESSION[session_key]['recovery']['token'] = $token;
 
 				if ($_ENV['config']['TWILIO_Enabled'] && $this->user->use_twofactor_auth == 1 && $this->user->cellphone_validated) {
