@@ -20,7 +20,7 @@ final class MediaFiles
     {
         $ctrl->require_role(['content', 'media']);
         if (!isset($_GET['folder']) || !is_numeric($_GET['folder'])) {
-            $result['error'] = "missing or invalid folder ID";
+            $ctrl->json(['error' => "missing or invalid folder ID"]);
         }
         $media = new Media;
         $response = ['success' => true, 'files' => $media->listFilesByFolder((int)$_GET['folder'])];
