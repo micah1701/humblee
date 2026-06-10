@@ -21,7 +21,7 @@ use Humblee\Model\Crypto;
 
 <div class="columns is-8">
     <div class="column is-one-third">
-        <form action="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) ? "?fwd=" . $_GET['fwd'] : '' ?>" method="post">
+        <form action="<?php echo (isset($_GET['fwd']) && preg_match('/^[\w\/\-]+$/', $_GET['fwd'])) ? "?fwd=" . htmlspecialchars($_GET['fwd'], ENT_QUOTES, 'UTF-8') : '' ?>" method="post">
             <div class="field">
                 <label class="label" for="username">Username or E-Mail</label>
                 <div class="control">

@@ -20,7 +20,7 @@ if(isset($error))
 ?>
 
 <section class="section columns">
-<form action="<?php echo $fwd ?>" method="post">
+<form action="<?php echo htmlspecialchars($fwd, ENT_QUOTES, 'UTF-8') ?>" method="post">
   
   <div class="field">
     <label class="label" for="username">Username:</label> 
@@ -33,7 +33,7 @@ if(isset($error))
     <label class="label" for="password">Password:</label> 
     <div class="control">
       <input class="input" type="password" id="password" name="password">
-      <p class="help is-pulled-right"><a href="<?php echo _app_path ?>user/forgotPassword<?php echo $fwd ?>">Forgot Password?</a></p>
+      <p class="help is-pulled-right"><a href="<?php echo _app_path ?>user/forgotPassword<?php echo htmlspecialchars($fwd, ENT_QUOTES, 'UTF-8') ?>">Forgot Password?</a></p>
     </div>
   </div>
   

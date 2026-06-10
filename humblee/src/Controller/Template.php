@@ -121,7 +121,7 @@ class Template
 
 			case "controller":
 
-				$controller_data = unserialize($this->template->page_meta);
+				$controller_data = json_decode($this->template->page_meta, true) ?: @unserialize($this->template->page_meta);
 				$controller = "App\\Controller\\" . ucfirst($controller_data['controller']);
 
 				$sub_controller = new $controller();
