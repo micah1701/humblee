@@ -29,7 +29,10 @@ final class Templates
                 'default_view'      => '',
             ];
             if ($row->page_type === 'controller') {
-                $meta = @unserialize($row->page_meta);
+                $meta = json_decode($row->page_meta, true);
+                if (!is_array($meta)) {
+                    $meta = @unserialize($row->page_meta);
+                }
                 if (is_array($meta)) {
                     $entry['controller']        = $meta['controller'] ?? '';
                     $entry['controller_action'] = $meta['action'] ?? '';
@@ -96,7 +99,7 @@ final class Templates
                 $page_meta = trim($_POST['default_view'] ?? '');
                 break;
             case 'controller':
-                $page_meta = serialize([
+                $page_meta = json_encode([
                     'controller' => trim($_POST['controller'] ?? ''),
                     'action'     => trim($_POST['controller_action'] ?? ''),
                 ]);
