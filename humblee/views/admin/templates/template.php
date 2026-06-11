@@ -113,9 +113,18 @@ $hmac_pair = $crypto->get_hmac_pair();
                                 Update Profile
                             </a>
                             <hr class="navbar-divider">
-                            <a class="navbar-item" id="themeToggle">
-                                <span class="icon has-text-warning"><i class="fas fa-moon" aria-hidden="true"></i></span>
-                                <span id="themeLabel">Switch to Dark Mode</span>
+                            <p class="navbar-item is-size-7" style="opacity:0.55;letter-spacing:0.08em;text-transform:uppercase;pointer-events:none;">Theme</p>
+                            <a class="navbar-item theme-option<?php echo ($userTheme ?? 'light') === 'light' ? ' is-active' : '' ?>" data-theme="light">
+                                <span class="icon"><i class="fas fa-sun" aria-hidden="true"></i></span>
+                                <span>Light</span>
+                            </a>
+                            <a class="navbar-item theme-option<?php echo ($userTheme ?? 'light') === 'dark' ? ' is-active' : '' ?>" data-theme="dark">
+                                <span class="icon"><i class="fas fa-moon" aria-hidden="true"></i></span>
+                                <span>Dark</span>
+                            </a>
+                            <a class="navbar-item theme-option<?php echo ($userTheme ?? 'light') === 'tech-bro-2026' ? ' is-active' : '' ?>" data-theme="tech-bro-2026">
+                                <span class="icon"><i class="fas fa-rocket" aria-hidden="true"></i></span>
+                                <span>2026 Tech Bro</span>
                             </a>
                             <hr class="navbar-divider">
                             <a class="navbar-item" href="<?php echo  _app_path ?>user/logout">

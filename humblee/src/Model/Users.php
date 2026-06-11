@@ -313,7 +313,7 @@ class Users
 			return 'light';
 		}
 		$theme = $user->theme_preference ?? 'light';
-		return in_array($theme, ['light', 'dark', 'system'], true) ? $theme : 'light';
+		return in_array($theme, ['light', 'dark', 'tech-bro-2026'], true) ? $theme : 'light';
 	}
 
 	/**
@@ -321,7 +321,7 @@ class Users
 	 */
 	public function setThemePreference(int $user_id, string $theme): bool
 	{
-		if (!in_array($theme, ['light', 'dark', 'system'], true)) {
+		if (!in_array($theme, ['light', 'dark', 'tech-bro-2026'], true)) {
 			return false;
 		}
 		$user = \ORM::for_table(_table_users)->find_one($user_id);
