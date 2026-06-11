@@ -12,6 +12,8 @@ export interface MediaFileData {
 export interface SummernoteOverrides {
   height?: number
   onChange?: (contents: string) => void
+  // SPA context: callback-based media manager. Falls back to legacy global mediamanager().
+  openMediaManager?: () => void
 }
 
 declare global {
@@ -27,15 +29,24 @@ function makeImageSCAdrop(_context: unknown): unknown {
   }).render()
 }
 
-function launchMediaManager(_context: unknown): unknown {
-  return $.summernote.ui.button({
-    tooltip: 'Insert Image from Media Manager',
-    contents: '<i class="fa fa-camera"></i> Media Manager',
-    click: () => mediamanager(),
-  }).render()
-}
-
 export function buildSummernoteConfig(overrides: SummernoteOverrides = {}) {
+  const { openMediaManager } = overrides
+
+  // Defined inline so the click handler can close over openMediaManager.
+  // tooltip omitted — summernote-lite's TooltipUI throws when positioning custom buttons.
+  function makeMediaManagerButton(_context: unknown): unknown {
+    return $.summernote.ui.button({
+      contents: '<i class="fa fa-camera"></i> Media Manager',
+      click: () => {
+        if (openMediaManager) {
+          openMediaManager()
+        } else {
+          mediamanager()
+        }
+      },
+    }).render()
+  }
+
   return {
     toolbar: [
       ['style', ['style']],
@@ -61,7 +72,7 @@ export function buildSummernoteConfig(overrides: SummernoteOverrides = {}) {
     minHeight: 500,
     buttons: {
       scaStyle: makeImageSCAdrop,
-      imageFromMediaManager: launchMediaManager,
+      imageFromMediaManager: makeMediaManagerButton,
     },
     callbacks: {
       onInit() {
@@ -72,6 +83,8 @@ export function buildSummernoteConfig(overrides: SummernoteOverrides = {}) {
   }
 }
 
+// Used by the tools app (legacy PHP pages) where window.handleMediaManagerSelect
+// is the integration point. Not used in the SPA page-editor.
 export function registerMediaManagerHandler(): void {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const jq = (window as any).jQuery || (window as any).$

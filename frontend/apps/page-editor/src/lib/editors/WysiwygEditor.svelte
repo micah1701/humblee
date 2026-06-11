@@ -1,15 +1,30 @@
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount, onDestroy, createEventDispatcher } from 'svelte';
   import type { ContentRecord } from '../types/editor';
-  import { buildSummernoteConfig, registerMediaManagerHandler } from '@crud-shared/summernote';
+  import { buildSummernoteConfig } from '@crud-shared/summernote';
 
   export let content: ContentRecord;
+
+  const dispatch = createEventDispatcher<{ 'open-media': (url: string) => void }>();
 
   let editorEl: HTMLElement;
   let editorValue = content.content;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const jq = (window as any).jQuery || (window as any).$;
+
+  function insertImage(url: string) {
+    if (!jq || !editorEl) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    jq(editorEl).summernote('insertImage', url, ($image: any) => {
+      const img = $image[0];
+      const width = img.naturalWidth || img.offsetWidth;
+      const maxWidth = width > 0 && width < 800 ? width : 800;
+      img.style.width = '100%';
+      img.style.maxWidth = `${maxWidth}px`;
+      img.classList.add('cms-image');
+    });
+  }
 
   onMount(() => {
     if (jq && editorEl) {
@@ -19,9 +34,9 @@
           onChange: (contents: string) => {
             editorValue = contents;
           },
+          openMediaManager: () => dispatch('open-media', insertImage),
         })
       );
-      registerMediaManagerHandler();
     }
   });
 

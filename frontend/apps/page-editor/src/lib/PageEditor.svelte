@@ -380,6 +380,7 @@
     <WysiwygEditor
       bind:this={wysiwygEditorRef}
       {content}
+      on:open-media={(e) => openMediaManager(e.detail)}
     />
   {:else if contentType.inputType === 'multifield'}
     <MultifieldEditor
