@@ -1,64 +1,36 @@
 /**
- * Theme Toggle - Light/Dark Mode Support
- * Handles switching between light and dark admin themes
+ * Theme Switcher — supports light, dark, and named custom themes
  */
 
 $(document).ready(function() {
-    // Set initial label based on current theme
-    updateThemeLabel();
+    updateThemeIndicator();
 
-    // Click handler for theme toggle
-    $('#themeToggle').on('click', function(e) {
+    $(document).on('click', '.theme-option', function(e) {
         e.preventDefault();
-        toggleTheme();
+        var newTheme = $(this).data('theme');
+        if (newTheme && newTheme !== window.CURRENT_THEME) {
+            applyTheme(newTheme);
+        }
     });
 });
 
-/**
- * Toggle between light and dark themes
- */
-function toggleTheme() {
-    var currentTheme = window.CURRENT_THEME || 'light';
-    var newTheme = currentTheme === 'light' ? 'dark' : 'light';
-
-    // Update the CSS file
+function applyTheme(theme) {
     var themeLink = $('link[href*="theme-"]');
     if (themeLink.length) {
-        var oldHref = themeLink.attr('href');
-        var newHref = oldHref.replace('theme-' + currentTheme, 'theme-' + newTheme);
+        var newHref = themeLink.attr('href').replace(/theme-[^/]+\.css/, 'theme-' + theme + '.css');
         themeLink.attr('href', newHref);
     }
-
-    // Update global variable
-    window.CURRENT_THEME = newTheme;
-
-    // Update label
-    updateThemeLabel();
-
-    // Save preference to database via AJAX
-    saveThemePreference(newTheme);
+    window.CURRENT_THEME = theme;
+    updateThemeIndicator();
+    saveThemePreference(theme);
 }
 
-/**
- * Update the theme toggle label and icon
- */
-function updateThemeLabel() {
+function updateThemeIndicator() {
     var theme = window.CURRENT_THEME || 'light';
-    var label = $('#themeLabel');
-    var icon = $('#themeToggle .icon i');
-
-    if (theme === 'dark') {
-        label.text('Switch to Light Mode');
-        icon.removeClass('fa-moon').addClass('fa-sun');
-    } else {
-        label.text('Switch to Dark Mode');
-        icon.removeClass('fa-sun').addClass('fa-moon');
-    }
+    $('.theme-option').removeClass('is-active');
+    $('.theme-option[data-theme="' + theme + '"]').addClass('is-active');
 }
 
-/**
- * Save theme preference to database
- */
 function saveThemePreference(theme) {
     $.post(XHR_PATH + 'setThemePreference', {
         theme: theme,
@@ -74,4 +46,3 @@ function saveThemePreference(theme) {
         quickNotice('Error saving theme preference', 'error');
     });
 }
-
