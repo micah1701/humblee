@@ -2,6 +2,11 @@ import { defineConfig } from 'vite'
 import { resolve } from 'path'
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@crud-shared': resolve(__dirname, '../../shared'),
+    },
+  },
   build: {
     // ../../../ = up from tools/ → apps/ → frontend/ → project root
     outDir: resolve(__dirname, '../../../public/humblee/js/tools'),

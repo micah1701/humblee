@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
   import type { ContentRecord } from '../types/editor';
+  import { buildSummernoteConfig, registerMediaManagerHandler } from '@crud-shared/summernote';
 
   export let content: ContentRecord;
 
@@ -12,14 +13,15 @@
 
   onMount(() => {
     if (jq && editorEl) {
-      jq(editorEl).summernote({
-        height: 350,
-        callbacks: {
+      jq(editorEl).summernote(
+        buildSummernoteConfig({
+          height: 350,
           onChange: (contents: string) => {
             editorValue = contents;
           },
-        },
-      });
+        })
+      );
+      registerMediaManagerHandler();
     }
   });
 
