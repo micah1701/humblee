@@ -153,10 +153,10 @@ error_reporting(E_ALL);
                 $encryption_folder_generated = "Folder exists";
             }
 
-            $file_content = '<?php defined(\'include_only\') or die(\'No direct script access.\');';
-            $file_content .= "\n\n /**\n * THIS FILE WAS AUTO GENERATED AT THE TIME OF INSTALL\n *\n * DO NOT MODIFY THIS FILE!\n *\n";
-            $file_content .= " * Do not store this file in a public repo. \n * You may want to create a backup of this file and store it in a safe place.\n *\n */\n\n";
-            $file_content .= '$_encryption_key = "' . random_bytes(32) . '";';
+            $file_content = '<?php';
+            $file_content .= "\n\n/**\n * THIS FILE WAS AUTO GENERATED AT THE TIME OF INSTALL\n *\n * DO NOT MODIFY THIS FILE!\n *\n";
+            $file_content .= " * Do not store this file in a public repo.\n * Keep a secure backup — losing this file means losing access to all encrypted media.\n *\n */\n\n";
+            $file_content .= 'return hex2bin(\'' . bin2hex(random_bytes(32)) . '\');';
 
             $handle = fopen($keyfilename, 'w') or die('Could not create encrpytion file at:  ' . $keyfilename);
             if (!fwrite($handle, $file_content)) {

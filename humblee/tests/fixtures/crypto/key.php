@@ -7,4 +7,4 @@
  * The production key lives in humblee/configuration/crypto/key.php
  * and must never be committed to version control.
  */
-$_encryption_key = str_repeat("\x42", SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
+return hex2bin(str_repeat('42', SODIUM_CRYPTO_SECRETBOX_KEYBYTES));
