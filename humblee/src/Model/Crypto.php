@@ -58,11 +58,18 @@ class Crypto
 
 	private function getCryptoKey(): string
 	{
-		$_encryption_key = $_ENV['config']['crypto_key'] ?? '';
-		if ($_encryption_key === '') {
-			throw new \RuntimeException('Encryption key not found');
+		$key_path = $_ENV['config']['crypto_key'] ?? '';
+		if ($key_path === '') {
+			throw new \RuntimeException('Encryption key not configured');
 		}
-		return $_encryption_key;
+		if (!file_exists($key_path)) {
+			throw new \RuntimeException('Encryption key file not found: ' . $key_path);
+		}
+		$key = require $key_path;
+		if (!is_string($key) || strlen($key) !== SODIUM_CRYPTO_SECRETBOX_KEYBYTES) {
+			throw new \RuntimeException('Encryption key must be exactly ' . SODIUM_CRYPTO_SECRETBOX_KEYBYTES . ' bytes');
+		}
+		return $key;
 	}
 
 	/**
@@ -72,9 +79,10 @@ class Crypto
 	 */
 	public function encrypt(string $plaintext): string|false
 	{
-		$nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
-		$ciphertext = sodium_crypto_secretbox($plaintext, $nonce, $this->getCryptoKey());
-		if ($ciphertext === false) {
+		try {
+			$nonce      = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+			$ciphertext = sodium_crypto_secretbox($plaintext, $nonce, $this->getCryptoKey());
+		} catch (\SodiumException|\RuntimeException) {
 			return false;
 		}
 		return $nonce . $ciphertext;
@@ -83,11 +91,19 @@ class Crypto
 	/**
 	 * Decrypt a payload produced by encrypt().
 	 * Extracts the nonce from the first SODIUM_CRYPTO_SECRETBOX_NONCEBYTES bytes.
+	 * Returns false if the payload is corrupt, the key is wrong, or decryption fails.
 	 */
 	public function decrypt(string $payload): string|false
 	{
+		if (strlen($payload) <= SODIUM_CRYPTO_SECRETBOX_NONCEBYTES) {
+			return false;
+		}
 		$nonce      = substr($payload, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
 		$ciphertext = substr($payload, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
-		return sodium_crypto_secretbox_open($ciphertext, $nonce, $this->getCryptoKey());
+		try {
+			return sodium_crypto_secretbox_open($ciphertext, $nonce, $this->getCryptoKey());
+		} catch (\SodiumException|\RuntimeException) {
+			return false;
+		}
 	}
 }

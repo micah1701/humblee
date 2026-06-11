@@ -86,7 +86,10 @@ class Media {
             if($decrypted === false)
             {
                 header('HTTP/1.1 500 Internal Server Error');
-                exit("<h1>500 Internal Server Error</h1>Could not decrypt the requested resource");
+                $content = [];
+                $template_view = Core::view(_app_server_path.'application/views/500.php', ['content' => $content]);
+                echo Core::view(_app_server_path.'application/views/templates/template.php', ['content' => $content, 'template_view' => $template_view]);
+                exit();
             }
 
             $cacheControl = ($this->file->required_role != 0) ? 'private' : 'public';
