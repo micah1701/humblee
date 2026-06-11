@@ -58,12 +58,13 @@ class Crypto
 
 	private function getCryptoKey(): string
 	{
-		$key_path = $_ENV['config']['crypto_key'] ?? '';
-		if ($key_path === '') {
+		$relative = $_ENV['config']['crypto_key'] ?? '';
+		if ($relative === '') {
 			throw new \RuntimeException('Encryption key not configured');
 		}
+		$key_path = _app_server_path . $relative;
 		if (!file_exists($key_path)) {
-			throw new \RuntimeException('Encryption key file not found: ' . $key_path);
+			throw new \RuntimeException('Encryption key file not found');
 		}
 		$key = require $key_path;
 		if (!is_string($key) || strlen($key) !== SODIUM_CRYPTO_SECRETBOX_KEYBYTES) {
