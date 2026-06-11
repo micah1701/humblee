@@ -115,7 +115,7 @@ error_reporting(E_ALL);
                 $user_id = $usersObj->createUser($_POST['name'], $_POST['email'], $_POST['email'], $_POST['password']);
 
                 if (!$user_id || !is_numeric($user_id)) {
-                    echo $user_id;
+                    echo htmlspecialchars((string)$user_id, ENT_QUOTES, 'UTF-8');
                     exit("EROR! could not create new user");
                 }
 
@@ -169,13 +169,13 @@ error_reporting(E_ALL);
             $encryption_key_generated = "Key Exists";
         }
 
-        echo "Database: " . $database_created;
+        echo "Database: " . htmlspecialchars($database_created, ENT_QUOTES, 'UTF-8');
         echo "<br>";
-        echo "User: " . $user_created;
+        echo "User: " . htmlspecialchars($user_created, ENT_QUOTES, 'UTF-8');
         echo "<br>";
-        echo "Encryption Key Directory: " . $encryption_folder_generated;
+        echo "Encryption Key Directory: " . htmlspecialchars($encryption_folder_generated, ENT_QUOTES, 'UTF-8');
         echo "<br>";
-        echo "Encryption key: " . $encryption_key_generated;
+        echo "Encryption key: " . htmlspecialchars($encryption_key_generated, ENT_QUOTES, 'UTF-8');
         echo "<br>";
 
         if (isset($show_form) && $show_form !== false) {

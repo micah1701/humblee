@@ -150,7 +150,7 @@ if (count($revisions) > 1 && $content->revision_date != $revisions[0]->revision_
     <input type="hidden" id="content" name="content" value="" />
 
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
-    <script src="<?php echo _app_path ?>humblee/js/tools/summernote.js"></script>
+    <script type="module" src="<?php echo _app_path ?>humblee/js/tools/summernote.js"></script>
 
     <input type="hidden" name="live" id="live" value="0">
 </form>

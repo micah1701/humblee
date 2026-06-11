@@ -359,7 +359,7 @@ class Admin
         if ($this->content_type->input_type === 'wysiwyg') {
             $this->extra_head_code .= '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css">';
             $this->extra_head_code .= '<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>';
-            $this->extra_head_code .= '<script src="' . _app_path . 'humblee/js/tools/summernote.js"></script>';
+            $this->extra_head_code .= '<script type="module" src="' . _app_path . 'humblee/js/tools/summernote.js"></script>';
         }
 
         // Showdown markdown — load only for the feed widget
