@@ -496,7 +496,6 @@
     display: flex;
     flex-direction: column;
     gap: 0;
-    overflow: hidden; /* clips inner content to box border-radius */
   }
 
   .page-manager-header {
@@ -505,6 +504,7 @@
     justify-content: space-between;
     gap: 1rem;
     border-bottom: 1px solid var(--bulma-border-weak);
+    border-radius: var(--bulma-box-radius) var(--bulma-box-radius) 0 0;
   }
 
   .header-actions {
