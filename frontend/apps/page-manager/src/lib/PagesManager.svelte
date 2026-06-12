@@ -308,9 +308,9 @@
   $: hasCollapsed = flatItems.some(i => i.hasChildren && !expanded.has(i.id));
 </script>
 
-<div class="page-manager">
+<div class="page-manager box p-0">
   <!-- Header -->
-  <div class="page-manager-header">
+  <div class="page-manager-header px-5 py-4">
     <div>
       <h2 class="title is-4 mb-1">Site Pages</h2>
       <p class="subtitle is-6 has-text-grey">
@@ -332,7 +332,7 @@
 
   <!-- Tree toolbar -->
   {#if !loading && flatItems.length > 0}
-    <div class="tree-toolbar">
+    <div class="tree-toolbar px-4 py-2">
       {#if hasCollapsed}
         <button class="button is-ghost is-small has-text-grey" on:click={expandAll}>
           <span class="icon is-small"><i class="fas fa-chevron-down"></i></span>
@@ -349,7 +349,7 @@
   {/if}
 
   <!-- Tree container -->
-  <div class="page-tree-box" class:is-saving={saving}>
+  <div class="page-tree-box px-4 py-3" class:is-saving={saving}>
     {#if loading}
       <div class="tree-loading">
         <span class="icon is-large has-text-grey-light">
@@ -410,9 +410,9 @@
 
             <!-- Page name + slug -->
             <span class="page-info">
-              <span class="page-label">{item.label}</span>
+              <span class="page-label has-text-weight-medium">{item.label}</span>
               {#if item.slug}
-                <span class="page-slug">/{item.slug}</span>
+                <span class="page-slug is-size-7 has-text-grey">/{item.slug}</span>
               {/if}
             </span>
 
@@ -467,7 +467,7 @@
 
   <!-- Legend -->
   {#if !loading && flatItems.length > 0}
-    <p class="tree-hint has-text-grey-light is-size-7">
+    <p class="tree-hint has-text-grey-light is-size-7 px-4 pb-3">
       <span class="icon is-small"><i class="fas fa-grip-vertical"></i></span>
       Drag a row to reorder or reparent it.
       &ensp;
@@ -496,15 +496,15 @@
     display: flex;
     flex-direction: column;
     gap: 0;
+    overflow: hidden; /* clips inner content to box border-radius */
   }
 
   .page-manager-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    padding: 1.25rem 1.5rem 1rem;
-    border-bottom: 1px solid #e8e8e8;
     gap: 1rem;
+    border-bottom: 1px solid var(--bulma-border-weak);
   }
 
   .header-actions {
@@ -514,12 +514,10 @@
   .tree-toolbar {
     display: flex;
     gap: 0.25rem;
-    padding: 0.5rem 1rem 0.25rem;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--bulma-border-weak);
   }
 
   .page-tree-box {
-    padding: 0.75rem 1rem;
     transition: opacity 0.15s;
   }
 
@@ -539,7 +537,7 @@
     flex-direction: column;
   }
 
-  /* ── Tree row ──────────────────────────────────────────────────────── */
+  /* ── Tree row ────────────────────────────────────────────────────── */
   .tree-row {
     display: flex;
     align-items: center;
@@ -554,7 +552,7 @@
   }
 
   .tree-row:hover {
-    background: #f5f5f5;
+    background: var(--bulma-scheme-main-ter);
   }
 
   .tree-row.is-dragging {
@@ -562,14 +560,14 @@
   }
 
   .tree-row.drop-inside {
-    background: #e8f0fe;
-    outline: 2px solid #3273dc;
+    background: var(--bulma-link-light);
+    outline: 2px solid var(--bulma-link);
     outline-offset: -2px;
   }
 
-  /* ── Drag handle ───────────────────────────────────────────────────── */
+  /* ── Drag handle ─────────────────────────────────────────────────── */
   .drag-handle {
-    color: #bbb;
+    color: var(--bulma-border);
     cursor: grab;
     padding: 0 4px;
     font-size: 0.85rem;
@@ -580,7 +578,7 @@
     cursor: grabbing;
   }
 
-  /* ── Expand button ─────────────────────────────────────────────────── */
+  /* ── Expand button ───────────────────────────────────────────────── */
   .expand-btn {
     width: 20px;
     height: 20px;
@@ -591,15 +589,15 @@
     border: none;
     background: transparent;
     cursor: pointer;
-    color: #888;
+    color: var(--bulma-text-soft);
     border-radius: 3px;
     padding: 0;
     transition: background 0.1s, color 0.1s;
   }
 
   .expand-btn:hover {
-    background: #e8e8e8;
-    color: #333;
+    background: var(--bulma-scheme-main-ter);
+    color: var(--bulma-text-strong);
   }
 
   .expand-btn.is-invisible {
@@ -607,7 +605,7 @@
     pointer-events: none;
   }
 
-  /* ── Page info ─────────────────────────────────────────────────────── */
+  /* ── Page info ───────────────────────────────────────────────────── */
   .page-info {
     flex: 1;
     min-width: 0;
@@ -619,23 +617,19 @@
 
   .page-label {
     font-size: 0.9rem;
-    font-weight: 500;
-    color: #363636;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   .page-slug {
-    font-size: 0.75rem;
-    color: #999;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     flex-shrink: 1;
   }
 
-  /* ── Badges ────────────────────────────────────────────────────────── */
+  /* ── Badges ──────────────────────────────────────────────────────── */
   .page-badges {
     display: flex;
     gap: 0.25rem;
@@ -646,7 +640,7 @@
     font-size: 0.65rem;
   }
 
-  /* ── Action buttons ────────────────────────────────────────────────── */
+  /* ── Action buttons ──────────────────────────────────────────────── */
   .page-actions {
     display: flex;
     gap: 0.15rem;
@@ -673,27 +667,26 @@
   }
 
   .page-actions .delete-page-btn {
-    color: #ccc;
+    color: var(--bulma-border);
   }
 
   .page-actions .delete-page-btn:hover,
   .page-actions .delete-page-btn:focus {
-    color: #f14668;
-    background-color: #feecf0;
+    color: var(--bulma-danger);
+    background-color: var(--bulma-danger-soft);
   }
 
-  /* ── Drop indicator line ───────────────────────────────────────────── */
+  /* ── Drop indicator line ─────────────────────────────────────────── */
   .drop-line {
     height: 2px;
-    background: #3273dc;
+    background: var(--bulma-link);
     border-radius: 1px;
     margin-right: 0.5rem;
     pointer-events: none;
   }
 
-  /* ── Footer hint ───────────────────────────────────────────────────── */
+  /* ── Footer hint ─────────────────────────────────────────────────── */
   .tree-hint {
-    padding: 0.5rem 1rem 0.75rem;
     display: flex;
     align-items: center;
     gap: 0.2rem;
