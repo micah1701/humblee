@@ -43,12 +43,16 @@ $hmac_pair = $crypto->get_hmac_pair();
     <?php echo (isset($extra_head_code)) ? $extra_head_code : '' ?>
 
     <style>
+        /* keep footer at bottom when content is short */
         body {
-            min-height: 100vh;
+            min-height: calc(100vh - 3.25rem);
+            /* 3.25 accounts for bulma adding the sticky header */
+
             display: flex;
             flex-direction: column;
         }
-        body > section.section {
+
+        body>section.section {
             flex: 1;
         }
     </style>
@@ -166,10 +170,10 @@ $hmac_pair = $crypto->get_hmac_pair();
     </footer>
 
     <script>
-    window.__SESSION_MONITOR_CONFIG__ = {
-        XHR_PATH: "<?php echo _app_path ?>core-request/",
-        checkIntervalMs: 60000
-    };
+        window.__SESSION_MONITOR_CONFIG__ = {
+            XHR_PATH: "<?php echo _app_path ?>core-request/",
+            checkIntervalMs: 60000
+        };
     </script>
     <div id="session-monitor-app"></div>
     <script type="module" src="<?php echo _app_path ?>humblee/js/admin/session-monitor/index.js"></script>
