@@ -100,15 +100,15 @@
 
 <style>
   :global(.cms_block:hover) {
-    outline: 1px dotted #55acee;
+    outline: 1px dotted var(--bulma-link);
   }
 
   .launch-editor {
     position: fixed;
-    background-color: #fff;
-    border: 1px solid #00d1b2;
+    background-color: var(--bulma-scheme-main);
+    border: 1px solid var(--bulma-primary);
     border-radius: 5px;
-    color: #00d1b2;
+    color: var(--bulma-primary);
     padding: 8px 10px;
     font-size: 0.875rem;
     font-family: sans-serif;
@@ -120,8 +120,8 @@
   }
 
   .launch-editor:hover {
-    background-color: #00d1b2;
-    color: #fff;
+    background-color: var(--bulma-primary);
+    color: var(--bulma-scheme-main);
   }
 
   :global(#humbleeEditor .modal-card) {

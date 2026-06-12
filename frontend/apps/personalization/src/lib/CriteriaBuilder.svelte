@@ -200,11 +200,11 @@
 
 <style>
   .or-block {
-    border: 1px solid #dbdbdb;
+    border: 1px solid var(--bulma-border-weak);
     border-radius: 6px;
     padding: 0.75rem;
     margin-bottom: 0.5rem;
-    background: #fafafa;
+    background: var(--bulma-scheme-main-ter);
   }
 
   .or-block-header {
@@ -214,7 +214,7 @@
   .or-separator {
     text-align: center;
     font-weight: 600;
-    color: #888;
+    color: var(--bulma-text-soft);
     margin: 0.5rem 0;
     font-size: 0.85rem;
     letter-spacing: 0.05em;
@@ -224,7 +224,7 @@
     text-align: center;
     font-size: 0.75rem;
     font-weight: 600;
-    color: #aaa;
+    color: var(--bulma-text-soft);
     letter-spacing: 0.05em;
     margin: 0.25rem 0;
   }
@@ -244,6 +244,6 @@
 
   .delete-and:hover {
     opacity: 1;
-    color: #f14668 !important;
+    color: var(--bulma-danger) !important;
   }
 </style>

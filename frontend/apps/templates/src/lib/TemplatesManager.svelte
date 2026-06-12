@@ -450,14 +450,14 @@
 
 <style>
   .slot-list {
-    border: 1px solid #dbdbdb;
+    border: 1px solid var(--bulma-border-weak);
     border-radius: 4px;
     padding: 0.5rem;
-    background: #fafafa;
+    background: var(--bulma-scheme-main-ter);
   }
 
   .slot-row {
-    background: #fff;
+    background: var(--bulma-scheme-main);
   }
 
   .sort-buttons {

@@ -393,10 +393,9 @@
       <label class="label" for="feed_content">Content</label>
       <div class="control">
         <textarea
-          class="textarea"
+          class="textarea feed-textarea"
           id="feed_content"
           bind:value={body}
-          style="height: 250px;"
         ></textarea>
       </div>
       <p class="help">
@@ -409,7 +408,6 @@
     <div class="box mb-3">
       <button
         class="button is-ghost is-fullwidth has-text-left is-size-5 collapse-trigger mb-0"
-        style="padding-left: 0; justify-content: flex-start;"
         on:click={() => imageExpanded = !imageExpanded}
       >
         <span class="icon is-small mr-1"><i class="fas fa-image"></i></span>
@@ -466,7 +464,6 @@
     <div class="box">
       <button
         class="button is-ghost is-fullwidth has-text-left is-size-5 collapse-trigger mb-0"
-        style="padding-left: 0; justify-content: flex-start;"
         on:click={() => linkExpanded = !linkExpanded}
       >
         <span class="icon is-small mr-1"><i class="fas fa-link"></i></span>
@@ -514,12 +511,11 @@
       <div class="column">
         <div class="field">
           <label class="label" for="feed_template">Template</label>
-          <div class="select" style="width: 100%;">
+          <div class="select is-fullwidth">
             <select
               id="feed_template"
               bind:value={template}
               on:change={onTemplateChange}
-              style="width: 100%;"
             >
               <option value="default">Default</option>
               <option value="profile">Profile</option>
@@ -561,12 +557,12 @@
         <div class="card feed-preview-card">
           <div class="card-content">
             {#if headline}<h2>{headline}</h2>{/if}
-            {#if dateline}<p style="font-weight: bold;">{dateline}</p>{/if}
+            {#if dateline}<p class="has-text-weight-bold">{dateline}</p>{/if}
             {#if body}{@html renderedBody}{/if}
             {#if linkUrl}
               <a href={linkUrl} target={linkTarget}>{linkLabel || linkUrl}</a>
             {/if}
-            {#if imageSrc}<img src={imageSrc} alt={imageAlt} style="max-width: 100%;">{/if}
+            {#if imageSrc}<img src={imageSrc} alt={imageAlt} class="is-fullwidth">{/if}
           </div>
         </div>
       {/if}
@@ -591,16 +587,16 @@
       {#if activeTemplate === 'cta'}
         <p class="help">CTA Template — Bold header, link becomes a button. Dateline and image optional.</p>
         <div class="card feed-preview-card">
-          <div class="card-header" style="background: #1a3a5c;">
-            <h2 class="card-header-title" style="color: #fff;">{headline}</h2>
+          <div class="card-header cta-card-header">
+            <h2 class="card-header-title has-text-white">{headline}</h2>
           </div>
           <div class="card-content">
-            {#if dateline}<p style="font-weight: bold;">{dateline}</p>{/if}
+            {#if dateline}<p class="has-text-weight-bold">{dateline}</p>{/if}
             {#if body}{@html renderedBody}{/if}
             {#if linkUrl}
               <a class="button is-primary" href={linkUrl} target={linkTarget}>{linkLabel || linkUrl}</a>
             {/if}
-            {#if imageSrc}<img src={imageSrc} alt={imageAlt} style="max-width: 100%;">{/if}
+            {#if imageSrc}<img src={imageSrc} alt={imageAlt} class="is-fullwidth">{/if}
           </div>
         </div>
       {/if}
@@ -609,12 +605,12 @@
       {#if activeTemplate === 'highlight'}
         <p class="help">Quick Highlight — Eye-catching header, no dateline or link. Image optional.</p>
         <div class="card feed-preview-card">
-          <div class="card-header" style="background: #c0392b;">
-            <h2 class="card-header-title" style="color: #fff;">{headline}</h2>
+          <div class="card-header highlight-card-header">
+            <h2 class="card-header-title has-text-white">{headline}</h2>
           </div>
           <div class="card-content">
             {#if body}{@html renderedBody}{/if}
-            {#if imageSrc}<img src={imageSrc} alt={imageAlt} style="max-width: 100%;">{/if}
+            {#if imageSrc}<img src={imageSrc} alt={imageAlt} class="is-fullwidth">{/if}
           </div>
         </div>
       {/if}
@@ -626,16 +622,16 @@
 {#if mediaManagerOpen}
   <div class="modal is-active">
     <div class="modal-background" on:click={closeMediaManager} role="none"></div>
-    <div class="modal-card" style="width: 90%; max-width: 1200px;">
+    <div class="modal-card preview-modal-card">
       <header class="modal-card-head">
         <p class="modal-card-title">Media Manager</p>
         <button class="delete" aria-label="close" on:click={closeMediaManager}></button>
       </header>
-      <section class="modal-card-body" style="padding: 0; min-height: 500px;">
+      <section class="modal-card-body preview-modal-body">
         <iframe
           src="{appPath}admin/media?iframe=true"
           title="Media Manager"
-          style="width: 100%; height: 600px; border: none;"
+          class="preview-iframe"
         ></iframe>
       </section>
     </div>
@@ -645,11 +641,44 @@
 {/if}
 
 <style>
+  .feed-textarea {
+    height: 250px;
+  }
+
   .collapse-trigger {
     cursor: pointer;
     user-select: none;
+    padding-left: 0;
+    justify-content: flex-start;
   }
+
   .collapse-trigger:hover {
-    color: #3273dc;
+    color: var(--bulma-link);
+  }
+
+  /* intentional: simulates preview appearance for content-designer-controlled card templates */
+  .cta-card-header {
+    background: #1a3a5c;
+  }
+
+  .highlight-card-header {
+    background: #c0392b;
+  }
+
+  .preview-modal-card {
+    width: 90%;
+    max-width: 1200px;
+  }
+
+  .preview-modal-body {
+    padding: 0;
+    min-height: 500px;
+  }
+
+  .preview-iframe {
+    display: block;
+    width: 100%;
+    height: 600px;
+    border: none;
   }
 </style>

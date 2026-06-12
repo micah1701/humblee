@@ -143,8 +143,8 @@
   }
 
   .priority-item.is-dragover {
-    background-color: #ebf5fb;
-    border-top: 2px solid #3273dc;
+    background-color: var(--bulma-link-light);
+    border-top: 2px solid var(--bulma-link);
   }
 
   .drag-handle {
@@ -157,8 +157,8 @@
   }
 
   .default-row {
-    background: #f5f5f5;
-    color: #888;
+    background: var(--bulma-scheme-main-ter);
+    color: var(--bulma-text-soft);
     font-style: italic;
   }
 </style>
