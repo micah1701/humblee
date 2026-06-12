@@ -17,5 +17,8 @@
   --bulma-text-weak-l: 70%;
   --bulma-text-strong-l: 100%;
 
+}
+
+.footer {
   --bulma-footer-padding: 2rem 1.5rem 1.5rem 1.5rem;
 }

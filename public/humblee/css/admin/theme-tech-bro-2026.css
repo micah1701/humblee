@@ -34,7 +34,6 @@
   --bulma-info-s: 85%;
   --bulma-info-l: 62%;
 
-  --bulma-footer-padding: 2rem 1rem 1rem 1rem;
 }
 
 /* ── Aurora gradient body ─────────────────────────────────────── */
@@ -231,6 +230,7 @@ body {
 
 /* ── Footer ───────────────────────────────────────────────────── */
 .footer {
+  --bulma-footer-padding: 2rem 1rem 1rem 1rem;
   background: none !important;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
