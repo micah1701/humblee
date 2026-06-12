@@ -33,6 +33,8 @@
   --bulma-info-h: 210;
   --bulma-info-s: 85%;
   --bulma-info-l: 62%;
+
+  --bulma-footer-padding: 2rem 1rem 1rem 1rem;
 }
 
 /* ── Aurora gradient body ─────────────────────────────────────── */
