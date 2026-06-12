@@ -42,6 +42,17 @@ $hmac_pair = $crypto->get_hmac_pair();
     <script src="<?php echo  _app_path ?>humblee/js/admin/theme-toggle.js"></script>
     <?php echo (isset($extra_head_code)) ? $extra_head_code : '' ?>
 
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        body > section.section {
+            flex: 1;
+        }
+    </style>
+
 </head>
 
 <body>
