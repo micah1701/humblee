@@ -148,7 +148,7 @@
   }
 
   .tree-row:hover {
-    background: #f5f5f5;
+    background: var(--bulma-scheme-main-ter);
   }
 
   .expand-btn {
@@ -161,15 +161,15 @@
     border: none;
     background: transparent;
     cursor: pointer;
-    color: #888;
+    color: var(--bulma-text-soft);
     border-radius: 3px;
     padding: 0;
     transition: background 0.1s, color 0.1s;
   }
 
   .expand-btn:hover {
-    background: #e8e8e8;
-    color: #333;
+    background: var(--bulma-scheme-main-ter);
+    color: var(--bulma-text-strong);
   }
 
   .expand-btn.is-invisible {
@@ -188,7 +188,7 @@
     text-align: left;
     font-size: 0.9rem;
     font-weight: 500;
-    color: #363636;
+    color: var(--bulma-text-strong);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -196,7 +196,7 @@
   }
 
   .page-label-btn:hover {
-    background-color: #00d1b2;
-    color: #fff;
+    background-color: var(--bulma-primary);
+    color: var(--bulma-scheme-main);
   }
 </style>

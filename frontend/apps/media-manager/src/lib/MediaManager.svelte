@@ -892,12 +892,12 @@
   }
 
   :global(ul.menu-list) button:hover {
-    background-color: whitesmoke;
+    background-color: var(--bulma-scheme-main-ter);
   }
 
   :global(ul.menu-list) button.is-active {
-    background-color: hsl(229, 53%, 53%);
-    color: white;
+    background-color: var(--bulma-link);
+    color: var(--bulma-scheme-main);
   }
 
   :global(ul.menu-list) button.menu-has-children:after {
@@ -964,14 +964,14 @@
   .dropZone {
     text-align: center;
     padding: 50px 0;
-    border: 2px #333 dashed;
+    border: 2px var(--bulma-text-strong) dashed;
     border-radius: 20px;
   }
 
   .dropZone.is-dragover {
-    background-color: #f3f3f3 !important;
-    border: 2px #23d160 dashed;
-    color: #336699;
+    background-color: var(--bulma-scheme-main-ter) !important;
+    border: 2px var(--bulma-success) dashed;
+    color: var(--bulma-link);
   }
 
   .dropZone.is-uploading {
