@@ -9,6 +9,7 @@ require_once _app_server_path.'humblee/configuration/config.php';
 require_once _app_server_path.'humblee/vendor/autoload.php';
 
 use Humblee\Foundation\Core;
+use Humblee\Middleware\Kernel;
 
 // Set default timezone
 date_default_timezone_set($_ENV['config']['timezone']);
@@ -26,90 +27,4 @@ if ($_rdbms === 'pgsql') {
 ORM::configure('username', $_ENV['config']['db_username']);
 ORM::configure('password', $_ENV['config']['db_password']);
 
-// Restore session from remember-me cookie when no active login
-if (!isset($_SESSION[session_key]['user_id'])) {
-    $remembered_uid = Core::checkRememberToken();
-    if ($remembered_uid !== false) {
-        $remembered_users = new \Humblee\Model\Users();
-        $remembered_users->logInSession($remembered_uid);
-        Core::setRememberToken($remembered_uid); // slide the expiry window forward
-    }
-    unset($remembered_uid, $remembered_users);
-}
-
-/**
- * Route to a specified controller based on URI.
- * If the URI matches a pre-defined route, use its corresponding controller;
- * otherwise fall through to the Template controller which resolves pages from the DB.
- */
-
-$_uri_parts = Core::getURIparts();
-$_called_controller = (count($_uri_parts) > 0) ? strtolower($_uri_parts[0]) : '';
-
-switch ($_called_controller)
-{
-    case "request": // Application-level AJAX requests — second URI segment is the action method
-        $controller = new \App\Controller\Request;
-
-        if (isset($_uri_parts[1]) && $_uri_parts[1] != "")
-        {
-            $function_name = $_uri_parts[1];
-            $controller->$function_name();
-        }
-        else
-        {
-            $controller->index();
-        }
-    break;
-
-    case "admin": // Admin panel controller
-        $controller = new \Humblee\Controller\Admin;
-
-        if (isset($_uri_parts[1]) && $_uri_parts[1] != "")
-        {
-            $function_name = $_uri_parts[1];
-            $controller->$function_name();
-        }
-        else
-        {
-            $controller->index();
-        }
-    break;
-
-    case "core-request": // Core CMS AJAX requests — second URI segment is the action method
-        $controller = new \Humblee\Controller\Request;
-
-        if (isset($_uri_parts[1]) && $_uri_parts[1] != "")
-        {
-            $function_name = $_uri_parts[1];
-            $controller->$function_name();
-        }
-        else
-        {
-            $controller->index();
-        }
-    break;
-
-    case "user": // User auth actions: login, register, profile, password reset
-        $controller = new \Humblee\Controller\User;
-
-        if (isset($_uri_parts[1]) && $_uri_parts[1] != "")
-        {
-            $function_name = $_uri_parts[1];
-            $controller->$function_name();
-        }
-        else
-        {
-            $controller->index();
-        }
-    break;
-
-    case "media": // Serve files from /storage with auth and encryption support
-        $controller = new \Humblee\Controller\Media;
-        $controller->index();
-    break;
-
-    default: // All standard site pages — resolves URL to a page record in the DB
-        $controller = new \Humblee\Controller\Template;
-        $controller->index();
-}
+Kernel::boot();
