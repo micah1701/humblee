@@ -144,6 +144,39 @@ class Core
 	}
 
 	/**
+	 * Send a JSON response with the specified status code
+	 */
+	public static function json(array|string $package, int $status = 200): void
+	{
+		// convert to array if not already an array
+		if (!is_array($package)) {
+			$package = [$package];
+		}
+
+		$asJSON = json_encode($package);
+		$errorCode = json_last_error();
+
+		if ($errorCode !== JSON_ERROR_NONE) {
+			$package = [
+				"Error" => "Could not generate a valid JSON response",
+				"message" => $errorCode . ": " . json_last_error_msg()
+			];
+		}
+
+		ob_start();
+		http_response_code($status);
+		header('Content-Type: application/json');
+		header("Expires: Sat, 07 Apr 1979 05:00:00 GMT");
+		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+		header("Cache-Control: no-store, no-cache, must-revalidate");
+		header("Cache-Control: post-check=0, pre-check=0", false);
+		header("Pragma: no-cache");
+		echo $asJSON;
+		ob_end_flush();
+		exit();
+	}
+
+	/**
 	 * Forward to another page using a redirect header
 	 *
 	 * $uri    path to forward to
