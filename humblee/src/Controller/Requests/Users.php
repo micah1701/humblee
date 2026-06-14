@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Humblee\Controller\Requests;
 
 use Humblee\Controller\Request;
+use Humblee\Foundation\Core;
 use Humblee\Model\Users as UsersModel;
 
 final class Users
@@ -16,11 +17,11 @@ final class Users
     {
         $ctrl->require_role('users');
 
-        $search    = isset($_GET['search'])    ? trim($_GET['search'])                        : '';
-        $roleId    = isset($_GET['role_id'])   && is_numeric($_GET['role_id'])  ? (int) $_GET['role_id']               : 0;
-        $offset    = isset($_GET['offset'])    && is_numeric($_GET['offset'])   ? max(0, (int) $_GET['offset'])         : 0;
-        $limit     = isset($_GET['limit'])     && is_numeric($_GET['limit'])    ? min(100, max(1, (int) $_GET['limit'])) : 50;
-        $sort      = isset($_GET['sort'])      && in_array($_GET['sort'], self::VALID_SORT_COLUMNS, true) ? $_GET['sort'] : 'name';
+        $search    = isset($_GET['search']) ? trim($_GET['search']) : '';
+        $roleId    = isset($_GET['role_id']) && is_numeric($_GET['role_id'])  ? (int) $_GET['role_id'] : 0;
+        $offset    = isset($_GET['offset']) && is_numeric($_GET['offset'])   ? max(0, (int) $_GET['offset']) : 0;
+        $limit     = isset($_GET['limit']) && is_numeric($_GET['limit'])    ? min(100, max(1, (int) $_GET['limit'])) : 50;
+        $sort      = isset($_GET['sort']) && in_array($_GET['sort'], self::VALID_SORT_COLUMNS, true) ? $_GET['sort'] : 'name';
         $direction = isset($_GET['direction']) && $_GET['direction'] === 'desc' ? 'desc' : 'asc';
 
         $baseQuery = \ORM::for_table(_table_users)
@@ -80,7 +81,7 @@ final class Users
             ];
         }
 
-        $ctrl->json([
+        Core::json([
             'users'  => $users,
             'total'  => $total,
             'offset' => $offset,
@@ -93,13 +94,13 @@ final class Users
         $ctrl->require_role('users');
 
         if (!isset($_POST['userID']) || !is_numeric($_POST['userID'])) {
-            $ctrl->json(["success" => false, "error" => "invalid or missing user ID"]);
+            Core::json(["success" => false, "error" => "invalid or missing user ID"]);
         }
         $userObj = new UsersModel;
         if ($userObj->deleteUser($_POST['userID'])) {
-            $ctrl->json(["success" => true]);
+            Core::json(["success" => true]);
         } else {
-            $ctrl->json(["success" => false, "error" => "Could not delete the user"]);
+            Core::json(["success" => false, "error" => "Could not delete the user"]);
         }
     }
 
@@ -107,7 +108,7 @@ final class Users
     {
         $ctrl->require_role('users');
         if (!isset($_POST['userID']) || !is_numeric($_POST['userID'])) {
-            $ctrl->json(["success" => false, "error" => "invalid or missing user ID"]);
+            Core::json(["success" => false, "error" => "invalid or missing user ID"]);
         }
         $userObj = new UsersModel;
         $userObj->stripRoles((int) $_POST['userID']);
@@ -119,6 +120,6 @@ final class Users
             }
             $userObj->addRole((int) $_POST['userID'], (int) $role);
         }
-        $ctrl->json(["success" => true]);
+        Core::json(["success" => true]);
     }
 }

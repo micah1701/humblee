@@ -28,7 +28,7 @@ final class Pages
                 'requiredRole'     => (int)$page->required_role,
             ];
         }
-        $ctrl->json($result);
+        Core::json($result);
     }
 
     public static function loadContentMenu(Request $ctrl): void
@@ -57,12 +57,12 @@ final class Pages
     {
         $ctrl->require_role('pages');
         if (!isset($_POST['page_id']) || !is_numeric($_POST['page_id'])) {
-            $ctrl->json(['error' => 'Invalid or missing page ID']);
+            Core::json(['error' => 'Invalid or missing page ID']);
         }
 
         $page = \ORM::for_table(_table_pages)->find_one($_POST['page_id']);
         if (!$page) {
-            $ctrl->json(['error' => 'Page data not found']);
+            Core::json(['error' => 'Page data not found']);
         }
 
         $active = ($page->active == 0) ? false : true;
@@ -83,7 +83,7 @@ final class Pages
             "searchable" => $searchable
         ];
 
-        $ctrl->json($array);
+        Core::json($array);
     }
 
     public static function setProperties(Request $ctrl): void
@@ -92,10 +92,10 @@ final class Pages
         $pages = new PagesModel;
         $page = $pages->add_or_update("update", $_POST);
         if (is_numeric($page)) {
-            $ctrl->json(['success' => true, 'page_id' => $page]);
+            Core::json(['success' => true, 'page_id' => $page]);
         }
 
-        $ctrl->json(['error' => $page]);
+        Core::json(['error' => $page]);
     }
 
     public static function add(Request $ctrl): void
@@ -104,10 +104,10 @@ final class Pages
         $pages = new PagesModel;
         $newPage = $pages->add_or_update("add", $_POST);
         if (is_numeric($newPage)) {
-            $ctrl->json(['success' => true, 'page_id' => $newPage]);
+            Core::json(['success' => true, 'page_id' => $newPage]);
         }
 
-        $ctrl->json(['error' => $newPage]);
+        Core::json(['error' => $newPage]);
     }
 
     public static function delete(Request $ctrl): void
@@ -120,10 +120,10 @@ final class Pages
             foreach ($contents as $content) {
                 $content->delete();
             }
-            $ctrl->json(['success' => true]);
+            Core::json(['success' => true]);
         }
 
-        $ctrl->json(['error' => $deletePage]);
+        Core::json(['error' => $deletePage]);
     }
 
     public static function contentList(Request $ctrl): void
@@ -140,19 +140,19 @@ final class Pages
                 'active'       => (bool)$page->active,
             ];
         }
-        $ctrl->json($result);
+        Core::json($result);
     }
 
     public static function order(Request $ctrl): void
     {
         $ctrl->require_role('pages');
         if (!isset($_POST['list_order']) || $_POST['list_order'] === '') {
-            $ctrl->json(['error' => 'Missing list order data']);
+            Core::json(['error' => 'Missing list order data']);
         }
 
         $entries = json_decode($_POST['list_order'], true);
         if (!is_array($entries)) {
-            $ctrl->json(['error' => 'Invalid list order data']);
+            Core::json(['error' => 'Invalid list order data']);
         }
 
         foreach ($entries as $entry) {
@@ -168,6 +168,6 @@ final class Pages
             $page->save();
         }
 
-        $ctrl->json(['success' => true]);
+        Core::json(['success' => true]);
     }
 }

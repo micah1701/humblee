@@ -34,7 +34,7 @@ class Request extends Xhr
 			'list'   => Blocks::list($this),
 			'save'   => Blocks::save($this),
 			'delete' => Blocks::delete($this),
-			default  => $this->json(['error' => 'Not found'], 404),
+			default  => Core::json(['error' => 'Not found'], 404),
 		};
 	}
 
@@ -45,7 +45,7 @@ class Request extends Xhr
 			'list'   => Templates::list($this),
 			'save'   => Templates::save($this),
 			'delete' => Templates::delete($this),
-			default  => $this->json(['error' => 'Not found'], 404),
+			default  => Core::json(['error' => 'Not found'], 404),
 		};
 	}
 
@@ -63,7 +63,7 @@ class Request extends Xhr
 			'delete-folder'  => MediaFiles::deleteFolder($this),
 			'upload'         => MediaFiles::upload($this),
 			'migrate-nonces' => MediaFiles::migrateNonces($this),
-			default          => $this->json(['error' => 'Not found'], 404),
+			default          => Core::json(['error' => 'Not found'], 404),
 		};
 	}
 
@@ -74,7 +74,7 @@ class Request extends Xhr
 			'list'      => UsersGroup::list($this),
 			'remove'    => UsersGroup::remove($this),
 			'set-roles' => UsersGroup::setRoles($this),
-			default     => $this->json(['error' => 'Not found'], 404),
+			default     => Core::json(['error' => 'Not found'], 404),
 		};
 	}
 
@@ -91,7 +91,7 @@ class Request extends Xhr
 			'add'               => Pages::add($this),
 			'delete'            => Pages::delete($this),
 			'order'             => Pages::order($this),
-			default             => $this->json(['error' => 'Not found'], 404),
+			default             => Core::json(['error' => 'Not found'], 404),
 		};
 	}
 
@@ -102,7 +102,7 @@ class Request extends Xhr
 			'latest-revision-date'   => Content::latestRevisionDate($this),
 			'p13n-order-priorities'  => Content::p13nOrderPriorities($this),
 			'page-map'               => Content::pageMap($this),
-			default                  => $this->json(['error' => 'Not found'], 404),
+			default                  => Core::json(['error' => 'Not found'], 404),
 		};
 	}
 
@@ -113,7 +113,7 @@ class Request extends Xhr
 			'list'   => Personalization::list($this),
 			'save'   => Personalization::save($this),
 			'delete' => Personalization::delete($this),
-			default  => $this->json(['error' => 'Not found'], 404),
+			default  => Core::json(['error' => 'Not found'], 404),
 		};
 	}
 
@@ -127,13 +127,13 @@ class Request extends Xhr
 	public function verify_sms_send(): void
 	{
 		if (!$_ENV['config']['TWILIO_Enabled']) {
-			$this->json(["error" => "Site not configured to use SMS"]);
+			Core::json(["error" => "Site not configured to use SMS"]);
 		}
 
 		$this->require_role('login');
 
 		if (!isset($_POST['cellphone']) || !is_numeric($_POST['cellphone']) || strlen($_POST['cellphone']) != 10) {
-			$this->json(["error" => "Invalid or missing 10 digit cellphone number"]);
+			Core::json(["error" => "Invalid or missing 10 digit cellphone number"]);
 		}
 		$userID = $_SESSION[session_key]['user_id'];
 
@@ -181,10 +181,10 @@ class Request extends Xhr
 	public function sms_login_code(): void
 	{
 		if (!$_ENV['config']['TWILIO_Enabled']) {
-			$this->json(["error" => "Site not configured to use SMS"]);
+			Core::json(["error" => "Site not configured to use SMS"]);
 		}
 		if (!isset($_SESSION[session_key]['sms_login_email']) || $_SESSION[session_key]['sms_login_email'] == "") {
-			$this->json(["error" => "Invalid Request"]);
+			Core::json(["error" => "Invalid Request"]);
 		}
 
 		$username_column = (filter_var($_SESSION[session_key]['sms_login_email'], FILTER_VALIDATE_EMAIL)) ? 'email' : 'username';
@@ -241,94 +241,94 @@ class Request extends Xhr
 	public function sms_login(): void
 	{
 		if (!$_ENV['config']['TWILIO_Enabled']) {
-			$this->json(["error" => "Site not configured to use SMS"]);
+			Core::json(["error" => "Site not configured to use SMS"]);
 		}
 		if (!isset($_SESSION[session_key]['sms_login_email']) || $_SESSION[session_key]['sms_login_email'] == "") {
-			$this->json(["error" => "You are not authorized to make this request."]);
+			Core::json(["error" => "You are not authorized to make this request."]);
 		}
 
 		$this->require_hmac();
 
 		if (!isset($_POST['sms_token']) || strlen($_POST['sms_token']) != 5) {
-			$this->json(["error" => "Missing or malformed verification token"]);
+			Core::json(["error" => "Missing or malformed verification token"]);
 		}
 
 		$users = new Users;
 		$login = $users->logIn($_SESSION[session_key]['sms_login_email'], $_POST['sms_token'], true);
 		if ($login['access_granted'] === true) {
-			$this->json(["success" => true]);
+			Core::json(["success" => true]);
 		} else {
-			$this->json(["error" => $login['error']]);
+			Core::json(["error" => $login['error']]);
 		}
 	}
 
 	public function recoveryRequestVerification(): void
 	{
 		if (isset($_SESSION[session_key]['recovery']['message_sent']) && $_SESSION[session_key]['recovery']['message_sent']) {
-			$this->json(["success" => false, "error" => "Access Code Already Sent"]);
+			Core::json(["success" => false, "error" => "Access Code Already Sent"]);
 		}
 		if (!isset($_SESSION[session_key]['recovery']['user_id']) || !isset($_SESSION[session_key]['recovery']['token'])) {
-			$this->json(["success" => false, "error" => "You session has expired. Please restart the password recovery process"]);
+			Core::json(["success" => false, "error" => "You session has expired. Please restart the password recovery process"]);
 		}
 		$user = \ORM::for_table(_table_users)->find_one($_SESSION[session_key]['recovery']['user_id']);
 		if (!$user) {
-			$this->json(["success" => false, "error" => "User account not found"]);
+			Core::json(["success" => false, "error" => "User account not found"]);
 		}
 		if (isset($_POST['method']) && $_POST['method'] == "sms") {
 			if (!$_ENV['config']['TWILIO_Enabled']) {
-				$this->json(["error" => "Site not configured to use SMS"]);
+				Core::json(["error" => "Site not configured to use SMS"]);
 			}
 			$tools = new Tools;
 			$txtmsg = $_ENV['config']['domain'] . " access code: " . $_SESSION[session_key]['recovery']['token'];
 			$sms_status = $tools->sendSMS($user->cellphone, $txtmsg);
 			$_SESSION[session_key]['recovery']['message_sent'] = true;
 			$_SESSION[session_key]['recovery']['method'] = "sms";
-			$this->json($sms_status);
+			Core::json($sms_status);
 		} elseif (isset($_POST['method']) && $_POST['method'] == "email") {
 			$userObj = new Users;
 			if ($userObj->forgotPasswordVerifyEmail($user->email, $user->name, $_SESSION[session_key]['recovery']['token'])) {
 				$_SESSION[session_key]['recovery']['message_sent'] = true;
 				$_SESSION[session_key]['recovery']['method'] = "email";
-				$this->json(["success" => true]);
+				Core::json(["success" => true]);
 			} else {
-				$this->json(["success" => false, "error" => "There was a system problem generating your recovery e-mail"]);
+				Core::json(["success" => false, "error" => "There was a system problem generating your recovery e-mail"]);
 			}
 		} else {
-			$this->json(["success" => false, "error" => "Invalid Request"]);
+			Core::json(["success" => false, "error" => "Invalid Request"]);
 		}
 	}
 
 	public function recoverySubmitVerification(): void
 	{
 		if (!isset($_SESSION[session_key]['recovery']['message_sent']) || !$_SESSION[session_key]['recovery']['message_sent']) {
-			$this->json(["success" => false, "error" => "Your session has expired. Please restart the password recovery process."]);
+			Core::json(["success" => false, "error" => "Your session has expired. Please restart the password recovery process."]);
 		}
 		if (!isset($_SESSION[session_key]['recovery']['user_id']) || !isset($_SESSION[session_key]['recovery']['token'])) {
-			$this->json(["success" => false, "error" => "You session has expired. Please restart the password recovery process."]);
+			Core::json(["success" => false, "error" => "You session has expired. Please restart the password recovery process."]);
 		}
 		if (!isset($_POST['accessCode']) || $_POST['accessCode'] == "") {
-			$this->json(["success" => false, "error" => "Missing Access Code"]);
+			Core::json(["success" => false, "error" => "Missing Access Code"]);
 		}
 
 		if (trim(strtolower($_POST['accessCode'])) != strtolower($_SESSION[session_key]['recovery']['token'])) {
-			$this->json(["success" => false, "error" => "Invalid Access code"]);
+			Core::json(["success" => false, "error" => "Invalid Access code"]);
 		} else {
 			$_SESSION[session_key]['recovery']['verified'] = true;
-			$this->json(["success" => true]);
+			Core::json(["success" => true]);
 		}
 	}
 
 	public function recoveryCancel(): void
 	{
 		unset($_SESSION[session_key]['recovery']);
-		$this->json(["success" => true]);
+		Core::json(["success" => true]);
 	}
 
 	public function toolbarLoader(): void
 	{
 		$this->require_role('admin');
 		$user = \ORM::for_table(_table_users)->select('name')->find_one($_SESSION[session_key]['user_id']);
-		$this->json([
+		Core::json([
 			"_app_path" => _app_path,
 			"js_load" => _app_path . "humblee/js/admin/toolbar.js?time=" . time(),
 			"name" => $user->name
@@ -350,7 +350,7 @@ class Request extends Xhr
 			$response['hmacKey']   = $pair['hmac'];
 			$response['hmacToken'] = $pair['message'];
 		}
-		$this->json($response);
+		Core::json($response);
 	}
 
 	/**
@@ -362,7 +362,7 @@ class Request extends Xhr
 		$this->require_hmac();
 
 		if (!isset($_POST['username']) || !isset($_POST['password'])) {
-			$this->json(['success' => false, 'message' => 'Missing credentials'], 400);
+			Core::json(['success' => false, 'message' => 'Missing credentials'], 400);
 		}
 
 		$users = new Users();
@@ -370,16 +370,16 @@ class Request extends Xhr
 
 		if ($login['access_granted'] !== true) {
 			if (($login['error'] ?? '') === 'use_twofactor_auth') {
-				$this->json(['success' => false, 'message' => 'Two-factor authentication is required. Please use the login page.']);
+				Core::json(['success' => false, 'message' => 'Two-factor authentication is required. Please use the login page.']);
 			}
-			$this->json(['success' => false, 'message' => $login['error'] ?? 'Login failed']);
+			Core::json(['success' => false, 'message' => $login['error'] ?? 'Login failed']);
 		}
 
 		if (!empty($_POST['remember'])) {
 			Core::setRememberToken((int) $_SESSION[session_key]['user_id']);
 		}
 
-		$this->json(['success' => true]);
+		Core::json(['success' => true]);
 	}
 
 	/**
@@ -391,7 +391,7 @@ class Request extends Xhr
 		$this->require_hmac();
 
 		if (!isset($_POST['theme']) || !is_string($_POST['theme'])) {
-			$this->json(["error" => "Missing or invalid theme parameter"]);
+			Core::json(["error" => "Missing or invalid theme parameter"]);
 		}
 
 		$users = new Users();
@@ -399,9 +399,9 @@ class Request extends Xhr
 		$theme = $_POST['theme'];
 
 		if ($users->setThemePreference($user_id, $theme)) {
-			$this->json(["success" => true, "theme" => $theme]);
+			Core::json(["success" => true, "theme" => $theme]);
 		} else {
-			$this->json(["error" => "Failed to update theme preference"], 400);
+			Core::json(["error" => "Failed to update theme preference"], 400);
 		}
 	}
 }

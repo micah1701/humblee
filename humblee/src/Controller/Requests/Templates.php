@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Humblee\Controller\Requests;
 
 use Humblee\Controller\Request;
+use Humblee\Foundation\Core;
 
 final class Templates
 {
@@ -60,7 +61,7 @@ final class Templates
 
             $result[] = $entry;
         }
-        $ctrl->json($result);
+        Core::json($result);
     }
 
     public static function save(Request $ctrl): void
@@ -71,7 +72,7 @@ final class Templates
         $name = trim($_POST['name'] ?? '');
 
         if ($name === '') {
-            $ctrl->json(['success' => false, 'errors' => ['Name field cannot be blank']]);
+            Core::json(['success' => false, 'errors' => ['Name field cannot be blank']]);
         }
 
         $row = ($id !== null)
@@ -79,7 +80,7 @@ final class Templates
             : \ORM::for_table(_table_templates)->create();
 
         if (!$row) {
-            $ctrl->json(['success' => false, 'errors' => ['Record not found']]);
+            Core::json(['success' => false, 'errors' => ['Record not found']]);
         }
 
         $postedBlocks = [];
@@ -173,7 +174,7 @@ final class Templates
             }
         }
 
-        $ctrl->json(['success' => true, 'id' => $templateId]);
+        Core::json(['success' => true, 'id' => $templateId]);
     }
 
     public static function delete(Request $ctrl): void
@@ -181,12 +182,12 @@ final class Templates
         $ctrl->require_role('designer');
 
         if (!isset($_POST['id']) || !is_numeric($_POST['id'])) {
-            $ctrl->json(['success' => false, 'errors' => ['Invalid or missing id']]);
+            Core::json(['success' => false, 'errors' => ['Invalid or missing id']]);
         }
 
         $row = \ORM::for_table(_table_templates)->find_one((int)$_POST['id']);
         if (!$row) {
-            $ctrl->json(['success' => false, 'errors' => ['Record not found']]);
+            Core::json(['success' => false, 'errors' => ['Record not found']]);
         }
 
         // Remove associated template block slots
@@ -195,7 +196,7 @@ final class Templates
             ->delete_many();
 
         $row->delete();
-        $ctrl->json(['success' => true]);
+        Core::json(['success' => true]);
     }
 
     private static function generateSlotKey(int $contentTypeId, int $existingCount): string

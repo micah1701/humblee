@@ -32,5 +32,6 @@ These rules override everything else. Violating them breaks the system or introd
 ## Code Style
 
 - **No comments explaining what the code does.** Good names carry that. Add a comment only when the *why* is non-obvious (hidden constraint, workaround for a specific bug, subtle invariant).
-- **No error handling for impossible cases.** Trust ORM guarantees, PHP type system, and internal invariants. Only validate at system boundaries (POST data, external APIs).
+- **No error handling for impossible cases.** Trust ORM guarantees, PHP type system, and internal invariants. Only validate at system boundaries (request data, external APIs).
 - **No backwards-compatibility shims.** If something is unused, delete it completely. No `// removed` comments, no renamed `_vars`.
+- **Read request input via `Package::current()`, not superglobals.** Use `Package::current()->get('key')`, `->all()`, `->method()`, etc. Do not read `$_POST`, `$_GET`, or `php://input` directly. `Package` is built by the middleware Kernel before any controller runs and normalizes all HTTP verbs including JSON bodies.

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Humblee\Controller\Requests;
 
 use Humblee\Controller\Request;
+use Humblee\Foundation\Core;
 use Humblee\Model\Media;
 
 final class MediaFiles
@@ -13,25 +14,25 @@ final class MediaFiles
     {
         $ctrl->require_role(['content', 'media']);
         $media = new Media;
-        $ctrl->json($media->listFolders());
+        Core::json($media->listFolders());
     }
 
     public static function listByFolder(Request $ctrl): void
     {
         $ctrl->require_role(['content', 'media']);
         if (!isset($_GET['folder']) || !is_numeric($_GET['folder'])) {
-            $ctrl->json(['error' => "missing or invalid folder ID"]);
+            Core::json(['error' => "missing or invalid folder ID"]);
         }
         $media = new Media;
         $response = ['success' => true, 'files' => $media->listFilesByFolder((int)$_GET['folder'])];
-        $ctrl->json($response);
+        Core::json($response);
     }
 
     public static function updateName(Request $ctrl): void
     {
         $ctrl->require_role('media');
         if (!isset($_POST['type']) || !isset($_POST['record']) || !is_numeric($_POST['record'])) {
-            $ctrl->json(['error' => 'invalid request']);
+            Core::json(['error' => 'invalid request']);
         }
         $record = false;
         if ($_POST['type'] == "folder_name") {
@@ -42,13 +43,13 @@ final class MediaFiles
         }
 
         if (!$record) {
-            $ctrl->json(['error' => 'record not found']);
+            Core::json(['error' => 'record not found']);
             return;
         }
 
         $record->name = $_POST['value'];
         $record->save();
-        $ctrl->json(['success' => true]);
+        Core::json(['success' => true]);
     }
 
     public static function updateRole(Request $ctrl): void
@@ -63,7 +64,7 @@ final class MediaFiles
         }
         $file->required_role = (int)$_POST['required_role'];
         $file->save();
-        $ctrl->json(['success' => true]);
+        Core::json(['success' => true]);
     }
 
     public static function encrypt(Request $ctrl): void
@@ -96,7 +97,7 @@ final class MediaFiles
             } else {
                 $file->encrypted = 1;
                 $file->save();
-                $ctrl->json(["success" => true]);
+                Core::json(["success" => true]);
             }
         } elseif ($_POST['action'] == "decrypt") {
             $decrypt = $crypto->decrypt($file_content);
@@ -108,11 +109,11 @@ final class MediaFiles
             } else {
                 $file->encrypted = 0;
                 $file->save();
-                $ctrl->json(["success" => true]);
+                Core::json(["success" => true]);
             }
         }
 
-        $ctrl->json(["success" => false, "error" => "malformed request"]);
+        Core::json(["success" => false, "error" => "malformed request"]);
     }
 
     public static function deleteFile(Request $ctrl): void
@@ -125,10 +126,10 @@ final class MediaFiles
         $delete = $mediaObj->deleteFile((int)$_POST['file_id']);
 
         if ($delete !== true) {
-            $ctrl->json(["success" => false, "error" => $delete]);
+            Core::json(["success" => false, "error" => $delete]);
         }
 
-        $ctrl->json(["success" => true]);
+        Core::json(["success" => true]);
     }
 
     public static function createFolder(Request $ctrl): void
@@ -140,7 +141,7 @@ final class MediaFiles
         $folder->parent_id = (isset($_POST['parent_id']) && is_numeric($_POST['parent_id'])) ? $_POST['parent_id'] : 0;
         $folder->save();
 
-        $ctrl->json(["success" => true, "folder_id" => $folder->id()]);
+        Core::json(["success" => true, "folder_id" => $folder->id()]);
     }
 
     public static function deleteFolder(Request $ctrl): void
@@ -152,7 +153,7 @@ final class MediaFiles
 
         $children = \ORM::for_table(_table_media_folders)->where('parent_id', (int)$_POST['folder_id'])->find_many();
         if ($children) {
-            $ctrl->json(["success" => false, "errors" => "This folder has subfolders and can not be deleted. Delete the child folders first!"]);
+            Core::json(["success" => false, "errors" => "This folder has subfolders and can not be deleted. Delete the child folders first!"]);
         }
 
         $files = \ORM::for_table(_table_media)->where('folder', (int)$_POST['folder_id'])->find_many();
@@ -166,7 +167,7 @@ final class MediaFiles
         }
 
         if (count($errors) > 0) {
-            $ctrl->json(["success" => false, "errors" => $errors]);
+            Core::json(["success" => false, "errors" => $errors]);
         }
 
         $folder = \ORM::for_table(_table_media_folders)->find_one($_POST['folder_id']);
@@ -175,7 +176,7 @@ final class MediaFiles
         }
 
         $folder->delete();
-        $ctrl->json(['success' => true]);
+        Core::json(['success' => true]);
     }
 
     public static function upload(Request $ctrl): void
@@ -255,7 +256,7 @@ final class MediaFiles
         }
 
         $success = ($savedFiles > 0) ? true : false;
-        $ctrl->json(["success" => $success, "errors" => $errors, "filesReceived" => $totalFiles, "filesSaved" => $savedFiles]);
+        Core::json(["success" => $success, "errors" => $errors, "filesReceived" => $totalFiles, "filesSaved" => $savedFiles]);
     }
 
     public static function migrateNonces(Request $ctrl): void
@@ -296,7 +297,7 @@ final class MediaFiles
             $migrated++;
         }
 
-        $ctrl->json([
+        Core::json([
             "success"  => empty($errors),
             "migrated" => $migrated,
             "errors"   => $errors,

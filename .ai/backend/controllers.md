@@ -1,5 +1,52 @@
 # Backend Controllers
 
+## Middleware Pipeline
+
+Before any controller runs, `Humblee\Middleware\Kernel::boot()` fires from `humblee/init.php`. It runs in this order:
+
+1. **`Package::build()`** — normalizes all request input into a single object
+2. **`Auth::handle()`** — restores session from remember-me cookie if no active login
+3. **App middleware** — any class in `application/middleware/` that implements `Humblee\Middleware\Contract`
+4. **`Router::handle()`** — URI dispatch to the correct controller
+
+### Adding application middleware
+
+Drop a file in `application/middleware/`, namespace it `App\Middleware`, and implement `Contract`:
+
+```php
+namespace App\Middleware;
+
+use Humblee\Middleware\Contract;
+use Humblee\Middleware\Package;
+
+class RateLimit implements Contract
+{
+    public function handle(Package $package): void
+    {
+        // runs on every request, before routing
+    }
+}
+```
+
+The Kernel discovers files by glob — no registration step needed.
+
+### Accessing request data in a controller
+
+```php
+use Humblee\Middleware\Package;
+
+public function save(): void
+{
+    $this->require_hmac();
+    $this->require_role('admin');
+
+    $id   = Package::current()->get('id');
+    $name = Package::current()->get('name', '');
+
+    // ...
+}
+```
+
 ## Class Hierarchy
 
 ```
@@ -25,7 +72,12 @@ Humblee\Controller\Template      ← Public page rendering (catch-all)
 $this->require_role('admin');               // 403 + exit if role missing
 $this->require_role(['admin', 'content']);  // 403 + exit if none match
 $this->require_hmac();                      // 401 + exit if HMAC invalid
-$this->json($array, $status = 200);        // JSON encode + exit
+```
+
+**JSON responses** use the static method on `Core`, available anywhere (not just Xhr subclasses):
+
+```php
+Core::json($array, $status = 200);         // JSON encode + exit
 ```
 
 ## Admin Controller
@@ -63,7 +115,7 @@ match ($group) {
 };
 ```
 
-Sub-controllers live in `humblee/src/Controller/Requests/`. Each has static methods that receive `$controller` (the Xhr instance) for calling `require_hmac()`, `require_role()`, and `json()`.
+Sub-controllers live in `humblee/src/Controller/Requests/`. Each has static methods that receive `$controller` (the Xhr instance) for calling `require_hmac()` and `require_role()`. JSON responses call `Core::json()` directly.
 
 ## App-Level Request Controller
 
@@ -88,7 +140,7 @@ class Request extends Xhr
             ->where('id', $_POST['user_id'])
             ->find_one();
 
-        $this->json(['data' => $result->as_array()]);
+        Core::json(['data' => $result->as_array()]);
     }
 }
 ```

@@ -19,15 +19,15 @@ public function myAction(): void
 
     $id = (int)($_POST['id'] ?? 0);
     if ($id <= 0) {
-        $this->json(['error' => 'Invalid id'], 400);
+        Core::json(['error' => 'Invalid id'], 400);
     }
 
     $record = \ORM::for_table(_table_pages)->find_one($id);
     if (!$record) {
-        $this->json(['error' => 'Not found'], 404);
+        Core::json(['error' => 'Not found'], 404);
     }
 
-    $this->json([
+    Core::json([
         'status' => 'ok',
         'data'   => $record->as_array(),
         'csrf'   => \Humblee\Model\Crypto::get_hmac_pair(),
@@ -51,12 +51,12 @@ public static function myAction(\Humblee\Controller\Xhr $controller): void
 
     $page_id = (int)($_POST['page_id'] ?? 0);
     if ($page_id <= 0) {
-        $controller->json(['error' => 'Invalid page_id'], 400);
+        Core::json(['error' => 'Invalid page_id'], 400);
     }
 
     $result = \Humblee\Model\Content::doSomething($page_id);
 
-    $controller->json([
+    Core::json([
         'status' => 'ok',
         'result' => $result,
         'csrf'   => \Humblee\Model\Crypto::get_hmac_pair(),
@@ -71,7 +71,7 @@ match ($action) {
     'save'     => Content::save($this),
     'revisions'=> Content::listRevisions($this),
     'myAction' => Content::myAction($this),     // ← add this line
-    default    => $this->json(['error' => 'Not found'], 404),
+    default    => Core::json(['error' => 'Not found'], 404),
 };
 ```
 

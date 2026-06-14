@@ -23,7 +23,7 @@ final class Personalization
                 'priority'    => (int)$row->priority,
             ];
         }
-        $ctrl->json($result);
+        Core::json($result);
     }
 
     public static function save(Request $ctrl): void
@@ -34,12 +34,12 @@ final class Personalization
         $name = trim($_POST['name'] ?? '');
 
         if ($name === '') {
-            $ctrl->json(['success' => false, 'errors' => ['Name field cannot be blank']]);
+            Core::json(['success' => false, 'errors' => ['Name field cannot be blank']]);
         }
 
         $criteria = trim($_POST['criteria'] ?? '');
         if ($criteria !== '' && json_decode($criteria) === null) {
-            $ctrl->json(['success' => false, 'errors' => ['Invalid criteria format']]);
+            Core::json(['success' => false, 'errors' => ['Invalid criteria format']]);
         }
 
         $row = ($id !== null)
@@ -47,7 +47,7 @@ final class Personalization
             : \ORM::for_table(_table_content_p13n)->create();
 
         if (!$row) {
-            $ctrl->json(['success' => false, 'errors' => ['Record not found']]);
+            Core::json(['success' => false, 'errors' => ['Record not found']]);
         }
 
         $row->name        = htmlspecialchars($name);
@@ -61,7 +61,7 @@ final class Personalization
         }
 
         $row->save();
-        $ctrl->json(['success' => true, 'id' => (int)$row->id]);
+        Core::json(['success' => true, 'id' => (int)$row->id]);
     }
 
     public static function delete(Request $ctrl): void
@@ -69,15 +69,15 @@ final class Personalization
         $ctrl->require_role('designer');
 
         if (!isset($_POST['id']) || !is_numeric($_POST['id'])) {
-            $ctrl->json(['success' => false, 'errors' => ['Invalid or missing id']]);
+            Core::json(['success' => false, 'errors' => ['Invalid or missing id']]);
         }
 
         $row = \ORM::for_table(_table_content_p13n)->find_one((int)$_POST['id']);
         if (!$row) {
-            $ctrl->json(['success' => false, 'errors' => ['Record not found']]);
+            Core::json(['success' => false, 'errors' => ['Record not found']]);
         }
 
         $row->delete();
-        $ctrl->json(['success' => true]);
+        Core::json(['success' => true]);
     }
 }

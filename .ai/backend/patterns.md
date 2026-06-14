@@ -2,6 +2,24 @@
 
 These are the recurring patterns used throughout the PHP codebase. Match them exactly when adding new code.
 
+## Request Input (Package)
+
+All request data comes from `Package::current()`. It is built by the middleware Kernel before any controller runs, normalizing GET, POST, PUT, DELETE, and PATCH — including JSON bodies sent via `php://input`.
+
+```php
+use Humblee\Middleware\Package;
+
+$package = Package::current();
+
+$id      = $package->get('id');              // single key, null if missing
+$id      = $package->get('id', 0);           // with default
+$all     = $package->all();                  // all parsed data as array
+$method  = $package->method();               // 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
+$present = $package->has('field');           // bool
+```
+
+Do not read `$_POST`, `$_GET`, or `php://input` directly. Package handles all verbs and content types consistently.
+
 ## ORM Queries
 
 All DB access uses `\ORM::for_table()`. Table names come from `_table_*` constants — never string literals.
@@ -88,7 +106,8 @@ $this->require_role('admin');  // Issues 403 and exits on failure
 
 ### In model or standalone code
 ```php
-if (!Crypto::check_hmac_pair($_POST['hmac_key'], $_POST['hmac_token'])) {
+$package = Package::current();
+if (!Crypto::check_hmac_pair($package->get('hmac_key'), $package->get('hmac_token'))) {
     http_response_code(401);
     exit;
 }
@@ -98,23 +117,23 @@ if (!Crypto::check_hmac_pair($_POST['hmac_key'], $_POST['hmac_token'])) {
 ```php
 // Return a fresh HMAC pair so the client can make the next request
 $new_hmac = Crypto::get_hmac_pair();
-$this->json(['status' => 'ok', 'hmac' => $new_hmac]);
+Core::json(['status' => 'ok', 'hmac' => $new_hmac]);
 ```
 
-## JSON Response (XHR controllers)
+## JSON Response
 
 ```php
 // Success
-$this->json(['status' => 'ok', 'data' => $result]);
+Core::json(['status' => 'ok', 'data' => $result]);
 
 // Success with HTTP status
-$this->json(['status' => 'created'], 201);
+Core::json(['status' => 'created'], 201);
 
 // Error
-$this->json(['error' => 'Not found'], 404);
+Core::json(['error' => 'Not found'], 404);
 ```
 
-`json()` handles UTF-8 encoding, sets `Content-Type: application/json`, and exits.
+`Core::json()` is a static method on `Humblee\Foundation\Core`. It handles UTF-8 encoding, sets `Content-Type: application/json`, and exits. It is available everywhere — not just in Xhr subclasses.
 
 ## Encryption
 

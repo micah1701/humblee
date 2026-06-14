@@ -12,6 +12,7 @@ A pre-migration snapshot of the codebase is preserved on the `legacy` git branch
 /
 ├── application/          # App\  namespace — overrides/extends core
 │   ├── Controller/       # Custom AJAX endpoints (e.g. Request.php)
+│   ├── Middleware/       # App middleware (auto-loaded by Kernel, must implement Contract)
 │   ├── Model/            # App models
 │   └── views/            # App-level PHP view templates
 │
@@ -20,13 +21,14 @@ A pre-migration snapshot of the codebase is preserved on the `legacy` git branch
 │
 ├── humblee/              # Humblee\ namespace — CMS core
 │   ├── src/
-│   │   ├── Foundation/   # Core.php (routing, auth, view), Draw.php (helpers)
+│   │   ├── Foundation/   # Core.php (auth, view, session), Draw.php (helpers)
+│   │   ├── Middleware/   # Kernel, Package, Auth, Router, Contract
 │   │   ├── Controller/   # Admin, User, Media, Template, Request, Xhr
 │   │   │   └── Requests/ # Sub-controllers (static method groups)
 │   │   └── Model/        # Content, Crypto, Media, Pages, Personalization, Tools, Users
 │   ├── views/            # CMS admin/user/email PHP templates
 │   ├── configuration/    # env_*.php + crypto/key.php
-│   └── init.php          # Bootstrap: autoload → route → dispatch
+│   └── init.php          # Bootstrap: autoload → DB → Kernel::boot()
 │
 ├── public/               # Apache web root
 │   ├── index.php         # Public entry point
@@ -40,16 +42,22 @@ A pre-migration snapshot of the codebase is preserved on the `legacy` git branch
 ```
 Browser → Apache → public/index.php
   → humblee/init.php
-    → Core::getURIparts()       # Parse URI into segments
-    → match($uri[0]) {          # Route on first segment
-        'request/'      → App\Controller\Request
-        'admin/'        → Humblee\Controller\Admin
-        'core-request/' → Humblee\Controller\Request
-        'user/'         → Humblee\Controller\User
-        'media/'        → Humblee\Controller\Media
-        default         → Humblee\Controller\Template   # Public page render
-      }
-    → $controller->$method()    # Second URI segment = method
+    → config, autoload, DB, session_start, timezone
+    → Kernel::boot()
+        → Package::build()          # Normalize request data (GET/POST/PUT/DELETE/PATCH)
+        → Auth::handle()            # Restore session from remember-me cookie if needed
+        → App\Middleware\*::handle()# Any files in application/middleware/ (auto-discovered)
+        → Router::handle()
+            → Core::getURIparts()   # Parse URI into segments
+            → match($uri[0]) {      # Route on first segment
+                'request/'      → App\Controller\Request
+                'admin/'        → Humblee\Controller\Admin
+                'core-request/' → Humblee\Controller\Request
+                'user/'         → Humblee\Controller\User
+                'media/'        → Humblee\Controller\Media
+                default         → Humblee\Controller\Template
+              }
+            → $controller->$method()# Second URI segment = method
 ```
 
 ## Routing Table
@@ -84,9 +92,11 @@ Example: `POST /core-request/content/save` → `Requests\Content::save($controll
 | Namespace | Directory | Autoloaded by |
 |---|---|---|
 | `Humblee\Foundation\` | `humblee/src/Foundation/` | Composer |
+| `Humblee\Middleware\` | `humblee/src/Middleware/` | Composer |
 | `Humblee\Controller\` | `humblee/src/Controller/` | Composer |
 | `Humblee\Model\` | `humblee/src/Model/` | Composer |
 | `App\Controller\` | `application/Controller/` | Composer |
+| `App\Middleware\` | `application/middleware/` | `require_once` by Kernel (file-based discovery) |
 | `App\Model\` | `application/Model/` | Composer |
 
 Views (PHP templates) are **not autoloaded** — they are `include`d by `Core::view()`.
