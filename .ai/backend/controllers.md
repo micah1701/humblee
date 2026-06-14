@@ -25,7 +25,12 @@ Humblee\Controller\Template      ← Public page rendering (catch-all)
 $this->require_role('admin');               // 403 + exit if role missing
 $this->require_role(['admin', 'content']);  // 403 + exit if none match
 $this->require_hmac();                      // 401 + exit if HMAC invalid
-$this->json($array, $status = 200);        // JSON encode + exit
+```
+
+**JSON responses** use the static method on `Core`, available anywhere (not just Xhr subclasses):
+
+```php
+Core::json($array, $status = 200);         // JSON encode + exit
 ```
 
 ## Admin Controller
@@ -63,7 +68,7 @@ match ($group) {
 };
 ```
 
-Sub-controllers live in `humblee/src/Controller/Requests/`. Each has static methods that receive `$controller` (the Xhr instance) for calling `require_hmac()`, `require_role()`, and `json()`.
+Sub-controllers live in `humblee/src/Controller/Requests/`. Each has static methods that receive `$controller` (the Xhr instance) for calling `require_hmac()` and `require_role()`. JSON responses call `Core::json()` directly.
 
 ## App-Level Request Controller
 
@@ -88,7 +93,7 @@ class Request extends Xhr
             ->where('id', $_POST['user_id'])
             ->find_one();
 
-        $this->json(['data' => $result->as_array()]);
+        Core::json(['data' => $result->as_array()]);
     }
 }
 ```

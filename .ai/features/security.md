@@ -32,7 +32,7 @@ $this->require_hmac();  // Must be called before reading POST data
 After every successful AJAX action, return a new pair so the next request can proceed:
 
 ```php
-$this->json([
+Core::json([
     'status' => 'ok',
     'csrf'   => \Humblee\Model\Crypto::get_hmac_pair(),
 ]);
@@ -61,7 +61,7 @@ Cast to int before use:
 
 ```php
 $id = (int)$_POST['id'];
-if ($id <= 0) { $this->json(['error' => 'Invalid ID'], 400); }
+if ($id <= 0) { Core::json(['error' => 'Invalid ID'], 400); }
 ```
 
 ### POST Data Whitelist

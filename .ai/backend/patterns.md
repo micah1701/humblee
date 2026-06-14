@@ -98,23 +98,23 @@ if (!Crypto::check_hmac_pair($_POST['hmac_key'], $_POST['hmac_token'])) {
 ```php
 // Return a fresh HMAC pair so the client can make the next request
 $new_hmac = Crypto::get_hmac_pair();
-$this->json(['status' => 'ok', 'hmac' => $new_hmac]);
+Core::json(['status' => 'ok', 'hmac' => $new_hmac]);
 ```
 
-## JSON Response (XHR controllers)
+## JSON Response
 
 ```php
 // Success
-$this->json(['status' => 'ok', 'data' => $result]);
+Core::json(['status' => 'ok', 'data' => $result]);
 
 // Success with HTTP status
-$this->json(['status' => 'created'], 201);
+Core::json(['status' => 'created'], 201);
 
 // Error
-$this->json(['error' => 'Not found'], 404);
+Core::json(['error' => 'Not found'], 404);
 ```
 
-`json()` handles UTF-8 encoding, sets `Content-Type: application/json`, and exits.
+`Core::json()` is a static method on `Humblee\Foundation\Core`. It handles UTF-8 encoding, sets `Content-Type: application/json`, and exits. It is available everywhere — not just in Xhr subclasses.
 
 ## Encryption
 
