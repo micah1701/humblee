@@ -34,6 +34,7 @@
 | **Entry point** | `public/index.php` → `humblee/init.php` |
 | **Database** | MySQL (also supports PostgreSQL — see `install/database_pgsql.sql`) |
 | **Storage** | `storage/` — must be web-server writable; not web-accessible |
+| **File permissions** | PHP source directories must be executable (`755`) by the web server process. Directories lacking execute permission will cause PHP's PCRE JIT to fail with `Allocation of JIT memory failed` warnings on PHP 8.x / newer Ubuntu versions — the fix is `chmod 755` on the directory, not a JIT config change. `humblee/src/` and all subdirectories are the common culprit. |
 | **Session** | PHP native sessions keyed by `session_key` constant |
 
 ## Constants (defined in `humblee/configuration/env_*.php`)
