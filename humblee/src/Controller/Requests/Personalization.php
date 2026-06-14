@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Humblee\Controller\Requests;
 
 use Humblee\Controller\Request;
+use Humblee\Foundation\Core;
 
 final class Personalization
 {
