@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Humblee\Controller\Requests;
 
 use Humblee\Controller\Request;
+use Humblee\Foundation\Core;
 use Humblee\Model\Content as ContentModel;
 
 final class Content
@@ -13,7 +14,7 @@ final class Content
     {
         $ctrl->require_role(['content', 'publish']);
         if (!isset($_POST['content_type']) || !is_numeric($_POST['content_type']) || !isset($_POST['page_id']) || !is_numeric($_POST['page_id'])) {
-            $ctrl->json(['error' => 'Missing required parameters']);
+            Core::json(['error' => 'Missing required parameters']);
         }
         $template_block_id = (isset($_POST['template_block_id']) && is_numeric($_POST['template_block_id']))
             ? (int)$_POST['template_block_id']
@@ -22,12 +23,12 @@ final class Content
         $content = $contentObj->listRevisions((int)$_POST['page_id'], (int)$_POST['content_type'], (int)$_POST['p13n_id'], 1, $template_block_id);
 
         if (!$content) {
-            $ctrl->json(['error' => 'could not confirm previously saved content']);
+            Core::json(['error' => 'could not confirm previously saved content']);
         }
 
         $content = $content[0];
         $latestRevision = ['revision_date' => $content->revision_date, 'live' => $content->live, 'name' => $content->name];
-        $ctrl->json(['success' => true, 'content' => $latestRevision]);
+        Core::json(['success' => true, 'content' => $latestRevision]);
     }
 
     public static function pageMap(Request $ctrl): void
@@ -36,12 +37,12 @@ final class Content
 
         $page_id = isset($_POST['page_id']) && is_numeric($_POST['page_id']) ? (int)$_POST['page_id'] : 0;
         if (!$page_id) {
-            $ctrl->json(['error' => 'Missing or invalid page_id']);
+            Core::json(['error' => 'Missing or invalid page_id']);
         }
 
         $page = \ORM::for_table(_table_pages)->find_one($page_id);
         if (!$page) {
-            $ctrl->json(['error' => 'Page not found']);
+            Core::json(['error' => 'Page not found']);
         }
 
         $templateBlockRows = \ORM::for_table(_table_template_blocks)
@@ -92,7 +93,7 @@ final class Content
             }
         }
 
-        $ctrl->json([
+        Core::json([
             'pageId'         => $page_id,
             'pageLabel'      => $page->label,
             'slots'          => $slots,
@@ -105,7 +106,7 @@ final class Content
     {
         $ctrl->require_role('designer');
         if (!isset($_POST['list_order']) || !is_array($_POST['list_order'])) {
-            $ctrl->json(['success' => false, 'error' => 'malformed request']);
+            Core::json(['success' => false, 'error' => 'malformed request']);
         }
         foreach ($_POST['list_order'] as $priority => $persona_domID) {
             $domID_parts = explode('_', $persona_domID);
@@ -113,13 +114,13 @@ final class Content
             $p13n = \ORM::for_table(_table_content_p13n)->find_one($persona_id);
 
             if (!$p13n) {
-                $ctrl->json(['success' => false, 'error' => 'critical error: one or more persona\'s were not updated']);
+                Core::json(['success' => false, 'error' => 'critical error: one or more persona\'s were not updated']);
             }
 
             $p13n->priority = $priority;
             $p13n->save();
         }
 
-        $ctrl->json(['success' => true]);
+        Core::json(['success' => true]);
     }
 }

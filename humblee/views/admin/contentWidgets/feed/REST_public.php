@@ -39,7 +39,7 @@ class feedRest_public extends feedRest
                         "contents" => json_decode($article->content)
                     ];
                 }
-                $this->json($result);
+                Core::json($result);
                 break;
             default:
                 return ["error" => "Malformed URL. Invalid feed action.", "statusCode" => 400];

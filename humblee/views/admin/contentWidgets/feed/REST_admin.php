@@ -71,7 +71,7 @@ class feedRest_admin extends feedRest
                     ];
                 }
                 // return ["lastQuery" => ORM::get_last_statement()];
-                return $this->json($result);
+                return Core::json($result);
                 break;
 
             default:
