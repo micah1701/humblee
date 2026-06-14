@@ -7,7 +7,7 @@
 | **PHP** | 8.3+ — strict types, union types, named arguments, native sodium |
 | **ORM** | `j4mie/idiorm` ^1.5 — always prefixed `\ORM::` |
 | **Password hashing** | `password_hash(..., PASSWORD_ARGON2ID)` |
-| **Encryption** | Native `sodium_crypto_secretbox` (XSalsa20-Poly1305) via `Crypto` model |
+| **Encryption** | Native `sodium_crypto_secretbox` (XSalsa20-Poly1305) via `Crypto` model — `paragonie/sodium_compat` was removed; PHP 8.3 ships sodium natively |
 | **Markdown** | `erusev/parsedown` ^1.8 |
 | **SMS / 2FA** | `twilio/sdk` ^5.16 — gated by `$_ENV['config']['TWILIO_Enabled']` |
 | **Image compression** | `tinify/tinify` ^1.6 — optional |
