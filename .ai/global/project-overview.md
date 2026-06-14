@@ -4,6 +4,8 @@
 
 Humblee is a PHP/MySQL CMS and framework. It manages pages, content blocks, templates, users, media, and personalization variants. The admin UI is a set of Svelte SPAs served as built ES modules.
 
+A pre-migration snapshot of the codebase is preserved on the `legacy` git branch (tagged `v0-legacy`). Reference it when comparing against the original architecture.
+
 ## Directory Map
 
 ```

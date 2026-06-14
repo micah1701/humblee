@@ -8,7 +8,3 @@ humblee/.phpunit.result.cache
 # Frontend build tool dependencies (built output in public/ IS committed)
 frontend/node_modules
 frontend/apps/*/node_modules
-
-#Ignore vscode AI rules
-.github
-.github/*
