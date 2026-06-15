@@ -164,7 +164,7 @@ $hmac_pair = $crypto->get_hmac_pair();
     <footer class="footer">
         <div class="container">
             <div class="content has-text-centered">
-                <p>Powered by <a href="https://humblee.io" target="_blank">Humblee</a> &copy; <?php echo gmdate("Y"); ?></p>
+                <p>Powered by <a href="https://humblee.app" target="_blank">Humblee</a> &copy; <?php echo gmdate("Y"); ?></p>
             </div>
         </div>
     </footer>

@@ -1,7 +1,7 @@
 {
   "name": "humblee",
   "version": "0.1.0",
-  "description": "Scripts and Styles used by the Humblee.io Framework",
+  "description": "Scripts and Styles used by the humblee.app Framework",
   "main": "index.js",
   "dependencies": {
     "bulma": "^1.0.4",

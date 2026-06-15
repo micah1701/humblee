@@ -4,8 +4,8 @@
  * Humblee - A humble PHP Framework and CMS
  * 
  * @package Humblee
- * @author	Micah J. Murray <micah@sixeightinteractive.com>
- * @link    https://humblee.io
+ * @author	Micah J. Murray <micah@creativeadhocsolutions.com>
+ * @link    https://humblee.app
  */
 
 session_start();

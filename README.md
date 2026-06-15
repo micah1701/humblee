@@ -203,9 +203,9 @@ PHPUnit is a **dev-only** dependency — it is installed automatically when you 
 
 Your PHP CLI version determines which PHPUnit major version is used:
 
-| PHP CLI version | PHPUnit version installed |
-|-----------------|--------------------------|
-| 8.3.x           | `^12.0` (current config) |
+| PHP CLI version | PHPUnit version installed        |
+| --------------- | -------------------------------- |
+| 8.3.x           | `^12.0` (current config)         |
 | 8.4.1+          | bump to `^13.0` in `require-dev` |
 
 Tests for database-backed models (e.g. `ContentTest`) use an **in-memory SQLite database** so they run without a MySQL server. This requires the `pdo_sqlite` and `sqlite3` PHP extensions to be enabled in your CLI `php.ini`. They ship with PHP 8.3+ on all platforms but are often disabled by default.
@@ -311,11 +311,11 @@ Full documentation can be found at <https://humblee.app>
 
 ## Author
 
-Humblee was created by **Micah Murray** and is a product offering of [Six Eight Interactive](https://sixeightinteractive.com)
+Humblee was created by **Micah Murray** and is a product offering of [Creative Ad-Hoc Solutions](https://creativeadhocsolutions.com)
 
 ## Questions, comments, bugs or security concerns
 
-Please feel free to [contact the author](https://sixeightinteractive.com/contact).
+Please feel free to [contact the author](https://creativeadhocsolutions.com).
 
 ## License
 
