@@ -6,7 +6,7 @@ use Humblee\Foundation\Draw;
 
 /** @var array<string, mixed> $content */
 
-Draw::content($content, "pagebody_hero");
+// Draw::content($content, "pagebody_hero");
 ?>
 <!DOCTYPE html>
 <html lang="en">
