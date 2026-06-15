@@ -695,7 +695,7 @@ use Humblee\Foundation\Draw;
         <div class="nav-inner">
             <a href="/" class="logo">hum<em>blee</em></a>
             <div class="nav-links">
-                <a href="/docs">Documentation</a>
+                <a href="/docs" style="line-height: 2rem">Documentation</a>
                 <a href="https://github.com/micah1701/humblee" class="nav-cta">GitHub →</a>
             </div>
         </div>
