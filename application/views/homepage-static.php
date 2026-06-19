@@ -201,8 +201,9 @@ $screenshots = [
         .hero-slide {
             position: absolute;
             inset: 0;
-            background-size: cover;
+            background-size: contain;
             background-position: center right;
+            background-repeat: no-repeat;
             opacity: 0;
             transition: opacity 1.2s ease-in-out;
         }
@@ -215,13 +216,11 @@ $screenshots = [
             position: absolute;
             inset: 0;
             z-index: 1;
-            background: linear-gradient(
-                to right,
-                rgba(12, 14, 22, 0.97) 0%,
-                rgba(12, 14, 22, 0.90) 32%,
-                rgba(12, 14, 22, 0.55) 62%,
-                rgba(12, 14, 22, 0.06) 100%
-            );
+            background: linear-gradient(to right,
+                    rgba(12, 14, 22, 0.97) 0%,
+                    rgba(12, 14, 22, 0.90) 32%,
+                    rgba(12, 14, 22, 0.55) 62%,
+                    rgba(12, 14, 22, 0.06) 100%);
             pointer-events: none;
         }
 
@@ -824,7 +823,7 @@ $screenshots = [
     <section class="hero">
         <div class="hero-slider" id="heroSlider">
             <?php foreach ($screenshots as $i => $src): ?>
-            <div class="hero-slide<?= $i === 0 ? ' active' : '' ?>" style="background-image:url('<?= htmlspecialchars($src) ?>')"></div>
+                <div class="hero-slide<?= $i === 0 ? ' active' : '' ?>" style="background-image:url('<?= htmlspecialchars($src) ?>')"></div>
             <?php endforeach; ?>
         </div>
         <div class="hero-overlay"></div>
@@ -1080,44 +1079,54 @@ $screenshots = [
     </div>
 
     <script>
-    (function () {
-        var slides = document.querySelectorAll('.hero-slide');
-        var slider = document.getElementById('heroSlider');
-        var modal  = document.getElementById('heroModal');
-        var img    = document.getElementById('heroModalImg');
-        var current = 0;
-        var timer   = null;
+        (function() {
+            var slides = document.querySelectorAll('.hero-slide');
+            var slider = document.getElementById('heroSlider');
+            var modal = document.getElementById('heroModal');
+            var img = document.getElementById('heroModalImg');
+            var current = 0;
+            var timer = null;
 
-        function show(idx) {
-            slides[current].classList.remove('active');
-            current = ((idx % slides.length) + slides.length) % slides.length;
-            slides[current].classList.add('active');
-        }
+            function show(idx) {
+                slides[current].classList.remove('active');
+                current = ((idx % slides.length) + slides.length) % slides.length;
+                slides[current].classList.add('active');
+            }
 
-        function start() { timer = setInterval(function () { show(current + 1); }, 5000); }
-        function stop()  { clearInterval(timer); timer = null; }
+            function start() {
+                timer = setInterval(function() {
+                    show(current + 1);
+                }, 5000);
+            }
 
-        function open() {
-            var bg = slides[current].style.backgroundImage;
-            img.src = bg.replace(/^url\(["']?|["']?\)$/g, '');
-            modal.classList.add('open');
-            stop();
-        }
+            function stop() {
+                clearInterval(timer);
+                timer = null;
+            }
 
-        function close() {
-            modal.classList.remove('open');
-            img.src = '';
+            function open() {
+                var bg = slides[current].style.backgroundImage;
+                img.src = bg.replace(/^url\(["']?|["']?\)$/g, '');
+                modal.classList.add('open');
+                stop();
+            }
+
+            function close() {
+                modal.classList.remove('open');
+                img.src = '';
+                start();
+            }
+
             start();
-        }
-
-        start();
-        slider.addEventListener('click', open);
-        document.getElementById('heroModalClose').addEventListener('click', close);
-        modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && modal.classList.contains('open')) close();
-        });
-    })();
+            slider.addEventListener('click', open);
+            document.getElementById('heroModalClose').addEventListener('click', close);
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) close();
+            });
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal.classList.contains('open')) close();
+            });
+        })();
     </script>
 
 </body>
