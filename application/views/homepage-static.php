@@ -191,6 +191,12 @@ $screenshots = [
             overflow: hidden;
         }
 
+        .hero .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+        }
+
         .hero-slider {
             position: absolute;
             inset: 0;
