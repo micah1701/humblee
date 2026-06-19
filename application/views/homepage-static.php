@@ -227,7 +227,8 @@ $screenshots = [
         .hero-content {
             position: relative;
             z-index: 2;
-            max-width: 600px;
+            max-width: 720px;
+            margin-right: auto;
         }
 
         .hero-badge {
