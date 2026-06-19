@@ -7,6 +7,15 @@ use Humblee\Foundation\Draw;
 /** @var array<string, mixed> $content */
 
 // Draw::content($content, "pagebody_hero");
+
+// TODO: replace with /media/{id}/filename.ext paths once images are added to the media manager
+$screenshots = [
+    '/application/img/CMS-homepage.png',
+    '/application/img/CMS-media-manager.png',
+    '/application/img/CMS-blocks-tool.png',
+    '/application/img/CMS-editor-seo.png',
+    '/application/img/CMS-page-properties.png',
+];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -173,22 +182,53 @@ use Humblee\Foundation\Draw;
 
         /* ── Hero ───────────────────────────────────────────────── */
         .hero {
+            min-height: 580px;
+            display: flex;
+            align-items: center;
             padding: 96px 0 88px;
-            text-align: center;
+            text-align: left;
             position: relative;
             overflow: hidden;
         }
 
-        .hero::before {
-            content: '';
+        .hero-slider {
             position: absolute;
-            top: -60px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 900px;
-            height: 500px;
-            background: radial-gradient(ellipse at 50% 0%, rgba(124, 108, 255, 0.14) 0%, transparent 68%);
+            inset: 0;
+            z-index: 0;
+            cursor: zoom-in;
+        }
+
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center right;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: linear-gradient(
+                to right,
+                rgba(12, 14, 22, 0.97) 0%,
+                rgba(12, 14, 22, 0.90) 32%,
+                rgba(12, 14, 22, 0.55) 62%,
+                rgba(12, 14, 22, 0.06) 100%
+            );
             pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
         }
 
         .hero-badge {
@@ -213,23 +253,68 @@ use Humblee\Foundation\Draw;
             line-height: 1.13;
             letter-spacing: -0.035em;
             color: #fff;
-            max-width: 780px;
-            margin: 0 auto 20px;
+            margin: 0 0 20px;
         }
 
         .hero-lead {
             font-size: 1.1rem;
             color: var(--muted);
-            max-width: 560px;
-            margin: 0 auto 40px;
+            max-width: 520px;
+            margin: 0 0 40px;
             line-height: 1.72;
         }
 
         .hero-ctas {
             display: flex;
             gap: 12px;
-            justify-content: center;
             flex-wrap: wrap;
+        }
+
+        /* ── Screenshot modal ───────────────────────────────────── */
+        .hero-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.92);
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .hero-modal.open {
+            display: flex;
+        }
+
+        .hero-modal-img {
+            max-width: 92vw;
+            max-height: 88vh;
+            object-fit: contain;
+            border-radius: 6px;
+            box-shadow: 0 4px 80px rgba(0, 0, 0, 0.7);
+        }
+
+        .hero-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: #fff;
+            font-size: 1rem;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s;
+            line-height: 1;
+        }
+
+        .hero-modal-close:hover {
+            background: rgba(255, 255, 255, 0.16);
         }
 
         /* ── Stat strip ─────────────────────────────────────────── */
@@ -662,6 +747,30 @@ use Humblee\Foundation\Draw;
             .stat-inner {
                 gap: 24px;
             }
+
+            .hero {
+                text-align: center;
+            }
+
+            .hero-overlay {
+                background: rgba(12, 14, 22, 0.88);
+            }
+
+            .hero-content {
+                max-width: 100%;
+            }
+
+            .hero h1 {
+                margin: 0 auto 20px;
+            }
+
+            .hero-lead {
+                margin: 0 auto 40px;
+            }
+
+            .hero-ctas {
+                justify-content: center;
+            }
         }
 
         @media (max-width: 480px) {
@@ -713,17 +822,25 @@ use Humblee\Foundation\Draw;
 
     <!-- ── Hero ─────────────────────────────────────────────── -->
     <section class="hero">
+        <div class="hero-slider" id="heroSlider">
+            <?php foreach ($screenshots as $i => $src): ?>
+            <div class="hero-slide<?= $i === 0 ? ' active' : '' ?>" style="background-image:url('<?= htmlspecialchars($src) ?>')"></div>
+            <?php endforeach; ?>
+        </div>
+        <div class="hero-overlay"></div>
         <div class="container">
-            <div class="hero-badge">Open Source &nbsp;·&nbsp; MIT License &nbsp;·&nbsp; PHP</div>
-            <h1>Build your app your way.<br>Manage it without the headache.</h1>
-            <p class="hero-lead">
-                Humblee is a lightweight PHP framework with a fully featured content management system built in.
-                Developers get a clean foundation they can extend freely.
-                Content teams get everything they need to publish and manage a site.
-            </p>
-            <div class="hero-ctas">
-                <a href="/docs" class="btn btn-primary">Read the Docs</a>
-                <a href="https://github.com/micah1701/humblee" class="btn btn-ghost">Get on GitHub &nbsp;→</a>
+            <div class="hero-content">
+                <div class="hero-badge">Open Source &nbsp;·&nbsp; MIT License &nbsp;·&nbsp; PHP</div>
+                <h1>Build your app your way.<br>Manage it without the headache.</h1>
+                <p class="hero-lead">
+                    Humblee is a lightweight PHP framework with a fully featured content management system built in.
+                    Developers get a clean foundation they can extend freely.
+                    Content teams get everything they need to publish and manage a site.
+                </p>
+                <div class="hero-ctas">
+                    <a href="/docs" class="btn btn-primary">Read the Docs</a>
+                    <a href="https://github.com/micah1701/humblee" class="btn btn-ghost">Get on GitHub &nbsp;→</a>
+                </div>
             </div>
         </div>
     </section>
@@ -954,6 +1071,54 @@ use Humblee\Foundation\Draw;
             <a href="https://github.com/micah1701/humblee" class="footer-gh">GitHub →</a>
         </div>
     </footer>
+
+
+    <!-- ── Screenshot modal ─────────────────────────────────── -->
+    <div class="hero-modal" id="heroModal" role="dialog" aria-modal="true" aria-label="CMS screenshot preview">
+        <button class="hero-modal-close" id="heroModalClose" aria-label="Close preview">✕</button>
+        <img class="hero-modal-img" id="heroModalImg" src="" alt="CMS screenshot" />
+    </div>
+
+    <script>
+    (function () {
+        var slides = document.querySelectorAll('.hero-slide');
+        var slider = document.getElementById('heroSlider');
+        var modal  = document.getElementById('heroModal');
+        var img    = document.getElementById('heroModalImg');
+        var current = 0;
+        var timer   = null;
+
+        function show(idx) {
+            slides[current].classList.remove('active');
+            current = ((idx % slides.length) + slides.length) % slides.length;
+            slides[current].classList.add('active');
+        }
+
+        function start() { timer = setInterval(function () { show(current + 1); }, 5000); }
+        function stop()  { clearInterval(timer); timer = null; }
+
+        function open() {
+            var bg = slides[current].style.backgroundImage;
+            img.src = bg.replace(/^url\(["']?|["']?\)$/g, '');
+            modal.classList.add('open');
+            stop();
+        }
+
+        function close() {
+            modal.classList.remove('open');
+            img.src = '';
+            start();
+        }
+
+        start();
+        slider.addEventListener('click', open);
+        document.getElementById('heroModalClose').addEventListener('click', close);
+        modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && modal.classList.contains('open')) close();
+        });
+    })();
+    </script>
 
 </body>
 
