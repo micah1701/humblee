@@ -44,8 +44,7 @@ use Humblee\Model\Pages;
     <!-- Analytics Tracking Code -->
     <script>
         window.ANALYTICS_CONFIG = {
-            trackingId: '+H0xXhj4YCT0IhXr',
-            apiUrl: 'https://gmvshvbfvqujlktpqllf.supabase.co/functions/v1/track'
+            trackingId: '+H0xXhj4YCT0IhXr'
         };
     </script>
     <script src="https://analytics.ad-hoc.app/analytics.js" defer></script>
