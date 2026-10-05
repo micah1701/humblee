@@ -806,7 +806,7 @@ $screenshots = [
     <script>
         window.ANALYTICS_CONFIG = {
             trackingId: '+H0xXhj4YCT0IhXr',
-            apiUrl: 'https://gmvshvbfvqujlktpqllf.supabase.co/functions/v1/track'
+            apiUrl: 'https://sb.cahs.cloud/functions/v1/track'
         };
     </script>
     <script src="https://analytics.ad-hoc.app/analytics.js" defer></script>
